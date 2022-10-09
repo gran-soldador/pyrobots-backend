@@ -17,7 +17,7 @@
 
 ## pre-commit pep8 check
 ```
-echo "#!/bin/sh\nflake8 . --exclude .git,__pycache__,env" > .git/hooks/pre-commit
+echo -e '#!/bin/sh\nflake8 . --exclude .git,__pycache__,env --ignore=F403,F405' > .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 pip3 install flake8
 ```
