@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-# from db import *
+from db import *
 
 router = APIRouter()
 
 
 @router.get("/lista_partidas")
 async def listar_partidas():
-    return {"response": "200 OK"}
+    return Persona.select().to_json()
