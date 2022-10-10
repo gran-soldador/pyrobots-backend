@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from db import *
+import json
 
 router = APIRouter()
 
@@ -21,10 +22,9 @@ async def listar_partidas():
             }
             lista.append(partida_datos)
         if lista == []:
-            return {'status': '400 BAD REQUEST',
-                    'error': 'no se encontraron partidas para listar'
-                    }
-        return {'status': '200 OK', 'lista': lista}
+            return (status.HTTP_400_BAD_REQUEST,
+                    json.dumps({'type': 'no se encontraron resultados'}))
+        return (status.HTTP_200_OK, json.dumps(lista))
 
 
 @router.get('/test_lista')
