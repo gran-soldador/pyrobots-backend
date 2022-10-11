@@ -30,4 +30,4 @@ pip3 install flake8
 	- pip3 install pytest
 	- pip3 install coverage
 - para correr el test hacer `coverage run -m pytest` desde la carpeta principal
-- para ver el informe hacer `coverage inform -m`
+- para ver el informe hacer `coverage report -m`
