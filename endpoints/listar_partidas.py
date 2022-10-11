@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
 from db import *
-import json
 
 router = APIRouter()
 
@@ -24,4 +23,4 @@ async def listar_partidas(status_code=status.HTTP_200_OK):
         if lista == []:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='No se encontraron partidas')
-        return json.dumps(lista)
+        return lista
