@@ -66,10 +66,14 @@ def email_exist(email: str):
         return False
 
 
-#  Verifica que el password tengo al menos una mayuscula, al menos una minuscula y al menos un numero
-def password_is_correct(password: str):
-    return (any(c.isupper() for c in password)) and (any(c.islower() for c in password)) and (any(c.isdigit() for c in password))
-
+#  Verifica que el password tengo al menos una mayuscula,
+#  al menos una minuscula y al menos un numero
+def password_is_correct(pas: str):
+    upper=any(c.isupper() for c in pas)
+    lower=any(c.islower() for c in pas)
+    digit=any(c.isdigit() for c in pas)
+    return (upper) and (lower) and (digit)
+   
 
 #  Crea al usuario con el nombre, el password y el email introducido.
 def crear_usuario(name: str, password: str, myemail: str):
@@ -79,4 +83,5 @@ def crear_usuario(name: str, password: str, myemail: str):
         email=myemail,
         verificado=True,
         avatar="Default Avatar"
-        )
+    )
+    
