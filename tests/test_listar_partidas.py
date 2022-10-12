@@ -6,7 +6,7 @@ client = TestClient(app)
 
 
 def test_empty_list():
-    response = client.get('/lista_partidas')
+    response = client.get('/lista-partidas')
     assert response.status_code == 400
     assert response.json() == {'detail': 'No se encontraron partidas'}
 
@@ -19,6 +19,6 @@ def test_non_empty_list():
         Partida(namepartida='my_partida', status='disponible',
                 numplayers=3, numgames=10, numrondas=10,
                 creador=u1)
-    response = client.get('/lista_partidas')
+    response = client.get('/lista-partidas')
     assert response.status_code == 200
     assert response.json()[0]['password'] is False

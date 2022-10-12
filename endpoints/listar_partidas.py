@@ -4,7 +4,7 @@ from db import *
 router = APIRouter()
 
 
-@router.get("/lista_partidas")
+@router.get("/lista-partidas")
 async def listar_partidas(status_code=status.HTTP_200_OK):
     with db_session:
         lista = []
