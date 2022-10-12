@@ -11,14 +11,14 @@ async def listar_partidas(status_code=status.HTTP_200_OK):
         for p in select(p for p in Partida):
             partida_datos = {
                 'partida_id': p.partida_id,
-                'partida_nombre': p.nombre,
-                'partida.status': p.status,
-                'partida_jugadores': len(p.participante),
-                'partida_total_jugadores': p.cant_jugadores,
-                'partida_juegos': p.cant_juegos,
-                'partida_rondas': p.cant_rondas,
-                'partida_creador': p.creador.nombre_usuario,
-                'contraseña': p.contraseña is not None
+                'namepartida': p.namepartida,
+                'status': p.status,
+                'numcurrentplayers': len(p.participante),
+                'numplayers': p.numplayers,
+                'numgames': p.numgames,
+                'numrondas': p.numrondas,
+                'creador': p.creador.nombre_usuario,
+                'password': p.password is not None
             }
             lista.append(partida_datos)
         if lista == []:

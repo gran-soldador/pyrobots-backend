@@ -16,9 +16,9 @@ def test_non_empty_list():
         u1 = Usuario(nombre_usuario='leandro',
                      email='leandro.lopez@mi.unc.edu.ar',
                      contraseña='42787067', verificado=True)
-        Partida(nombre='my_partida', status='disponible',
-                cant_jugadores=3, cant_juegos=10, cant_rondas=10,
+        Partida(namepartida='my_partida', status='disponible',
+                numplayers=3, numgames=10, numrondas=10,
                 creador=u1)
     response = client.get('/lista_partidas')
     assert response.status_code == 200
-    assert response.json()[0]['contraseña'] is False
+    assert response.json()[0]['password'] is False
