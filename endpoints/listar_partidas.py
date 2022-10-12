@@ -17,7 +17,8 @@ async def listar_partidas(status_code=status.HTTP_200_OK):
                 'partida_total_jugadores': p.cant_jugadores,
                 'partida_juegos': p.cant_juegos,
                 'partida_rondas': p.cant_rondas,
-                'partida_creador': p.creador.nombre_usuario
+                'partida_creador': p.creador.nombre_usuario,
+                'contraseña': p.contraseña is not None
             }
             lista.append(partida_datos)
         if lista == []:
