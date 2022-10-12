@@ -21,4 +21,4 @@ def test_non_empty_list():
                 creador=u1)
     response = client.get('/lista_partidas')
     assert response.status_code == 200
-    assert response.json()[0]['contraseña'] == False
+    assert response.json()[0]['contraseña'] is False
