@@ -17,52 +17,52 @@ def check_string(string: str) -> bool:
     return True
 
 
-@router.post("/crear_partida")
-async def crear_partida(nombre: str = Form(...),
-                        contraseña: str = Form(None),
-                        cant_jugadores: int = Form(...),
-                        cant_juegos: int = Form(...),
-                        cant_rondas: int = Form(...),
-                        robot_id: int = Form(...),
+@router.post("/crear-partida")
+async def crear_partida(namepartida: str = Form(...),
+                        password: str = Form(None),
+                        numplayers: int = Form(...),
+                        numgames: int = Form(...),
+                        numrondas: int = Form(...),
+                        idrobot: int = Form(...),
                         status_code=status.HTTP_200_OK):
-    if (len(nombre) <= 32 and check_string(nombre)) is False:
+    if (len(namepartida) <= 32 and check_string(namepartida)) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='nombre invalido')
-    if contraseña:
-        if (len(contraseña) <= 10 and check_string(contraseña)) is False:
+                            detail='namepartida invalido')
+    if password:
+        if (len(password) <= 10 and check_string(password)) is False:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail='contraseña invalida')
-    if (cant_jugadores >= 2 and cant_jugadores <= 4) is False:
+                                detail='password invalida')
+    if (numplayers >= 2 and numplayers <= 4) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='número de jugadores invalido')
-    if (cant_juegos >= 1 and cant_juegos <= 200) is False:
+                            detail='numplayers invalido')
+    if (numgames >= 1 and numgames <= 200) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='número de juegos invalido')
-    if (cant_rondas >= 1 and cant_rondas <= 200) is False:
+                            detail='numgames invalido')
+    if (numrondas >= 1 and numrondas <= 200) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='número de rondas invalido')
+                            detail='numrondas invalido')
     with db_session:
         try:
-            robot = Robot[robot_id]
+            robot = Robot[idrobot]
         except Exception:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot no valido')
         if robot.defectuoso is True:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot defectuoso')
-        if contraseña:
-            p1 = Partida(nombre=nombre, contraseña=contraseña,
+        if password:
+            p1 = Partida(namepartida=namepartida, password=password,
                          status='disponible',
-                         cant_jugadores=cant_jugadores,
-                         cant_juegos=cant_juegos,
-                         cant_rondas=cant_rondas,
+                         numplayers=numplayers,
+                         numgames=numgames,
+                         numrondas=numrondas,
                          creador=robot.usuario)
         else:
-            p1 = Partida(nombre=nombre,
+            p1 = Partida(namepartida=namepartida,
                          status='disponible',
-                         cant_jugadores=cant_jugadores,
-                         cant_juegos=cant_juegos,
-                         cant_rondas=cant_rondas,
+                         numplayers=numplayers,
+                         numgames=numgames,
+                         numrondas=numrondas,
                          creador=robot.usuario)
         p1.participante.add(robot)
         p1.flush()
