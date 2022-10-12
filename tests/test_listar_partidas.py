@@ -19,6 +19,6 @@ def test_non_empty_list():
         Partida(nombre='my_partida', status='disponible',
                 cant_jugadores=3, cant_juegos=10, cant_rondas=10,
                 creador=u1)
-        response = client.get('/lista_partidas')
-        assert response.status_code == 200
-        assert response.json()[0]['partida_nombre'] == 'my_partida'
+    response = client.get('/lista_partidas')
+    assert response.status_code == 200
+    assert response.json()[0]['partida_nombre'] == 'my_partida'
