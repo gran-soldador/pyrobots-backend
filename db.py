@@ -56,9 +56,11 @@ def user_exist(username: str):
     if Usuario.get(nombre_usuario=username) is not None:
         return True
     else:
-        return False 
+        return False
 
 #  Verifica si el email ya está registrado
+
+
 def email_exist(email: str):
     if Usuario.get(email=email) is not None:
         return True
@@ -75,6 +77,8 @@ def password_is_correct(pas: str):
     return (upper) and (lower) and (digit)
 
 #  Crea al usuario con el nombre, el password y el email introducido.
+
+
 def crear_usuario(name: str, password: str, myemail: str):
     Usuario(
         nombre_usuario=name,
@@ -86,30 +90,34 @@ def crear_usuario(name: str, password: str, myemail: str):
 
 #  Crea al usuario con el nombre, el password, el email
 #  y el directorio de su imagen de perfil
+
+
 def crear_usuario_con_avatar(name: str, password: str, myemail: str):
     Usuario(
         nombre_usuario=name,
         contraseña=password,
         email=myemail,
         verificado=True,
-        avatar="userUploads/avatars/"+name+"UserAvatar"
+        avatar="userUploads/avatars/" + name + "UserAvatar"
     )
 
 #  Cambio del avatar del usuario
+
+
 def change_avatar_user(name: str):
     try:
         sqliteConnection = sqlite3.connect('main.db')
         cursor = sqliteConnection.cursor()
         print("Connected to SQLite")
-        avatar_directory = "userUploads/avatars/"+name+"UserAvatar"
+        avatar_directory = "userUploads/avatars/" + name + "UserAvatar"
         sqlite_command = " UPDATE Usuario SET avatar=? WHERE nombre_usuario=?"
-        cursor.execute(sqlite_command, (avatar_directory,name))
+        cursor.execute(sqlite_command, (avatar_directory, name))
         sqliteConnection.commit()
-        cursor.close()    
+        cursor.close()
 
     except sqlite3.Error as error:
         print("Failed to insert data into sqlite table", error)
-    
+
     finally:
         if sqliteConnection:
             sqliteConnection.close()
