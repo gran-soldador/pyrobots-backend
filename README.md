@@ -21,3 +21,6 @@ echo -e '#!/bin/sh\nflake8 . --exclude .git,__pycache__,env --ignore=F403,F405' 
 chmod +x .git/hooks/pre-commit
 pip3 install flake8
 ```
+## Registro de Usuario
+
+- pip install python-dotenv
