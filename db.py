@@ -122,3 +122,39 @@ def change_avatar_user(name: str):
         if sqliteConnection:
             sqliteConnection.close()
             print("the sqlite connection is closed")
+
+# Se fija si los datos de logue ingresados son válidos
+
+
+def correct_login(name: str, password: str):
+    if Usuario.get(nombre_usuario=name, contraseña=password) is not None:
+        return True
+    else:
+        return False
+
+# Genera un diccionario con los datos ingresados
+
+
+def dict_factory(cursor, row):
+    col_names = [col[0] for col in cursor.description]
+    return {key: value for key, value in zip(col_names, row)}
+
+# Transforma los datos del user en un diccionario
+
+
+def devolver_user(name: str):
+    try:
+        sqliteConnection = sqlite3.connect('main.db')
+        sqliteConnection.row_factory = dict_factory
+        for row in sqliteConnection.execute(" SELECT * FROM Usuario WHERE nombre_usuario = '%s' " % name):
+            b = row
+            print("Connected to SQLite")
+        return b
+
+    except sqlite3.Error as error:
+        print("Failed to insert data into sqlite table", error)
+
+    finally:
+        if sqliteConnection:
+            sqliteConnection.close()
+            print("the sqlite connection is closed")
