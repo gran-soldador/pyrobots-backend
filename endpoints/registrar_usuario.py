@@ -21,9 +21,6 @@ async def registro_usuario(username: str = Form(),
         if len(username) > MAX_NICKNAME_SIZE:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Username too long.")
-        elif len(username) < MIN_NICKNAME_SIZE:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail="Username too short.")
         elif len(password) < MIN_PASSWORD_SIZE:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Password too Short.")
