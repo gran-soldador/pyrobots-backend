@@ -25,7 +25,7 @@ class Usuario(db.Entity):
 class Robot(db.Entity):
     robot_id = PrimaryKey(int, auto=True)
     nombre = Required(str, 255)
-    implementacion = Required(str, 255)
+    implementacion = Required(str)
     avatar = Optional(str, 255)
     partidas_ganadas = Required(int)
     partidas_jugadas = Required(int)
@@ -122,3 +122,40 @@ def change_avatar_user(name: str):
         if sqliteConnection:
             sqliteConnection.close()
             print("the sqlite connection is closed")
+
+#  Sube un robot con avatar Default
+
+
+def subir_robot(username: str, robotName: str, robotCode: str):
+    myUser = Usuario.get(nombre_usuario=username)
+    Robot(nombre=robotName,
+          implementacion=robotCode,
+          avatar="userUploads/robotAvatars/defaultAvatarRobot.png",
+          partidas_ganadas=0,
+          partidas_jugadas=0,
+          defectuoso=False,
+          usuario=myUser.user_id
+          )
+# Sube un robot con avatar subido por el usuario
+
+
+def subir_robot_con_avatar(username: str, robotName: str, robotCode: str):
+    myUser = Usuario.get(nombre_usuario=username)
+    Robot(nombre=robotName,
+          implementacion=robotCode,
+          avatar="userUploads/robotAvatars/"+username+robotName+"Avatar",
+          partidas_ganadas=0,
+          partidas_jugadas=0,
+          defectuoso=False,
+          usuario=myUser.user_id
+          )
+# Me dice si el usuario ya tiene un robot suyo con ese nombre
+
+
+def user_robot_already_exist(username: str, robotName: str):
+    myUser = Usuario.get(nombre_usuario=username)
+    if Robot.get(nombre=robotName) is not None:
+        myRobotUser = Robot.get(nombre=robotName).usuario.user_id
+        if (myRobotUser == myUser.user_id):
+            return True
+    return False
