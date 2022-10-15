@@ -1,15 +1,10 @@
 from .robot import Robot, Position
 from typing import Any, Generator, List, Tuple
 import logging
+import random
 
 MAXX = 1000.0
 MAXY = 1000.0
-STARTPOS = [
-    (.1 * MAXX, .1 * MAXY),
-    (.1 * MAXX, .9 * MAXY),
-    (.9 * MAXX, .9 * MAXY),
-    (.9 * MAXX, .1 * MAXY),
-]
 
 
 class Game:
@@ -21,8 +16,7 @@ class Game:
         logging.getLogger(__name__).debug("starting game")
         self.rounds = rounds
         self.robots: List[Robot] = []
-        init_data = zip(range(4), robot_descriptions, STARTPOS)
-        for num, (name, code), xy in init_data:
+        for num, (name, code) in enumerate(robot_descriptions):
             try:
                 exec(code)
                 robot = eval(name)()
@@ -32,7 +26,9 @@ class Game:
                     "Robot failed during construction", exc_info=True)
                 robot = Robot()
                 robot._status.damage = 100
-            robot._status.position = Position(*xy)
+            robot._status.position = Position(
+                random.uniform(.1, .9) * MAXX,
+                random.uniform(.1, .9) * MAXY)
             robot._status.name = name
             robot._status.id = num
             self.robots.append(robot)
