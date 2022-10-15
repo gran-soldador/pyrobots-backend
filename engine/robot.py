@@ -1,19 +1,20 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
 class Position:
-    x: float
-    y: float
+    x: float = 0.0
+    y: float = 0.0
 
 
 @dataclass
 class BotStatus:
     name: str = ""
+    id: int = -1
     damage: float = 0.0
     velocity: float = 0.0
     direction: float = 0.0
-    position: Position = Position(0.0, 0.0)
+    position: Position = field(default_factory=Position)
 
 
 class Robot:
