@@ -39,6 +39,8 @@ class Game:
 
     def simulate(self):
         result = {
+            "maxrounds": self.rounds,
+            "robotcount": len(self.robots),
             "robots": [{
                 "name": r._status.name,
                 "positions": [],
