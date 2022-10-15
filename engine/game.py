@@ -51,29 +51,20 @@ class Game:
         }
 
         self._initialize_robots()
-
         round_generator = self._execute_rounds()
-        finished = False
-        while True:
-            for r in self.robots:
-                x = r._status.position.x
-                y = r._status.position.y
-                damage = r._status.damage
-                result["robots"][r._status.id]["positions"].append(
-                    {"x": x, "y": y}
-                )
-                result["robots"][r._status.id]["damage"].append(damage)
-            if finished:
-                break
-            try:
+        try:
+            while True:
+                for r in self.robots:
+                    x = r._status.position.x
+                    y = r._status.position.y
+                    damage = r._status.damage
+                    result["robots"][r._status.id]["positions"].append(
+                        {"x": x, "y": y}
+                    )
+                    result["robots"][r._status.id]["damage"].append(damage)
                 next(round_generator)
-            except StopIteration as ret:
-                result["rounds"], result["winner"] = ret.args[0]
-                if result["rounds"] != self.rounds:
-                    # Early finish! Must do one last iteration to write data
-                    finished = True
-                else:
-                    break
+        except StopIteration as ret:
+            result["rounds"], result["winner"] = ret.args[0]
         return result
 
     def _initialize_robots(self):
@@ -81,12 +72,10 @@ class Game:
             self._robot_do_or_die(r.initialize)
 
     def _execute_rounds(self) -> Generator[Any, None, Tuple[int, int]]:
-        round = 1
-        while round <= self.rounds:
+        round = 0
+        while len(self.alive) > 1 and round < self.rounds:
             for r in self.alive:
                 self._robot_do_or_die(r.respond)
-            if len(self.alive) <= 1:
-                break
             round += 1
             yield
         winner = self.alive[0]._status.id if len(self.alive) == 1 else None
