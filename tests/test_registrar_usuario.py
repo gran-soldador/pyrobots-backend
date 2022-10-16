@@ -156,7 +156,7 @@ def test_invalid_email():
 #     with db_session:
 #          crear_usuario("usuarioCambioPerfil","passwOrdRandom1213","emailValido@hotmail.com")
 #     response = client.post('/user/uploadavatar/', data={"username": 'usuarioCambioPerfil',
-#                                                         'file': ('filename', open("tests/archivosParaTests/notAnImage.txt", "rb"),
-#                                                         "tests/archivosParaTests/" )})
+#                                                         'file': f"tests/archivosParaTests/notAnImage.txt"
+#                                                         })
 #     assert response.status_code == 400
 #     assert response.json() == {"detail": "File is not an image."}
