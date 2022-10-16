@@ -82,7 +82,7 @@ def test_moving_twice_robot():
 
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
-    assert isclose(rut._status.position.x, .5 * MAXX + 25/100 * MAXSPEED)
+    assert isclose(rut._status.position.x, .5 * MAXX + 25 / 100 * MAXSPEED)
     assert isclose(rut._status.position.y, .5 * MAXY)
 
 
