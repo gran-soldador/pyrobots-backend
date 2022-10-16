@@ -4,15 +4,14 @@ import string
 
 router = APIRouter()
 
-char = string.ascii_lowercase
-char += string.ascii_uppercase
-char += ''.join([str(i) for i in range(0, 10)])
-char += '-_'
+VALID_CHAR = (string.ascii_lowercase + string.ascii_uppercase
+              + ''.join([str(i) for i in range(0, 10)]) + '-_'
+              )
 
 
 def check_string(string: str) -> bool:
     for i in string:
-        if i not in char:
+        if i not in VALID_CHAR:
             return False
     return True
 
@@ -38,7 +37,7 @@ async def crear_partida(namepartida: str = Form(...),
     if (numgames >= 1 and numgames <= 200) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='numgames invalido')
-    if (numrondas >= 1 and numrondas <= 200) is False:
+    if (numrondas >= 1 and numrondas <= 10000) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='numrondas invalido')
     with db_session:
