@@ -1,4 +1,6 @@
 from dataclasses import dataclass, field
+from copy import deepcopy
+import logging
 
 
 @dataclass
@@ -25,8 +27,30 @@ class Robot:
     def initialize(self):
         pass
 
+    def _initialize_or_die(self):
+        prev_status = deepcopy(self._status)
+        try:
+            self.initialize()
+            assert self._status == prev_status
+        except Exception:
+            logging.getLogger(__name__).debug("Robot failed when initializing",
+                                              exc_info=True)
+            self._status = prev_status
+            self._status.damage = 100
+
     def respond(self):
         pass
+
+    def _respond_or_die(self):
+        prev_status = deepcopy(self._status)
+        try:
+            self.respond()
+            assert self._status == prev_status
+        except Exception:
+            logging.getLogger(__name__).debug("Robot failed when responding",
+                                              exc_info=True)
+            self._status = prev_status
+            self._status.damage = 100
 
     def is_cannon_ready(self) -> bool:
         pass

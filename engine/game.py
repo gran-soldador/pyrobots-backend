@@ -67,22 +67,14 @@ class Game:
 
     def _initialize_robots(self):
         for r in self.alive:
-            self._robot_do_or_die(r.initialize)
+            Robot._initialize_or_die(r)
 
     def _execute_rounds(self) -> Generator[Any, None, Tuple[int, int]]:
         round = 0
         while len(self.alive) > 1 and round < self.rounds:
             for r in self.alive:
-                self._robot_do_or_die(r.respond)
+                Robot._respond_or_die(r)
             round += 1
             yield
         winner = self.alive[0]._status.id if len(self.alive) == 1 else None
         return (round, winner)
-
-    def _robot_do_or_die(self, method):
-        try:
-            method()
-        except Exception:
-            logging.getLogger(__name__).debug("Robot failed when called",
-                                              exc_info=True)
-            method.__self__._status.damage = 100
