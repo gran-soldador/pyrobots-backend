@@ -1,10 +1,7 @@
-from .robot import Robot, Position
+from .robot import Robot, Position, MAXX, MAXY
 from typing import Any, Generator, List, Tuple
 import logging
 import random
-
-MAXX = 1000.0
-MAXY = 1000.0
 
 
 class Game:
@@ -74,6 +71,8 @@ class Game:
         while len(self.alive) > 1 and round < self.rounds:
             for r in self.alive:
                 Robot._respond_or_die(r)
+            for r in self.alive:
+                Robot._execute_drive(r)
             round += 1
             yield
         winner = self.alive[0]._status.id if len(self.alive) == 1 else None

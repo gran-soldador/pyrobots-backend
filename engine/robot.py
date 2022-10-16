@@ -1,6 +1,11 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 import logging
+from math import sin, cos, radians, isclose
+
+MAXX = 1000.0  # in meters
+MAXY = 1000.0
+MAXSPEED = 100  # in meters/round at 100% speed
 
 
 @dataclass
@@ -19,10 +24,17 @@ class BotStatus:
     position: Position = field(default_factory=Position)
 
 
+@dataclass
+class BotCommands:
+    drive_direction: float = 0.0
+    drive_velocity: float = 0.0
+
+
 class Robot:
+
     def __init__(self):
         self._status = BotStatus()
-        # TODO: Agregar atributos para almacenar acciones y sus resultados
+        self._commands = BotCommands()
 
     def initialize(self):
         pass
@@ -43,6 +55,7 @@ class Robot:
 
     def _respond_or_die(self):
         prev_status = deepcopy(self._status)
+        self._commands = BotCommands()
         try:
             self.respond()
             assert self._status == prev_status
@@ -66,7 +79,29 @@ class Robot:
         pass
 
     def drive(self, direction: float, velocity: float) -> None:
-        pass
+        self._commands.drive_direction = direction
+        self._commands.drive_velocity = velocity
+
+    def _execute_drive(self) -> None:
+        if not 0 <= self._commands.drive_velocity <= 100:
+            raise ValueError("Invalid speed")
+        changed_dir = not isclose(self._commands.drive_direction,
+                                  self._status.direction)
+        if changed_dir and self._commands.drive_velocity > 50:
+            raise ValueError("Too fast for changing direction")
+
+        angle = self._commands.drive_direction
+        modulo = self._commands.drive_velocity / 100.0 * MAXSPEED
+        newx = self._status.position.x + cos(radians(angle)) * modulo
+        newy = self._status.position.y + sin(radians(angle)) * modulo
+        if (not 0 <= newx <= MAXX) or (not 0 <= newy <= MAXY):
+            self._status.damage += 2
+            newx = min(MAXX, max(0, newx))
+            newy = min(MAXY, max(0, newy))
+        self._status.position.x = newx
+        self._status.position.y = newy
+        self._status.direction = self._commands.drive_direction
+        self._status.velocity = self._commands.drive_velocity
 
     def get_direction(self) -> float:
         pass
