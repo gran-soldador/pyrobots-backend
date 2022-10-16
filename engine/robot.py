@@ -37,7 +37,7 @@ class Robot:
         self._commands = BotCommands()
 
     def initialize(self):
-        pass
+        raise NotImplementedError("Robot has no initialize code")
 
     def _initialize_or_die(self):
         prev_status = deepcopy(self._status)
@@ -51,7 +51,7 @@ class Robot:
             self._status.damage = 100
 
     def respond(self):
-        pass
+        raise NotImplementedError("Robot has no respond code")
 
     def _respond_or_die(self):
         prev_status = deepcopy(self._status)
@@ -66,17 +66,17 @@ class Robot:
             self._status.damage = 100
 
     def is_cannon_ready(self) -> bool:
-        pass
+        pass  # pragma: no cover
 
     def cannon(self, degree: float, distance: float) -> None:
-        pass
+        pass  # pragma: no cover
 
     def point_scanner(self, direction: float,
                       resolution_in_degrees: float) -> None:
-        pass
+        pass  # pragma: no cover
 
     def scanned(self) -> float:
-        pass
+        pass  # pragma: no cover
 
     def drive(self, direction: float, velocity: float) -> None:
         self._commands.drive_direction = direction
@@ -85,9 +85,12 @@ class Robot:
     def _execute_drive(self) -> None:
         if not 0 <= self._commands.drive_velocity <= 100:
             raise ValueError("Invalid speed")
+        if not 0 <= self._commands.drive_direction < 360:
+            raise ValueError("Invalid angle")
         changed_dir = not isclose(self._commands.drive_direction,
                                   self._status.direction)
-        if changed_dir and self._commands.drive_velocity > 50:
+        stopped = isclose(0.0, self._status.velocity)
+        if changed_dir and not stopped and self._commands.drive_velocity > 50:
             raise ValueError("Too fast for changing direction")
 
         angle = self._commands.drive_direction
@@ -104,13 +107,13 @@ class Robot:
         self._status.velocity = self._commands.drive_velocity
 
     def get_direction(self) -> float:
-        pass
+        pass  # pragma: no cover
 
     def get_velocity(self) -> float:
-        pass
+        pass  # pragma: no cover
 
     def get_position(self) -> Position:
-        pass
+        pass  # pragma: no cover
 
     def get_damage(self) -> float:
-        pass
+        pass  # pragma: no cover
