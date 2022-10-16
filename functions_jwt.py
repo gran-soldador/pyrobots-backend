@@ -28,6 +28,8 @@ def validate_token(token, output=False):
             return decode(token, key=getenv("SECRET"), algorithms=["HS256"])
         decode(token, key=getenv("SECRET"), algorithms=["HS256"])
     except exceptions.DecodeError:
-        return JSONResponse(content={'Message:': 'Invalid Token'}, status_code=401)
+        return JSONResponse(content={'Message:': 'Invalid Token'},
+                            status_code=401)
     except exceptions.ExpiredSignatureError:
-        return JSONResponse(content={'Message:': 'Token Expired'}, status_code=401)
+        return JSONResponse(content={'Message:': 'Token Expired'},
+                            status_code=401)

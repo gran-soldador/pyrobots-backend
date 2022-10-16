@@ -1,5 +1,4 @@
 from pony.orm import *
-import sqlite3
 
 db = Database()
 
@@ -49,4 +48,3 @@ class Partida(db.Entity):
 
 
 db.generate_mapping(create_tables=True)
-

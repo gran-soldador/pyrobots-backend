@@ -1,7 +1,5 @@
 from pony.orm import *
 from db import *
-import sqlite3
-
 
 
 #  Verifica si el nombre de usuario existe
@@ -29,52 +27,6 @@ def password_is_correct(pas: str):
     digit = any(c.isdigit() for c in pas)
     return (upper) and (lower) and (digit)
 
-#  Crea al usuario con el nombre, el password y el email introducido.
-
-
-def crear_usuario(name: str, password: str, myemail: str):
-    Usuario(
-        nombre_usuario=name,
-        contraseña=password,
-        email=myemail,
-        verificado=True,
-        avatar="userUploads/avatars/DefaultAvatar.png"
-    )
-
-#  Crea al usuario con el nombre, el password, el email
-#  y el directorio de su imagen de perfil
-
-
-def crear_usuario_con_avatar(name: str, password: str, myemail: str):
-    Usuario(
-        nombre_usuario=name,
-        contraseña=password,
-        email=myemail,
-        verificado=True,
-        avatar="userUploads/avatars/" + name + "UserAvatar"
-    )
-
-#  Cambio del avatar del usuario
-
-
-def change_avatar_user(name: str):
-    try:
-        sqliteConnection = sqlite3.connect('main.db')
-        cursor = sqliteConnection.cursor()
-        print("Connected to SQLite")
-        avatar_directory = "userUploads/avatars/" + name + "UserAvatar"
-        sqlite_command = " UPDATE Usuario SET avatar=? WHERE nombre_usuario=?"
-        cursor.execute(sqlite_command, (avatar_directory, name))
-        sqliteConnection.commit()
-        cursor.close()
-
-    except sqlite3.Error as error:
-        print("Failed to insert data into sqlite table", error)
-
-    finally:
-        if sqliteConnection:
-            sqliteConnection.close()
-            print("the sqlite connection is closed")
 
 # Se fija si los datos de logue ingresados son válidos
 
@@ -91,23 +43,3 @@ def correct_login(name: str, password: str):
 def dict_factory(cursor, row):
     col_names = [col[0] for col in cursor.description]
     return {key: value for key, value in zip(col_names, row)}
-
-# Transforma los datos del user en un diccionario
-
-
-def devolver_user(name: str):
-    try:
-        sqliteConnection = sqlite3.connect('main.db')
-        sqliteConnection.row_factory = dict_factory
-        for row in sqliteConnection.execute(" SELECT * FROM Usuario WHERE nombre_usuario = '%s' " % name):
-            b = row
-            print("Connected to SQLite")
-        return b
-
-    except sqlite3.Error as error:
-        print("Failed to insert data into sqlite table", error)
-
-    finally:
-        if sqliteConnection:
-            sqliteConnection.close()
-            print("the sqlite connection is closed")
