@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, File, UploadFile, Form
 from db import *
+from validation import *
 
 router = APIRouter()
 
@@ -12,9 +13,9 @@ MIN_PASSWORD_SIZE = 8
 @router.post("/user/registro_de_usuario/",
              tags=["User Methods"],
              name="Registro de Usuarios")
-async def registro_usuario(username: str = Form(),
-                           password: str = Form(),
-                           useremail: str = Form(),
+async def registro_usuario(username: str = Form(...),
+                           password: str = Form(...),
+                           useremail: str = Form(...),
                            userAvatar: UploadFile = File(None)
                            ):
     with db_session:

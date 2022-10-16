@@ -17,7 +17,7 @@ def expire_date(days: int):
 def write_token(data: dict):
     token = encode(payload={**data, "exp": expire_date(2)},
                    key=getenv("SECRET"), algorithm="HS256")
-    return token
+    return {'accessToken': token}
 
 # Valida que el token ingresado sea válido
 

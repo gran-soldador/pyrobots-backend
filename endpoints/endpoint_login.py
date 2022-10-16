@@ -1,9 +1,8 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Form
 from pony.orm import *
 from db import *
 from functions_jwt import validate_token, write_token
-
-db = Database()
+from validation import *
 
 
 auth_routes = APIRouter()
@@ -12,7 +11,8 @@ auth_routes = APIRouter()
 
 
 @auth_routes.post("/login")
-async def login(username: str, password: str):
+async def login(username: str = Form(...),
+                password: str = Form(...)):
     with db_session:
         if not user_exist(username):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
