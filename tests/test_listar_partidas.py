@@ -1,8 +1,15 @@
 from fastapi.testclient import TestClient
 from db import *
 from main import app
+import pytest
 
 client = TestClient(app)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def reset_db():
+    db.drop_all_tables(True)
+    db.create_tables()
 
 
 def test_empty_list():
