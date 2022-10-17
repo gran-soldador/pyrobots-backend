@@ -5,11 +5,6 @@ db = Database()
 db.bind(provider="sqlite", filename="main.db", create_db=True)
 
 
-class TestMessage(db.Entity):
-    msgid = PrimaryKey(int, auto=True)
-    text = Required(str, 255)
-
-
 class Usuario(db.Entity):
     user_id = PrimaryKey(int, auto=True)
     nombre_usuario = Required(str, 255, unique=True)

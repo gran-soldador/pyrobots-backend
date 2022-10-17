@@ -5,6 +5,8 @@
 - python3 -m venv env
 - source env/bin/activate
 - pip3 install -r requirements.txt
+- pip3 uninstall PyJWT
+- pip3 install PyJWT
 - uvicorn main:app --reload --port 8000
 
 ## clear
