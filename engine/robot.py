@@ -1,11 +1,13 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 import logging
-from math import sin, cos, radians, isclose
+from math import sin, cos, radians, isclose, sqrt
+from typing import Tuple
 
 MAXX = 1000.0  # in meters
 MAXY = 1000.0
-MAXSPEED = 100  # in meters/round at 100% speed
+HITBOX = 10
+MAXSPEED = 10  # in meters/round at 100% speed
 
 
 @dataclass
@@ -107,13 +109,19 @@ class Robot:
         self._status.velocity = self._commands.drive_velocity
 
     def get_direction(self) -> float:
-        pass  # pragma: no cover
+        return self._status.direction
 
     def get_velocity(self) -> float:
-        pass  # pragma: no cover
+        return self._status.velocity
 
-    def get_position(self) -> Position:
-        pass  # pragma: no cover
+    def get_position(self) -> Tuple[float, float]:
+        return self._status.position.x, self._status.position.y
 
     def get_damage(self) -> float:
-        pass  # pragma: no cover
+        return self._status.damage
+
+    def _get_distance(self, other) -> float:
+        x1, y1 = self._status.position.x, self._status.position.y
+        x2, y2 = other._status.position.x, other._status.position.y
+        dx, dy = abs(x1 - x2), abs(y1 - y2)
+        return sqrt(dx**2 + dy**2)
