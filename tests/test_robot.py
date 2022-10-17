@@ -95,13 +95,13 @@ def test_moving_oob_robot():
             self.drive(0, 100)
 
     rut = MovingOOBRobot()
-    rut._status.position = Position(.99 * MAXX, .99 * MAXY)
+    rut._status.position = Position(.999 * MAXX, .999 * MAXY)
     Robot._initialize_or_die(rut)
 
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
     assert isclose(rut._status.position.x, MAXX)
-    assert isclose(rut._status.position.y, .99 * MAXY)
+    assert isclose(rut._status.position.y, .999 * MAXY)
     assert rut._status.damage == 2
 
 
