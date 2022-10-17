@@ -2,7 +2,6 @@ from fastapi.testclient import TestClient
 from main import app
 from db import *
 import pytest
-from functions_jwt import *
 
 client = TestClient(app)
 

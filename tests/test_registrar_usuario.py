@@ -159,3 +159,19 @@ def test_invalid_email():
     )
     assert response.status_code == 400
     assert response.json() == {"detail": "Email inválido."}
+
+
+def test_invalid_avatar():
+    with open("tests/archivosParaTests/notAnImage.txt", "rb") as f:
+        response = client.post(
+            'user/registro_de_usuario/',
+            data={
+                "username": "usuarioAvatarIncorrecto",
+                "password": "myPasswordDeTest444",
+                "useremail": "avatarincorrecto@test.com",
+            },
+            files={"userAvatar": f},
+        )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "File is not an image."}

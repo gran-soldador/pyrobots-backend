@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Form
 from pony.orm import *
 from db import *
-from functions_jwt import validate_token, write_token
-from validation import *
+from .functions_jwt import validate_token, write_token
+from .validation import *
 
 
 auth_routes = APIRouter()
