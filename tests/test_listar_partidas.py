@@ -24,7 +24,7 @@ def test_non_empty_list():
                      email='leandro.lopez@mi.unc.edu.ar',
                      contraseña='42787067', verificado=True)
         Partida(namepartida='my_partida', status='disponible',
-                numplayers=3, numgames=10, numrondas=10,
+                minplayers=3, maxplayers=3, numgames=10, numrondas=10,
                 creador=u1)
     response = client.get('/lista-partidas')
     assert response.status_code == 200
