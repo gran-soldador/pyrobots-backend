@@ -23,7 +23,6 @@ async def login(username: str = Form(...),
         elif correct_login(username, password):
             user = Usuario.get(nombre_usuario=username).to_dict()
             del user["contraseña"]
-            print(user)
             return write_token(user)
 
 
