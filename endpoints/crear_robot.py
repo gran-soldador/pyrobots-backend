@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, File, UploadFile, Form
 from db import *
+from validation import *
 
 router = APIRouter()
 
@@ -26,21 +27,24 @@ async def creacion_de_robot(username: str = Form(),
         elif user_robot_already_exist(username, robotName):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="You already have a robot with that name.")
-        else:
-            if (robotAvatar is None):
-                subir_robot(username, robotName, code_of_robot)
-                return {"new robot created": robotName}
-            else:
-                if not robotAvatar.filename.lower().endswith(('.png',
-                                                              '.jpg',
-                                                              '.jpeg',
-                                                              '.tiff',
-                                                              '.bmp')):
-                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                        detail="File is not an image.")
-                subir_robot_con_avatar(username, robotName, code_of_robot)
-                avatar_string = "Avatar"
-                avatar_location = f"userUploads/robotAvatars/{username+robotName+avatar_string}"
-                with open(avatar_location, "wb+") as file_object:
-                    file_object.write(robotAvatar.file.read())
-                return {"new robot with avatar created": robotName}
+
+        robot_avatar_location = "userUploads/robotAvatars/defaultAvatarRobot.png"
+        if robotAvatar is not None:
+            ext = robotAvatar.filename.split(".")[-1]
+            if ext not in ['png', 'jpg', 'jpeg', 'tiff', 'bmp']:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                    detail="File is not an image.")
+            robot_avatar_location = f"userUploads/robotAvatars/{username}{robotName}Avatar.{ext}"
+            with open(robot_avatar_location, "wb+") as file_object:
+                file_object.write(robotAvatar.file.read())
+        myUser_id = Usuario.get(nombre_usuario=username).user_id
+        Robot(
+            nombre=robotName,
+            implementacion=code_of_robot,
+            avatar=robot_avatar_location,
+            partidas_ganadas=0,
+            partidas_jugadas=0,
+            defectuoso=False,
+            usuario=myUser_id
+        )
+        return {"new robot created": robotName}

@@ -1,10 +1,17 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from endpoints import helloworld, registrar_usuario, crear_robot
+from endpoints import helloworld, registrar_usuario, endpoint_login
+from endpoints import crear_robot
+from dotenv import load_dotenv
+
 
 app = FastAPI()
+
+load_dotenv()  # Important for loading .env file with JWT SECRET
+
 app.include_router(helloworld.router)
 app.include_router(registrar_usuario.router)
+app.include_router(endpoint_login.auth_routes)
 app.include_router(crear_robot.router)
 
 origins = [
@@ -15,6 +22,6 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=['GET'],
-    allow_headers=['Content-Type', 'application/xml'],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
