@@ -1,7 +1,8 @@
-from .robot import Robot, Position, MAXX, MAXY
+from .robot import Robot, Position, MAXX, MAXY, HITBOX
 from typing import Any, Generator, List, Tuple
 import logging
 import random
+from itertools import combinations
 
 
 class Game:
@@ -73,6 +74,10 @@ class Game:
                 Robot._respond_or_die(r)
             for r in self.alive:
                 Robot._execute_drive(r)
+            for r1, r2 in combinations(self.alive, 2):
+                if Robot._get_distance(r1, r2) < HITBOX:
+                    r1._status.damage += 2
+                    r2._status.damage += 2
             round += 1
             yield
         winner = self.alive[0]._status.id if len(self.alive) == 1 else None
