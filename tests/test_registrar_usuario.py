@@ -14,24 +14,24 @@ def reset_db():
 
 
 def test_correct_form():
-    response = client.post(
-        'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "username": "myUsuarioDeTest",
-            "password": "myPasswordDeTest444",
-            "useremail": "emailTest1@test.com",
-            "userAvatar": None
-        }
-    )
-    assert response.status_code == 200
+    with open("tests/cosasParaTestear/Mandelbrot0.jpg", "rb") as f:
+        response = client.post(
+            'user/registro_de_usuario/',
+            data={
+                "username": "myUsuarioDeTest",
+                "password": "myPasswordDeTest444",
+                "useremail": "emailTest1@test.com",
+            },
+            files={"userAvatar": f},
+        )
+
     assert response.json() == {"new user created": "myUsuarioDeTest"}
+    assert response.status_code == 200
 
 
 def test_name_too_long():
     response = client.post(
         'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "username": "NombreDemasiadoLargoParaHacerLaPruebaDeNombre",
             "password": "myPasswordDeTest444",
@@ -46,7 +46,6 @@ def test_name_too_long():
 def test_password_too_short():
     response = client.post(
         'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "username": "usuarioPasswordCorto",
             "password": "hOl4",
@@ -61,7 +60,6 @@ def test_password_too_short():
 def test_password_without_lower():
     response = client.post(
         'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "username": "usuarioPassword",
             "password": "PASSWORDSINLETRACHICA444",
@@ -78,7 +76,6 @@ def test_password_without_lower():
 def test_password_without_upper():
     response = client.post(
         'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "username": "usuarioPassword",
             "password": "passwordsinmayuscula444",
@@ -95,7 +92,6 @@ def test_password_without_upper():
 def test_password_without_digit():
     response = client.post(
         'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "username": "usuarioPassword",
             "password": "passwordSinNumeros",
@@ -116,7 +112,6 @@ def test_user_already_exist():
 
     response = client.post(
         'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "username": "usuarioQueExiste",
             "password": "pasWordCualquiera4313",
@@ -134,7 +129,6 @@ def test_email_already_exist():
                 email="emailtestEmailExiste@test.com", verificado=1)
     response = client.post(
         'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "username": "usuarioCualquiera",
             "password": "pasWordCualquiera4313",
@@ -149,7 +143,6 @@ def test_email_already_exist():
 def test_invalid_email():
     response = client.post(
         'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "username": "usuarioEmailChoto",
             "password": "passwordRandom444",
@@ -159,3 +152,19 @@ def test_invalid_email():
     )
     assert response.status_code == 400
     assert response.json() == {"detail": "Email inválido."}
+
+
+def test_invalid_avatar():
+    with open("tests/cosasParaTestear/notAnImage.txt", "rb") as f:
+        response = client.post(
+            'user/registro_de_usuario/',
+            data={
+                "username": "usuarioAvatarIncorrecto",
+                "password": "myPasswordDeTest444",
+                "useremail": "avatarincorrecto@test.com",
+            },
+            files={"userAvatar": f},
+        )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "File is not an image."}
