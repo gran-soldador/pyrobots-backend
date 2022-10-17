@@ -27,7 +27,8 @@ def test_correct_form():
         data={
             "namepartida": "my-partida",
             "password": None,
-            "numplayers": 3,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 2,
             "numrondas": 3,
             "idrobot": 1
@@ -44,7 +45,8 @@ def test_correct_form_password():
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 3,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 2,
             "numrondas": 3,
             "idrobot": 1
@@ -61,7 +63,8 @@ def test_incorrect_form_name():
         headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "namepartida": "sdlsjdldksldkdldskdslkdsldskldskdslkdslsdk",
-            "numplayers": 3,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 2,
             "numrondas": 3,
             "idrobot": 1
@@ -77,7 +80,8 @@ def test_incorrect_form_name_character():
         headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "namepartida": "my.partida",
-            "numplayers": 3,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 2,
             "numrondas": 3,
             "idrobot": 1
@@ -94,7 +98,8 @@ def test_incorrect_pwd_name():
         data={
             "namepartida": "my-partida",
             "password": '444444444444444444444444444444444444',
-            "numplayers": 3,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 2,
             "numrondas": 3,
             "idrobot": 1
@@ -111,7 +116,8 @@ def test_incorrect_form_pwd_character():
         data={
             "namepartida": "my-partida",
             "password": "42.5",
-            "numplayers": 3,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 2,
             "numrondas": 3,
             "idrobot": 1
@@ -121,21 +127,22 @@ def test_incorrect_form_pwd_character():
     assert response.json() == {'detail': 'password invalida'}
 
 
-def test_incorrect_form_jugadores():
+def test_incorrect_form_jugadores_min():
     response = client.post(
         'crear-partida',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 1,
+            "minplayers": 1,
+            "maxplayers": 3,
             "numgames": 2,
             "numrondas": 3,
             "idrobot": 1
         }
     )
     assert response.status_code == 400
-    assert response.json() == {'detail': 'numplayers invalido'}
+    assert response.json() == {'detail': 'minplayers o maxplayers invalido'}
 
 
 def test_incorrect_form_jugadores_max():
@@ -145,14 +152,33 @@ def test_incorrect_form_jugadores_max():
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 5,
+            "minplayers": 3,
+            "maxplayers": 5,
             "numgames": 2,
             "numrondas": 3,
             "idrobot": 1
         }
     )
     assert response.status_code == 400
-    assert response.json() == {'detail': 'numplayers invalido'}
+    assert response.json() == {'detail': 'minplayers o maxplayers invalido'}
+
+
+def test_incorrect_form_jugadores_absurd():
+    response = client.post(
+        'crear-partida',
+        headers={'Content-type': 'application/x-www-form-urlencoded'},
+        data={
+            "namepartida": "my-partida",
+            "password": '42787067',
+            "minplayers": 4,
+            "maxplayers": 2,
+            "numgames": 2,
+            "numrondas": 3,
+            "idrobot": 1
+        }
+    )
+    assert response.status_code == 400
+    assert response.json() == {'detail': 'minplayers o maxplayers invalido'}
 
 
 def test_incorrect_form_juegos():
@@ -162,7 +188,8 @@ def test_incorrect_form_juegos():
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 2,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 0,
             "numrondas": 3,
             "idrobot": 1
@@ -179,7 +206,8 @@ def test_incorrect_form_juegos_max():
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 2,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 500,
             "numrondas": 3,
             "idrobot": 1
@@ -196,7 +224,8 @@ def test_incorrect_form_rondas():
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 2,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 1,
             "numrondas": 0,
             "idrobot": 1
@@ -213,7 +242,8 @@ def test_incorrect_form_rondas_max():
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 2,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 200,
             "numrondas": 1000000,
             "idrobot": 1
@@ -230,7 +260,8 @@ def test_incorrect_form_robot():
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 2,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 200,
             "numrondas": 3,
             "idrobot": 0
@@ -254,7 +285,8 @@ def test_incorrect_form_robot_defect():
         data={
             "namepartida": "my-partida",
             "password": '42787067',
-            "numplayers": 2,
+            "minplayers": 3,
+            "maxplayers": 3,
             "numgames": 200,
             "numrondas": 3,
             "idrobot": 2

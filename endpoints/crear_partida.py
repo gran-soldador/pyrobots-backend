@@ -19,7 +19,8 @@ def check_string(string: str) -> bool:
 @router.post("/crear-partida")
 async def crear_partida(namepartida: str = Form(...),
                         password: str = Form(None),
-                        numplayers: int = Form(...),
+                        minplayers: int = Form(...),
+                        maxplayers: int = Form(...),
                         numgames: int = Form(...),
                         numrondas: int = Form(...),
                         idrobot: int = Form(...),
@@ -31,9 +32,9 @@ async def crear_partida(namepartida: str = Form(...),
         if (len(password) <= 10 and check_string(password)) is False:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='password invalida')
-    if (numplayers >= 2 and numplayers <= 4) is False:
+    if (minplayers >= 2 and minplayers <= maxplayers <= 4) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='numplayers invalido')
+                            detail='minplayers o maxplayers invalido')
     if (numgames >= 1 and numgames <= 200) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='numgames invalido')
@@ -52,14 +53,16 @@ async def crear_partida(namepartida: str = Form(...),
         if password:
             p1 = Partida(namepartida=namepartida, password=password,
                          status='disponible',
-                         numplayers=numplayers,
+                         minplayers=minplayers,
+                         maxplayers=maxplayers,
                          numgames=numgames,
                          numrondas=numrondas,
                          creador=robot.usuario)
         else:
             p1 = Partida(namepartida=namepartida,
                          status='disponible',
-                         numplayers=numplayers,
+                         minplayers=minplayers,
+                         maxplayers=maxplayers,
                          numgames=numgames,
                          numrondas=numrondas,
                          creador=robot.usuario)
