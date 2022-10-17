@@ -57,10 +57,8 @@ async def creacion_de_robot(username: str = Form(),
 async def listar_robots(username: str = Form(...)):
     with db_session:
         lista = []
-        for u in select(u for u in Usuario
-                        if u.nombre_usuario == username):
-            for r in select(r for r in u.robot):
-                lista.append({'id': r.robot_id, 'nombre': r.nombre})
+        for r in Usuario.get(nombre_usuario=username).robot:
+            lista.append({'id': r.robot_id, 'nombre': r.nombre})
         if lista == []:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='No se encontraron robots')
