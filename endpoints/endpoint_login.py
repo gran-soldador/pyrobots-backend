@@ -28,5 +28,5 @@ async def login(username: str = Form(...),
 
 # Verificacion de que el token sea válido
 @auth_routes.post("/login/verify_token")
-async def verify_token(Authorization: str):
+async def verify_token(Authorization: str = Form(...)):
     return validate_token(Authorization)
