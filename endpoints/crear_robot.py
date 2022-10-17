@@ -50,3 +50,16 @@ async def creacion_de_robot(username: str = Form(),
             usuario=myUser_id
         )
         return {"new robot created": robotName}
+
+@router.post("/lista-robots",
+             name="Subida de Robots por el Usuario")
+async def listar_robots(username:str = Form(...), status_code=status.HTTP_200_OK):
+    with db_session:
+        lista = []
+        for u in select(u for u in Usuario):
+            for r in select(r for r in u.robot):
+                lista.append({'id':r.robot_id, 'nombre':r.nombre})
+        if lista == []:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail='No se encontraron robots')
+        return lista
