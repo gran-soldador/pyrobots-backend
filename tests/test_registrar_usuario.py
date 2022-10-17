@@ -13,19 +13,35 @@ def reset_db():
     db.create_tables()
 
 
-def test_correct_form():
+def test_correct_form_withdefaultavatar():
     response = client.post(
         'user/registro_de_usuario/',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
-            "username": "myUsuarioDeTest",
+            "username": "myUsuarioDeTestSinAvatar",
             "password": "myPasswordDeTest444",
-            "useremail": "emailTest1@test.com",
+            "useremail": "emailTest1SinAvatar@test.com",
             "userAvatar": None
         }
     )
     assert response.status_code == 200
-    assert response.json() == {"new user created": "myUsuarioDeTest"}
+    assert response.json() == {"new user created": "myUsuarioDeTestSinAvatar"}
+
+
+def test_correct_form_with_avatar():
+    with open("tests/archivosParaTests/DefaultAvatar.png", "rb") as f:
+        response = client.post(
+            'user/registro_de_usuario/',
+            data={
+                "username": "myUsuarioDeTestConAvatar",
+                "password": "myPasswordDeTest444",
+                "useremail": "emailTest1ConAvatar@test.com"
+            },
+            files={"avatar": f}
+        )
+        assert response.status_code == 200
+        assert response.json() == {
+            "new user created": "myUsuarioDeTestConAvatar"}
 
 
 def test_name_too_long():
