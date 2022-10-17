@@ -36,12 +36,12 @@ class Robot(db.Entity):
 
 class Partida(db.Entity):
     partida_id = PrimaryKey(int, auto=True)
-    nombre = Required(str, 255)
-    contraseña = Optional(str, 255)
+    namepartida = Required(str, 32)
+    password = Optional(str, 10, nullable=True, default=None)
     status = Required(str, 32)
-    cant_jugadores = Required(int)
-    cant_juegos = Required(int)
-    cant_rondas = Required(int)
+    numplayers = Required(int)
+    numgames = Required(int)
+    numrondas = Required(int)
     participante = Set(Robot, reverse='participa')
     creador = Required(Usuario, reverse='partida')
     ganador = Optional(Robot, reverse='gano')
