@@ -4,19 +4,12 @@ from db import *
 
 #  Verifica si el nombre de usuario existe
 def user_exist(username: str):
-    if Usuario.get(nombre_usuario=username) is not None:
-        return True
-    else:
-        return False
+    return Usuario.get(nombre_usuario=username) is not None
+
 
 #  Verifica si el email ya está registrado
-
-
 def email_exist(email: str):
-    if Usuario.get(email=email) is not None:
-        return True
-    else:
-        return False
+    return Usuario.get(email=email) is not None
 
 
 #  Verifica que el password tengo al menos una mayuscula,
@@ -29,17 +22,5 @@ def password_is_correct(pas: str):
 
 
 # Se fija si los datos de logue ingresados son válidos
-
-
 def correct_login(name: str, password: str):
-    if Usuario.get(nombre_usuario=name, contraseña=password) is not None:
-        return True
-    else:
-        return False
-
-# Genera un diccionario con los datos ingresados
-
-
-def dict_factory(cursor, row):
-    col_names = [col[0] for col in cursor.description]
-    return {key: value for key, value in zip(col_names, row)}
+    return Usuario.get(nombre_usuario=name, contraseña=password) is not None

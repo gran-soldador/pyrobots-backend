@@ -21,11 +21,13 @@ async def login(username: str = Form(...),
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                 detail="Wrong Password.")
         elif correct_login(username, password):
-            return write_token(Usuario.get(nombre_usuario=username).to_dict())
+            user = Usuario.get(nombre_usuario=username).to_dict()
+            del user["contraseña"]
+            print(user)
+            return write_token(user)
+
 
 # Verificacion de que el token sea válido
-
-
 @auth_routes.post("/login/verify_token")
 async def verify_token(Authorization: str):
-    return validate_token(Authorization, output=True)
+    return validate_token(Authorization)

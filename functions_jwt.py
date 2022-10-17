@@ -22,11 +22,9 @@ def write_token(data: dict):
 # Valida que el token ingresado sea válido
 
 
-def validate_token(token, output=False):
+def validate_token(token):
     try:
-        if output:
-            return decode(token, key=getenv("SECRET"), algorithms=["HS256"])
-        decode(token, key=getenv("SECRET"), algorithms=["HS256"])
+        return decode(token, key=getenv("SECRET"), algorithms=["HS256"])
     except exceptions.DecodeError:
         return JSONResponse(content={'Message:': 'Invalid Token'},
                             status_code=401)
