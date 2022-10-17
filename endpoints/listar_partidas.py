@@ -5,7 +5,7 @@ router = APIRouter()
 
 
 @router.get("/lista-partidas")
-async def listar_partidas(status_code=status.HTTP_200_OK):
+async def listar_partidas():
     with db_session:
         lista = []
         for p in select(p for p in Partida):

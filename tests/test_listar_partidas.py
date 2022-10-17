@@ -30,14 +30,15 @@ def test_non_empty_list():
     assert response.status_code == 200
     assert response.json()[0]['password'] is False
 
+
 def test_empty_robot_list():
     response = client.post('/lista-robots',
-                           headers={'Content-type': 'application/x-www-form-urlencoded'},
                            data={
-                                 "username": "pedro"
+                               "username": "pedro"
                            })
     assert response.status_code == 400
     assert response.json() == {'detail': 'No se encontraron robots'}
+
 
 def test_non_empty_robot_list():
     with db_session:
@@ -48,7 +49,7 @@ def test_non_empty_robot_list():
               partidas_jugadas=0, defectuoso=False, usuario=u2)
     response = client.post('/lista-robots',
                            data={
-                                 "username": "pedro"
+                               "username": "pedro"
                            })
     assert response.status_code == 200
-    assert response.json() == [{'id': 1, 'nombre':'rob'}]
+    assert response.json() == [{'id': 1, 'nombre': 'rob'}]

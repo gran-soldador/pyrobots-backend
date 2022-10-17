@@ -5,7 +5,7 @@ router = APIRouter()
 
 
 @router.get("/simulacion")
-async def estado_juego(status_code=status.HTTP_200_OK):
+async def estado_juego():
     try:
         return run_demo_game()
     except Exception:
