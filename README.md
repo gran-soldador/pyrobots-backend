@@ -22,6 +22,10 @@ chmod +x .git/hooks/pre-commit
 pip3 install flake8
 ```
 
+## Registro de Usuario
+
+- pip install python-dotenv
+
 ## crear un test
 
 - en la carpeta tests crear un archivo test_`<nombre del archivo a testear>`.py
@@ -31,3 +35,4 @@ pip3 install flake8
 	- pip3 install coverage
 - para correr el test hacer `coverage run -m pytest` desde la carpeta principal
 - para ver el informe hacer `coverage report -m`
+

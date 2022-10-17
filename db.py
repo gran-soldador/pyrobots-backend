@@ -24,7 +24,7 @@ class Usuario(db.Entity):
 class Robot(db.Entity):
     robot_id = PrimaryKey(int, auto=True)
     nombre = Required(str, 255)
-    implementacion = Required(str, 255)
+    implementacion = Required(str)
     avatar = Optional(str, 255)
     partidas_ganadas = Required(int)
     partidas_jugadas = Required(int)
