@@ -7,7 +7,7 @@ import pytest
 client = TestClient(app)
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(autouse=True)
 def reset_db():
     db.drop_all_tables(True)
     db.create_tables()

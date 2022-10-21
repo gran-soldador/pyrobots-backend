@@ -1,8 +1,12 @@
 from pony.orm import *
+import sys
 
 db = Database()
 
-db.bind(provider="sqlite", filename="main.db", create_db=True)
+if "pytest" in sys.modules:
+    db.bind(provider="sqlite", filename=":sharedmemory:")   
+else:
+    db.bind(provider="sqlite", filename="main.db", create_db=True)
 
 
 class Usuario(db.Entity):

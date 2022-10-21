@@ -7,7 +7,7 @@ import pytest
 client = TestClient(app)
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(autouse=True)
 def reset_db():
     db.drop_all_tables(True)
     db.create_tables()
@@ -39,6 +39,13 @@ def test_correct_form():
 
 
 def test_correct_form_password():
+    with db_session:
+        u1 = Usuario(nombre_usuario='leandro',
+                     email='leandro.lopez@mi.unc.edu.ar',
+                     contraseña='42787067', verificado=True)
+        Robot(nombre='robocop', implementacion='super-robot.py',
+              partidas_ganadas=0, partidas_jugadas=0,
+              defectuoso=False, usuario=u1)
     response = client.post(
         'crear-partida',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
@@ -54,7 +61,7 @@ def test_correct_form_password():
     )
     print(response.json())
     assert response.status_code == 200
-    assert response.json() == {'id_partida': 2}
+    assert response.json() == {'id_partida': 1}
 
 
 def test_incorrect_form_name():
@@ -273,8 +280,8 @@ def test_incorrect_form_robot():
 
 def test_incorrect_form_robot_defect():
     with db_session:
-        u1 = Usuario(nombre_usuario='leandr',
-                     email='leandr.lopez@mi.unc.edu.ar',
+        u1 = Usuario(nombre_usuario='leandro',
+                     email='leandro.lopez@mi.unc.edu.ar',
                      contraseña='42787067', verificado=True)
         Robot(nombre='robocop', implementacion='super-robot.py',
               partidas_ganadas=0, partidas_jugadas=0,
@@ -289,7 +296,7 @@ def test_incorrect_form_robot_defect():
             "maxplayers": 3,
             "numgames": 200,
             "numrondas": 3,
-            "idrobot": 2
+            "idrobot": 1
         }
     )
     assert response.status_code == 400
