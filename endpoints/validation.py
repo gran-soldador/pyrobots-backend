@@ -24,13 +24,3 @@ def password_is_correct(pas: str):
 # Se fija si los datos de logue ingresados son válidos
 def correct_login(name: str, password: str):
     return Usuario.get(nombre_usuario=name, contraseña=password) is not None
-
-
-# Me dice si el usuario ya tiene un robot suyo con ese nombre
-def user_robot_already_exist(username: str, robotName: str):
-    myUser = Usuario.get(nombre_usuario=username)
-    if Robot.get(nombre=robotName) is not None:
-        myRobotUser = Robot.get(nombre=robotName).usuario.user_id
-        if (myRobotUser == myUser.user_id):
-            return True
-    return False
