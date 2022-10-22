@@ -2,6 +2,8 @@ from jwt import encode, decode, exceptions
 from datetime import datetime, timedelta
 from os import getenv
 from fastapi.responses import JSONResponse
+from fastapi import HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # Genera fecha de expiracion de token
 
@@ -31,3 +33,17 @@ def validate_token(token):
     except exceptions.ExpiredSignatureError:
         return JSONResponse(content={'Message:': 'Token Expired'},
                             status_code=401)
+
+
+async def authenticated_user(
+        token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+    try:
+        res = decode(token.credentials, key=getenv("SECRET"),
+                     algorithms=["HS256"])
+        return res["user_id"]
+    except exceptions.DecodeError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid Token")
+    except exceptions.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Token Expired")

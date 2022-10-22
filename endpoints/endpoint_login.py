@@ -20,10 +20,9 @@ async def login(username: str = Form(...),
         elif not correct_login(username, password):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                 detail="Wrong Password.")
-        elif correct_login(username, password):
-            user = Usuario.get(nombre_usuario=username).to_dict()
-            del user["contraseña"]
-            return write_token(user)
+        else:
+            user_id = Usuario.get(nombre_usuario=username).user_id
+            return write_token({"user_id": user_id})
 
 
 # Verificacion de que el token sea válido
