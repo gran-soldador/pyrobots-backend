@@ -54,8 +54,7 @@ async def creacion_de_robot(user_id: int = Depends(authenticated_user),
         return {"new robot created": robotName}
 
 
-@router.post("/lista-robots",
-             name="Subida de Robots por el Usuario")
+@router.post("/lista-robots")
 async def listar_robots(user_id: int = Depends(authenticated_user)):
     with db_session:
         lista = [{'id': r.robot_id, 'nombre': r.nombre}
