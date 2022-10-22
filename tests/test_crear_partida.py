@@ -1,10 +1,12 @@
 from fastapi.testclient import TestClient
 from main import app
 from db import *
+from endpoints.functions_jwt import authenticated_user
 import pytest
 
-
 client = TestClient(app)
+
+app.dependency_overrides[authenticated_user] = lambda: 1
 
 
 @pytest.fixture(autouse=True)
@@ -23,7 +25,6 @@ def test_correct_form():
               defectuoso=False, usuario=u1)
     response = client.post(
         'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
         data={
             "namepartida": "my-partida",
             "password": None,
@@ -34,8 +35,8 @@ def test_correct_form():
             "idrobot": 1
         }
     )
-    assert response.status_code == 200
     assert response.json() == {'id_partida': 1}
+    assert response.status_code == 200
 
 
 def test_correct_form_password():

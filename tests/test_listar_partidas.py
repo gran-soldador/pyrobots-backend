@@ -1,9 +1,12 @@
 from fastapi.testclient import TestClient
 from db import *
+from endpoints.functions_jwt import authenticated_user
+
 from main import app
 import pytest
 
 client = TestClient(app)
+app.dependency_overrides[authenticated_user] = lambda: 1
 
 
 @pytest.fixture(autouse=True)
