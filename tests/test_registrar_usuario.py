@@ -1,19 +1,7 @@
-from fastapi.testclient import TestClient
-from main import app
 from db import *
-import pytest
 
 
-client = TestClient(app)
-
-
-@pytest.fixture(autouse=True)
-def reset_db():
-    db.drop_all_tables(True)
-    db.create_tables()
-
-
-def test_correct_form_withdefaultavatar():
+def test_correct_form_withdefaultavatar(client):
     response = client.post(
         'user/registro_de_usuario/',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
@@ -28,7 +16,7 @@ def test_correct_form_withdefaultavatar():
     assert response.json() == {"new user created": "myUsuarioDeTestSinAvatar"}
 
 
-def test_correct_form_with_avatar():
+def test_correct_form_with_avatar(client):
     with open("tests/archivosParaTests/DefaultAvatar.png", "rb") as f:
         response = client.post(
             'user/registro_de_usuario/',
@@ -44,7 +32,7 @@ def test_correct_form_with_avatar():
             "new user created": "myUsuarioDeTestConAvatar"}
 
 
-def test_name_too_long():
+def test_name_too_long(client):
     response = client.post(
         'user/registro_de_usuario/',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
@@ -59,7 +47,7 @@ def test_name_too_long():
     assert response.json() == {"detail": "Username too long."}
 
 
-def test_password_too_short():
+def test_password_too_short(client):
     response = client.post(
         'user/registro_de_usuario/',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
@@ -74,7 +62,7 @@ def test_password_too_short():
     assert response.json() == {"detail": "Password too Short."}
 
 
-def test_password_without_lower():
+def test_password_without_lower(client):
     response = client.post(
         'user/registro_de_usuario/',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
@@ -91,7 +79,7 @@ def test_password_without_lower():
                                "minusucula y un numero."}
 
 
-def test_password_without_upper():
+def test_password_without_upper(client):
     response = client.post(
         'user/registro_de_usuario/',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
@@ -108,7 +96,7 @@ def test_password_without_upper():
                                "minusucula y un numero."}
 
 
-def test_password_without_digit():
+def test_password_without_digit(client):
     response = client.post(
         'user/registro_de_usuario/',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
@@ -125,7 +113,7 @@ def test_password_without_digit():
                                "minusucula y un numero."}
 
 
-def test_user_already_exist():
+def test_user_already_exist(client):
     with db_session:
         Usuario(nombre_usuario="usuarioQueExiste", contraseña="paSSw0rd444",
                 email="emailtestUsuario@nose.com", verificado=1)
@@ -144,7 +132,7 @@ def test_user_already_exist():
     assert response.json() == {"detail": "User name already exist."}
 
 
-def test_email_already_exist():
+def test_email_already_exist(client):
     with db_session:
         Usuario(nombre_usuario="usuarioASDK", contraseña="paSSw0rd444",
                 email="emailtestEmailExiste@test.com", verificado=1)
@@ -162,7 +150,7 @@ def test_email_already_exist():
     assert response.json() == {"detail": "Email already registered."}
 
 
-def test_invalid_email():
+def test_invalid_email(client):
     response = client.post(
         'user/registro_de_usuario/',
         headers={'Content-type': 'application/x-www-form-urlencoded'},
@@ -177,7 +165,7 @@ def test_invalid_email():
     assert response.json() == {"detail": "Email inválido."}
 
 
-def test_invalid_avatar():
+def test_invalid_avatar(client):
     with open("tests/archivosParaTests/notAnImage.txt", "rb") as f:
         response = client.post(
             'user/registro_de_usuario/',
