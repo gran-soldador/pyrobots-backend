@@ -3,36 +3,6 @@ from db import *
 
 
 @pytest.fixture
-@db_session
-def user1():
-    user = Usuario(nombre_usuario='leandro',
-                   email='leandro.lopez@mi.unc.edu.ar',
-                   contraseña='42787067', verificado=True)
-    user.flush()
-    return user.user_id
-
-
-@pytest.fixture
-@db_session
-def user2():
-    user = Usuario(nombre_usuario='luigi',
-                   email='luigifinetti@mi.unc.edu.ar',
-                   contraseña='1234ABCDa!', verificado=True)
-    user.flush()
-    return user.user_id
-
-
-@pytest.fixture
-@db_session
-def robot1(user1):
-    robot = Robot(nombre='robocop', implementacion='super-robot.py',
-                  partidas_ganadas=0, partidas_jugadas=0,
-                  defectuoso=False, usuario=Usuario[user1])
-    robot.flush()
-    return robot.robot_id
-
-
-@pytest.fixture
 def valid_form(robot1):
     return {
         "namepartida": "my-partida",
