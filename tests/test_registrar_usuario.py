@@ -25,7 +25,7 @@ def test_correct_form_with_avatar(client):
                 "password": "myPasswordDeTest444",
                 "useremail": "emailTest1ConAvatar@test.com"
             },
-            files={"avatar": f}
+            files={"userAvatar": f}
         )
         assert response.status_code == 200
         assert response.json() == {
