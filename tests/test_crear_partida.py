@@ -1,303 +1,122 @@
-from fastapi.testclient import TestClient
-from main import app
-from db import *
 import pytest
+from db import *
 
 
-client = TestClient(app)
+@pytest.fixture
+def valid_form(robot1):
+    return {
+        "namepartida": "my-partida",
+        "password": None,
+        "minplayers": 3,
+        "maxplayers": 3,
+        "numgames": 2,
+        "numrondas": 3,
+        "idrobot": robot1
+    }
 
 
-@pytest.fixture(autouse=True)
-def reset_db():
-    db.drop_all_tables(True)
-    db.create_tables()
-
-
-def test_correct_form():
-    with db_session:
-        u1 = Usuario(nombre_usuario='leandro',
-                     email='leandro.lopez@mi.unc.edu.ar',
-                     contraseña='42787067', verificado=True)
-        Robot(nombre='robocop', implementacion='super-robot.py',
-              partidas_ganadas=0, partidas_jugadas=0,
-              defectuoso=False, usuario=u1)
-    response = client.post(
+@pytest.mark.parametrize("password", [None, "42787067"])
+def test_correct_form(loggedin_client, valid_form, user1, password):
+    response = loggedin_client.post(
         'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": None,
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
+        data={**valid_form, "password": password}
     )
     assert response.status_code == 200
     assert response.json() == {'id_partida': 1}
-
-
-def test_correct_form_password():
     with db_session:
-        u1 = Usuario(nombre_usuario='leandro',
-                     email='leandro.lopez@mi.unc.edu.ar',
-                     contraseña='42787067', verificado=True)
-        Robot(nombre='robocop', implementacion='super-robot.py',
-              partidas_ganadas=0, partidas_jugadas=0,
-              defectuoso=False, usuario=u1)
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    print(response.json())
-    assert response.status_code == 200
-    assert response.json() == {'id_partida': 1}
+        assert Partida.select().count() == 1
+        assert Partida[1].creador.user_id == user1
+        assert Partida[1].password == password
 
 
-def test_incorrect_form_name():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "sdlsjdldksldkdldskdslkdsldskldskdslkdslsdk",
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'namepartida invalido'}
-
-
-def test_incorrect_form_name_character():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my.partida",
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'namepartida invalido'}
-
-
-def test_incorrect_pwd_name():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '444444444444444444444444444444444444',
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'password invalida'}
-
-
-def test_incorrect_form_pwd_character():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": "42.5",
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'password invalida'}
-
-
-def test_incorrect_form_jugadores_min():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 1,
-            "maxplayers": 3,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'minplayers o maxplayers invalido'}
-
-
-def test_incorrect_form_jugadores_max():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 3,
-            "maxplayers": 5,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'minplayers o maxplayers invalido'}
-
-
-def test_incorrect_form_jugadores_absurd():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 4,
-            "maxplayers": 2,
-            "numgames": 2,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'minplayers o maxplayers invalido'}
-
-
-def test_incorrect_form_juegos():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 0,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'numgames invalido'}
-
-
-def test_incorrect_form_juegos_max():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 500,
-            "numrondas": 3,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'numgames invalido'}
-
-
-def test_incorrect_form_rondas():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 1,
-            "numrondas": 0,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'numrondas invalido'}
-
-
-def test_incorrect_form_rondas_max():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 200,
-            "numrondas": 1000000,
-            "idrobot": 1
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'numrondas invalido'}
-
-
-def test_incorrect_form_robot():
-    response = client.post(
-        'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 200,
-            "numrondas": 3,
-            "idrobot": 0
-        }
-    )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'robot no valido'}
-
-
-def test_incorrect_form_robot_defect():
+def test_logged_out(client, valid_form):
+    response = client.post('crear-partida', data=valid_form)
+    assert response.status_code == 403
+    assert response.json() == {'detail': 'Not authenticated'}
     with db_session:
-        u1 = Usuario(nombre_usuario='leandro',
-                     email='leandro.lopez@mi.unc.edu.ar',
-                     contraseña='42787067', verificado=True)
-        Robot(nombre='robocop', implementacion='super-robot.py',
-              partidas_ganadas=0, partidas_jugadas=0,
-              defectuoso=True, usuario=u1)
-    response = client.post(
+        assert not Partida.select().exists()
+
+
+@pytest.mark.parametrize("invalid_params, expected_detail", [
+    pytest.param(
+        {"namepartida": "sdlsjdldksldkdldskdslkdsldskldskdslkdslsdk"},
+        'namepartida invalido',
+        id="name_too_long"),
+    pytest.param(
+        {"namepartida": "my.partida"},
+        'namepartida invalido',
+        id="name_with_invalid_char"),
+    pytest.param(
+        {"password": "444444444444444444444444444444444444"},
+        'password invalida',
+        id="password_too_long"),
+    pytest.param(
+        {"password": "42.5"},
+        'password invalida',
+        id="password_with_invalid_char"),
+    pytest.param(
+        {"minplayers": "1"},
+        'minplayers o maxplayers invalido',
+        id="minplayers_too_small"),
+    pytest.param(
+        {"maxplayers": "5"},
+        'minplayers o maxplayers invalido',
+        id="maxplayers_too_large"),
+    pytest.param(
+        {"minplayers": 4, "maxplayers": 2},
+        'minplayers o maxplayers invalido',
+        id="players_absurd"),
+    pytest.param(
+        {"numgames": 0},
+        'numgames invalido',
+        id="numgames_too_small"),
+    pytest.param(
+        {"numgames": 500},
+        'numgames invalido',
+        id="numgames_too_large"),
+    pytest.param(
+        {"numrondas": 0},
+        'numrondas invalido',
+        id="numrondas_too_small"),
+    pytest.param(
+        {"numrondas": 1000000},
+        'numrondas invalido',
+        id="numrondas_too_large"),
+    pytest.param(
+        {"idrobot": 27},
+        'robot no valido',
+        id="robot_not_existent"),
+])
+def test_incorrect_field(loggedin_client, valid_form, invalid_params,
+                         expected_detail):
+    response = loggedin_client.post(
         'crear-partida',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "namepartida": "my-partida",
-            "password": '42787067',
-            "minplayers": 3,
-            "maxplayers": 3,
-            "numgames": 200,
-            "numrondas": 3,
-            "idrobot": 1
-        }
+        data={**valid_form, **invalid_params}
+    )
+    assert response.status_code == 400
+    assert response.json() == {'detail': expected_detail}
+    with db_session:
+        assert not Partida.select().exists()
+
+
+def test_defective_robot(loggedin_client, valid_form, robot1):
+    with db_session:
+        Robot[robot1].defectuoso = True
+    response = loggedin_client.post(
+        'crear-partida',
+        data=valid_form
     )
     assert response.status_code == 400
     assert response.json() == {'detail': 'robot defectuoso'}
+    with db_session:
+        assert not Partida.select().exists()
+
+
+def test_not_my_robot(loggedin_client, valid_form, robot1, user2):
+    with db_session:
+        Robot[robot1].usuario = Usuario[user2]
+    response = loggedin_client.post('crear-partida', data=valid_form)
+    assert response.status_code == 401
+    assert response.json() == {'detail': 'robot no pertenece al usuario'}
+    with db_session:
+        assert not Partida.select().exists()

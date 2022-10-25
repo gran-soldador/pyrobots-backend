@@ -12,6 +12,7 @@ h11==0.14.0
 idna==3.4
 iniconfig==1.1.1
 mccabe==0.7.0
+mock==4.0.3
 packaging==21.3
 pluggy==1.0.0
 pony==0.7.16
