@@ -1,21 +1,7 @@
-from fastapi.testclient import TestClient
-from main import app
-from endpoints.functions_jwt import authenticated_user
 from db import *
-import pytest
-
-client = TestClient(app)
-
-app.dependency_overrides[authenticated_user] = lambda: 1
 
 
-@pytest.fixture(autouse=True)
-def reset_db():
-    db.drop_all_tables(True)
-    db.create_tables()
-
-
-def test_correct_form_subir_robot():
+def test_correct_form_subir_robot(loggedin_client):
     with db_session:
         Usuario(
             nombre_usuario="usuarioRobotCorrectForm",
@@ -26,7 +12,7 @@ def test_correct_form_subir_robot():
         )
     with open("tests/archivosParaTests/DefaultAvatar.png", "rb") as f:
         with open("tests/archivosParaTests/codeOfRobot.py", "rb") as c:
-            response = client.post(
+            response = loggedin_client.post(
                 '/user/creacion_de_robot/',
                 data={
                     "username": "usuarioRobotCorrectForm",
@@ -41,7 +27,7 @@ def test_correct_form_subir_robot():
                 "new robot created": "nombreGenericoDeRobot"}
 
 
-def test_user_doesnt_exist_robot():
+def test_user_not_logged_in_exist_robot(client):
     with open("tests/archivosParaTests/DefaultAvatar.png", "rb") as f:
         with open("tests/archivosParaTests/codeOfRobot.py", "rb") as c:
             response = client.post(
@@ -54,11 +40,11 @@ def test_user_doesnt_exist_robot():
                        "robotCode": c
                        },
             )
-            assert response.status_code == 400
-            assert response.json() == {'detail': "User doesn't exist."}
+            assert response.status_code == 403
+            assert response.json() == {'detail': "Not authenticated"}
 
 
-def test_user_robot_already_exist():
+def test_user_robot_already_exist(loggedin_client):
     with db_session:
         user = Usuario(
             nombre_usuario="usuarioRobotExist",
@@ -78,7 +64,7 @@ def test_user_robot_already_exist():
         )
     with open("tests/archivosParaTests/DefaultAvatar.png", "rb") as f:
         with open("tests/archivosParaTests/codeOfRobot.py", "rb") as c:
-            response = client.post(
+            response = loggedin_client.post(
                 '/user/creacion_de_robot/',
                 data={
                     "username": "usuarioRobotExist",
@@ -93,7 +79,7 @@ def test_user_robot_already_exist():
                                        "a robot with that name."}
 
 
-def test_robot_file_not_an_image():
+def test_robot_file_not_an_image(loggedin_client):
     with db_session:
         Usuario(
             nombre_usuario="usuarioRobotImagenMala",
@@ -104,7 +90,7 @@ def test_robot_file_not_an_image():
         )
     with open("tests/archivosParaTests/notAnImage.txt", "rb") as f:
         with open("tests/archivosParaTests/codeOfRobot.py", "rb") as c:
-            response = client.post(
+            response = loggedin_client.post(
                 '/user/creacion_de_robot/',
                 data={
                     "username": "usuarioRobotImagenMala",
@@ -118,7 +104,7 @@ def test_robot_file_not_an_image():
             assert response.json() == {'detail': "File is not an image."}
 
 
-def test_robot_file_not_py():
+def test_robot_file_not_py(loggedin_client):
     with db_session:
         Usuario(
             nombre_usuario="usuarioRobotNoPy",
@@ -129,7 +115,7 @@ def test_robot_file_not_py():
         )
     with open("tests/archivosParaTests/DefaultAvatar.png", "rb") as f:
         with open("tests/archivosParaTests/notAnImage.txt", "rb") as c:
-            response = client.post(
+            response = loggedin_client.post(
                 '/user/creacion_de_robot/',
                 data={
                     "username": "usuarioRobotNoPy",
