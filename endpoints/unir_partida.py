@@ -8,7 +8,7 @@ router = APIRouter()
 @router.post('/unir-partida')
 async def unir_partida(user_id: int = Depends(authenticated_user),
                        partida_id: int = Form(...),
-                       contraseña: str = Form(None),
+                       password: str = Form(None),
                        id_robot: int = Form(...)):
     with db_session:
         try:
@@ -16,7 +16,10 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
         except Exception:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
-        if (partida.password) and partida.password != contraseña:
+        if partida.status != 'disponible':
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail='partida no disponible')
+        if partida.password != password:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='contraseña incorrecta')
         if user_id == partida.creador.user_id:
@@ -35,4 +38,7 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='el robot no pertenece al usuario')
         partida.participante.add(robot)
-        return {'detail': 'unido exitosamente'}
+        partida.flush()
+        if len(partida.participante) == partida.maxplayers:
+            partida.status = 'ocupada'
+        return {'detail': partida.status}
