@@ -5,6 +5,7 @@ from endpoints import crear_robot
 from dotenv import load_dotenv
 from endpoints import crear_partida, simulacion, listar_partidas
 from endpoints import unir_partida, abandonar_partida, match_result
+from endpoints import websocket
 
 app = FastAPI()
 
@@ -20,6 +21,7 @@ app.include_router(simulacion.router)
 app.include_router(unir_partida.router)
 app.include_router(abandonar_partida.router)
 app.include_router(match_result.router)
+app.include_router(websocket.router)
 
 origins = [
     'http://localhost:3000'
