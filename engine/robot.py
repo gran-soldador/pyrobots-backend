@@ -4,12 +4,7 @@ import logging
 from math import sin, cos, radians, isclose, sqrt
 from typing import Tuple
 from .constants import *
-
-
-@dataclass
-class Position:
-    x: float = 0.0
-    y: float = 0.0
+from .vector import Vector
 
 
 @dataclass
@@ -20,7 +15,7 @@ class BotStatus:
     damage: float = 0.0
     velocity: float = 0.0
     direction: float = 0.0
-    position: Position = field(default_factory=Position)
+    position: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
 
 
 @dataclass
@@ -92,6 +87,8 @@ class Robot:
         if changed_dir and not stopped and self._commands.drive_velocity > 50:
             raise ValueError("Too fast for changing direction")
 
+        # Parameters are now valid
+        # Now calculating actual movement, accounting for inertia
         angle = self._commands.drive_direction
         modulo = self._commands.drive_velocity / 100.0 * MAXSPEED
         newx = self._status.position.x + cos(radians(angle)) * modulo
@@ -100,8 +97,10 @@ class Robot:
             self._status.damage += 2
             newx = min(MAXX, max(0, newx))
             newy = min(MAXY, max(0, newy))
-        self._status.position.x = newx
-        self._status.position.y = newy
+            self._commands.drive_velocity = 0  # Have crashed, is now stopped
+
+        # Saving resulting movement
+        self._status.position.cartesian = (newx, newy)
         self._status.direction = self._commands.drive_direction
         self._status.velocity = self._commands.drive_velocity
 

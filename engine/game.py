@@ -1,4 +1,5 @@
-from .robot import Robot, Position
+from .robot import Robot
+from .vector import Vector
 from .constants import MAXX, MAXY, HITBOX
 from typing import Any, Dict, Generator, List, Tuple
 import logging
@@ -25,9 +26,9 @@ class Game:
                     "Robot failed during construction", exc_info=True)
                 robot = Robot()
                 robot._status.damage = 100
-            robot._status.position = Position(
+            robot._status.position = Vector(cartesian=(
                 random.uniform(.1, .9) * MAXX,
-                random.uniform(.1, .9) * MAXY)
+                random.uniform(.1, .9) * MAXY))
             robot._status.name = name
             robot._status.robot_id = robot_id
             robot._status.id = num

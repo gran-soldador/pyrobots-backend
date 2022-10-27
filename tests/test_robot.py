@@ -1,4 +1,5 @@
-from engine.robot import Position, Robot, MAXSPEED, MAXX, MAXY
+from engine.robot import Robot, MAXSPEED, MAXX, MAXY
+from engine.vector import Vector
 from math import isclose
 from copy import deepcopy
 import pytest
@@ -58,7 +59,7 @@ def test_moving_robot():
             self.drive(90, 100)
 
     rut = MovingRobot()
-    rut._status.position = Position(.5 * MAXX, .5 * MAXY)
+    rut._status.position = Vector(cartesian=(.5 * MAXX, .5 * MAXY))
     Robot._initialize_or_die(rut)
 
     Robot._respond_or_die(rut)
@@ -77,7 +78,7 @@ def test_moving_twice_robot():
             self.drive(0, 25)
 
     rut = MovingTwiceRobot()
-    rut._status.position = Position(.5 * MAXX, .5 * MAXY)
+    rut._status.position = Vector(cartesian=(.5 * MAXX, .5 * MAXY))
     Robot._initialize_or_die(rut)
 
     Robot._respond_or_die(rut)
@@ -95,7 +96,7 @@ def test_moving_oob_robot():
             self.drive(0, 100)
 
     rut = MovingOOBRobot()
-    rut._status.position = Position(.999 * MAXX, .999 * MAXY)
+    rut._status.position = Vector(cartesian=(.999 * MAXX, .999 * MAXY))
     Robot._initialize_or_die(rut)
 
     Robot._respond_or_die(rut)
@@ -148,7 +149,7 @@ def test_turning_too_fast_robot():
             self.first = False
 
     rut = TurningTooFastRobot()
-    rut._status.position = Position(.5 * MAXX, .5 * MAXY)
+    rut._status.position = Vector(cartesian=(.5 * MAXX, .5 * MAXY))
     Robot._initialize_or_die(rut)
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
