@@ -6,7 +6,7 @@ router = APIRouter()
 
 
 @router.post('/match-result')
-def return_result(partida_id: int = Form(...)):
+async def return_result(partida_id: int = Form(...)):
     with db_session:
         try:
             partida = Partida[partida_id]

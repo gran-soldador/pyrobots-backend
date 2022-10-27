@@ -24,7 +24,6 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
     max_points = max(scores, key=scores.get)
     with db_session:
         partida = Partida[partida_id]
-        partida.status = 'finalizada'
         for robot_id in scores:
             robot = Robot[robot_id]
             if scores[robot_id] == scores[max_points]:
@@ -32,7 +31,15 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
                 partida.ganador.add(robot)
             robot.partidas_jugadas += 1
             robot.flush()
-        partida.flush()
+        partida.status = 'finalizada'
+        ganador = [u.usuario.nombre_usuario for u in partida.ganador]
+        await lobby_manager.broadcast(
+            partida_id,
+            {
+                "event": "finish",
+                "ganador": ganador
+            }
+        )
 
 
 @router.post('/iniciar-partida')
@@ -63,7 +70,7 @@ async def init_match(user_id: int = Depends(authenticated_user),
         await lobby_manager.broadcast(
             partida_id,
             {
-                "event": "start",
+                "event": "init",
                 "robots": [{"id": r.robot_id, "nombre": r.nombre}
                            for r in list(Partida[partida_id].participante)]
             }
