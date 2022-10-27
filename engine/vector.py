@@ -1,5 +1,5 @@
 from typing import Tuple
-from math import cos, sin, atan, sqrt, isclose
+from math import cos, sin, atan2, sqrt, isclose
 
 
 class Vector:
@@ -31,7 +31,7 @@ class Vector:
         if self._polar is not None:
             return self._polar
         x, y = self._cartesian
-        return (atan(x / y), sqrt(x**2 + y**2))
+        return (atan2(x, y), sqrt(x**2 + y**2))
 
     @polar.setter
     def polar(self, val):
@@ -61,6 +61,10 @@ class Vector:
 
     def __add__(self, other):
         return Vector(cartesian=(self.x + other.x, self.y + other.y))
+
+    def __iadd__(self, other):
+        self.cartesian = (self.x + other.x, self.y + other.y)
+        return self
 
     def __mul__(self, scalar):
         if self._cartesian is not None:

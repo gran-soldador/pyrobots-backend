@@ -1,4 +1,4 @@
-from engine.robot import Robot, MAXSPEED, MAXX, MAXY
+from engine.robot import Robot, MAXSPEED, MAXX, MAXY, INERTIA
 from engine.vector import Vector
 from math import isclose
 from copy import deepcopy
@@ -64,8 +64,10 @@ def test_moving_robot():
 
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
-    assert isclose(rut._status.position.x, .5 * MAXX)
-    assert isclose(rut._status.position.y, .5 * MAXY + MAXSPEED)
+    assert isclose(rut._status.position.x, .5 * MAXX,
+                   rel_tol=INERTIA)
+    assert isclose(rut._status.position.y, .5 * MAXY + MAXSPEED,
+                   rel_tol=INERTIA)
 
 
 def test_moving_twice_robot():
@@ -83,8 +85,10 @@ def test_moving_twice_robot():
 
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
-    assert isclose(rut._status.position.x, .5 * MAXX + 25 / 100 * MAXSPEED)
-    assert isclose(rut._status.position.y, .5 * MAXY)
+    assert isclose(rut._status.position.x, .5 * MAXX + 25 / 100 * MAXSPEED,
+                   rel_tol=INERTIA)
+    assert isclose(rut._status.position.y, .5 * MAXY,
+                   rel_tol=INERTIA)
 
 
 def test_moving_oob_robot():

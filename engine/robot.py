@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 import logging
-from math import sin, cos, radians, isclose, sqrt
+from math import radians, isclose, sqrt
 from typing import Tuple
 from .constants import *
 from .vector import Vector
@@ -13,8 +13,7 @@ class BotStatus:
     id: int = -1
     robot_id: int = -1
     damage: float = 0.0
-    velocity: float = 0.0
-    direction: float = 0.0
+    movement: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
     position: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
 
 
@@ -81,28 +80,31 @@ class Robot:
             raise ValueError("Invalid speed")
         if not 0 <= self._commands.drive_direction < 360:
             raise ValueError("Invalid angle")
-        changed_dir = not isclose(self._commands.drive_direction,
-                                  self._status.direction)
-        stopped = isclose(0.0, self._status.velocity)
+        changed_dir = not isclose(radians(self._commands.drive_direction),
+                                  self._status.movement.angle)
+        stopped = isclose(0.0, self._status.movement.modulo)
         if changed_dir and not stopped and self._commands.drive_velocity > 50:
             raise ValueError("Too fast for changing direction")
 
-        # Parameters are now valid
-        # Now calculating actual movement, accounting for inertia
-        angle = self._commands.drive_direction
-        modulo = self._commands.drive_velocity / 100.0 * MAXSPEED
-        newx = self._status.position.x + cos(radians(angle)) * modulo
-        newy = self._status.position.y + sin(radians(angle)) * modulo
-        if (not 0 <= newx <= MAXX) or (not 0 <= newy <= MAXY):
+        # Parameters are now valid: calculating desired movement
+        req = Vector(polar=(
+            radians(self._commands.drive_direction),
+            self._commands.drive_velocity / 100.0 * MAXSPEED
+        ))
+        # Accounting for inertia
+        mov = req * (1 - INERTIA) + self._status.movement * INERTIA
+        pos = self._status.position + mov
+        if (not 0 <= pos.x <= MAXX) or (not 0 <= pos.y <= MAXY):
             self._status.damage += 2
-            newx = min(MAXX, max(0, newx))
-            newy = min(MAXY, max(0, newy))
+            pos = Vector(cartesian=(
+                min(MAXX, max(0, pos.x)),
+                min(MAXX, max(0, pos.y))
+            ))
             self._commands.drive_velocity = 0  # Have crashed, is now stopped
 
         # Saving resulting movement
-        self._status.position.cartesian = (newx, newy)
-        self._status.direction = self._commands.drive_direction
-        self._status.velocity = self._commands.drive_velocity
+        self._status.position = pos
+        self._status.movement = mov
 
     def get_direction(self) -> float:
         return self._status.direction
