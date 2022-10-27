@@ -21,9 +21,13 @@ class LobbyManager:
 
     async def broadcast(self, partida_id: int, msg: json):
         self.last_msg[partida_id] = msg
-        if self.room[partida_id] != []:
-            for connection in self.room[partida_id]:
-                await connection.send_json(msg)
+        try:
+            room = self.room[partida_id]
+            if room != []:
+                for connection in room:
+                    await connection.send_json(msg)
+        except Exception:
+            pass
 
 
 lobby_manager = LobbyManager()
