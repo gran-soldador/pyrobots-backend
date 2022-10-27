@@ -1,6 +1,5 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from websocket import lobby_manager
-from db import *
 
 router = APIRouter()
 
