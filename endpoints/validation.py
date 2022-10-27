@@ -1,6 +1,6 @@
 from pony.orm import *
 from db import *
-
+import base64
 
 #  Verifica si el nombre de usuario existe
 def user_exist(username: str):
@@ -24,3 +24,17 @@ def password_is_correct(pas: str):
 # Se fija si los datos de logue ingresados son válidos
 def correct_login(name: str, password: str):
     return Usuario.get(nombre_usuario=name, contraseña=password) is not None
+
+
+
+#  Convierte por ahora la imagen del path a string y momentaneamete
+#  escribe un archivo encode.bin para tener el string
+#  mas compacto para poder probar 
+def image_to_string():
+    with open("userUploads/robotAvatars/defaultAvatarRobot.png", "rb") as file:
+        img = file.read()
+        data = base64.encodebytes(img)#.decode('utf-8')
+    with open('userUploads/robotAvatars/encode.bin', "wb") as file:
+        file.write(data)
+    return data
+    #return json.dumps(data)
