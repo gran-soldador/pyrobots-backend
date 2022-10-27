@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Form, status, HTTPException, Depends
 from db import *
 from .functions_jwt import *
+from websocket import lobby_manager
+import asyncio
 
 router = APIRouter()
 
@@ -40,6 +42,14 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
                                 detail='el robot no pertenece al usuario')
         partida.participante.add(robot)
         partida.flush()
+        asyncio.gather(lobby_manager.broadcast(
+            partida_id,
+            {
+                "event": "join",
+                "robots": [{"id": r.robot_id, "nombre": r.nombre}
+                for r in list(Partida[partida_id].participante)]
+            }
+        ))
         if len(partida.participante) == partida.maxplayers:
             partida.status = 'ocupada'
         return {'detail': partida.status}
