@@ -27,7 +27,6 @@ async def imagen_funciona():
     return myPath
 
 
-
 # ANDA- SUBE UNA IMAGEN, ME MUESTRA LA MISMA IMAGEN SUBIDA
 
 # @router.post("/vector_image")

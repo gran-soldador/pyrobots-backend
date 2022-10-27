@@ -27,9 +27,11 @@ def correct_login(name: str, password: str):
 
 
 
+
 #  Convierte por ahora la imagen del path a string y momentaneamete
 #  escribe un archivo encode.bin para tener el string
 #  mas compacto para poder probar 
+
 def image_to_string():
     with open("userUploads/robotAvatars/defaultAvatarRobot.png", "rb") as file:
         img = file.read()
