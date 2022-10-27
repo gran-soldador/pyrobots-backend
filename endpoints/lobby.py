@@ -8,15 +8,7 @@ router = APIRouter()
 @router.websocket('/ws/{partida_id}')
 async def websocket_manager(websocket: WebSocket, partida_id: int):
     await lobby_manager.connect(websocket, partida_id)
-    try:
-        msg = lobby_manager.last_msg[partida_id]
-    except Exception:
-        with db_session:
-            msg = {
-                "event": 'created',
-                "robots": [{"id": r.robot_id, "nombre": r.nombre}
-                           for r in list(Partida[partida_id].participante)]
-            }
+    msg = lobby_manager.last_msg[partida_id]
     await websocket.send_json(msg)
     try:
         while True:
