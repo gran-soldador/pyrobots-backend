@@ -17,7 +17,7 @@ async def websocket_manager(websocket: WebSocket, partida_id: int):
                 msg = {
                     "event": "start",
                     "robot": [{"id": r.robot_id, "nombre": r.nombre}
-                              for r in 
+                              for r in
                               list(Partida[partida_id].participante)]
                 }
                 lobby_manager.last_msg[partida_id] = msg
@@ -30,4 +30,5 @@ async def websocket_manager(websocket: WebSocket, partida_id: int):
                 lobby_manager.disconnect(websocket, partida_id)
         else:
             lobby_manager.disconnect(websocket, partida_id)
+            await websocket.send_json({"detail": "room doesnt exist"})
             await websocket.close()
