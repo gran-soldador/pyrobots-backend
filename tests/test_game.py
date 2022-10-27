@@ -3,13 +3,13 @@ from engine import Game
 
 def test_invalid_codes():
     # Is not code
-    r1 = ("A", """
+    r1 = (1, "A", """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 Maecenas semper arcu in metus dignissim consectetur.
 Nam consequat vulputate ullamcorper.
     """)
     # Wrong class name
-    r2 = ("MyRobot", """
+    r2 = (2, "MyRobot", """
 class NotMyRobot(Robot):
     def initialize(self):
         pass
@@ -17,7 +17,7 @@ class NotMyRobot(Robot):
         pass
     """)
     # Doesn't subclass Robot
-    r3 = ("MyObj", """
+    r3 = (3, "MyObj", """
 class MyObj():
     def initialize(self):
         pass
@@ -25,7 +25,7 @@ class MyObj():
         pass
     """)
     # Good Robot
-    r4 = ("MyGoodRobot", """
+    r4 = (4, "MyGoodRobot", """
 class MyGoodRobot(Robot):
     def initialize(self):
         pass
@@ -34,11 +34,11 @@ class MyGoodRobot(Robot):
     """)
     gut = Game([r1, r2, r3, r4], 100)
     assert len(gut.alive) == 1
-    assert gut.alive[0]._status.name == r4[0]
+    assert gut.alive[0]._status.name == r4[1]
 
 
 def test_moving_robots():
-    r = ("R", """
+    r = (1, "R", """
 class R(Robot):
     def initialize(self):
         pass
@@ -47,7 +47,7 @@ class R(Robot):
     """)
     rounds = 5
     gut = Game([r, r], rounds)
-    result = gut.simulate()
+    result = gut.simulation()
     assert result["robotcount"] == len(result["robots"])
     assert result["maxrounds"] == result["rounds"] == rounds
     assert len(result["robots"][0]["positions"]) == result["rounds"] + 1
@@ -57,14 +57,14 @@ class R(Robot):
 
 
 def test_early_finish():
-    r1 = ("ISurvive", """
+    r1 = (1, "ISurvive", """
 class ISurvive(Robot):
     def initialize(self):
         pass
     def respond(self):
         pass
     """)
-    r2 = ("IDieAt3", """
+    r2 = (2, "IDieAt3", """
 class IDieAt3(Robot):
     def initialize(self):
         self.a = 1
@@ -75,10 +75,10 @@ class IDieAt3(Robot):
 """)
     rounds = 100
     gut = Game([r1, r2], rounds)
-    result = gut.simulate()
+    result = gut.simulation()
     assert result["robotcount"] == len(result["robots"])
     assert result["rounds"] == 3
-    assert result["robots"][1]["name"] == r2[0]
+    assert result["robots"][1]["name"] == r2[1]
     assert len(result["robots"][1]["positions"]) == result["rounds"] + 1
     damages = result["robots"][1]["damage"]
     for damage in damages[:-1]:

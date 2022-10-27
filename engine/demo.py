@@ -1,6 +1,6 @@
 from engine import Game
 
-random = ("RandomRobot", """
+random = (1, "RandomRobot", """
 class RandomRobot(Robot):
     def initialize(self):
         self.a = 1
@@ -10,7 +10,7 @@ class RandomRobot(Robot):
         self.drive(random.uniform(0,360),50)
 """)
 
-sleeping = ("SleepingRobot", """
+sleeping = (2, "SleepingRobot", """
 class SleepingRobot(Robot):
     def initialize(self):
         pass
@@ -19,7 +19,7 @@ class SleepingRobot(Robot):
         pass
 """)
 
-square = ("SquareRobot", """
+square = (3, "SquareRobot", """
 class SquareRobot(Robot):
     def initialize(self):
         self.cycling_mode = False
@@ -38,7 +38,7 @@ class SquareRobot(Robot):
             else: self.drive((dir + 90)%360, 50)
 """)
 
-dvd = ("DVDRobot", """
+dvd = (4, "DVDRobot", """
 class DVDRobot(Robot):
     def initialize(self):
         pass
@@ -53,7 +53,7 @@ class DVDRobot(Robot):
             self.drive(dir, 25)
 """)
 
-spiral = ("SpiralRobot", """
+spiral = (5, "SpiralRobot", """
 class SpiralRobot(Robot):
     def initialize(self):
         pass
@@ -69,4 +69,4 @@ class SpiralRobot(Robot):
 
 def demo():
     g = Game([random, square, dvd, spiral])
-    return g.simulate()
+    return g.simulation()

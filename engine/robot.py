@@ -20,6 +20,7 @@ class Position:
 class BotStatus:
     name: str = ""
     id: int = -1
+    robot_id: int = -1
     damage: float = 0.0
     velocity: float = 0.0
     direction: float = 0.0
