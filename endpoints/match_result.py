@@ -13,7 +13,8 @@ def return_result(partida_id: int = Form(...)):
         except Exception:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
-        if partida.status != 'terminada':
+        if partida.status != 'finalizada':
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no tiene resultados')
-        return {'ganador': partida.ganador.usuario.nombre_usuario}
+        ganador = [u.usuario.nombre_usuario for u in partida.ganador]
+        return {'ganador': ganador}

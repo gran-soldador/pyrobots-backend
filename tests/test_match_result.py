@@ -3,7 +3,7 @@ from db import *
 
 def test_correct_match(client, user1, robot1):
     with db_session:
-        p = Partida(namepartida='partida', status='terminada', minplayers=2,
+        p = Partida(namepartida='partida', status='finalizada', minplayers=2,
                     maxplayers=2, numgames=10, numrondas=10,
                     creador=Usuario[user1], ganador=Robot[robot1])
         p.participante.add(Robot[robot1])
@@ -14,7 +14,7 @@ def test_correct_match(client, user1, robot1):
         }
     )
     assert response.status_code == 200
-    assert response.json() == {'ganador': 'leandro'}
+    assert response.json() == {'ganador': ['leandro']}
 
 
 def test_unfinished_match(client, partida1):
