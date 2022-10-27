@@ -15,7 +15,7 @@ async def websocket_manager(websocket: WebSocket, partida_id: int):
             msg = {
                 "event": 'created',
                 "robots": [{"id": r.robot_id, "nombre": r.nombre}
-                for r in list(Partida[partida_id].participante)]
+                           for r in list(Partida[partida_id].participante)]
             }
     await websocket.send_json(msg)
     try:

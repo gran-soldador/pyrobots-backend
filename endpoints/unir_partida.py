@@ -47,7 +47,7 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
             {
                 "event": "join",
                 "robots": [{"id": r.robot_id, "nombre": r.nombre}
-                for r in list(Partida[partida_id].participante)]
+                           for r in list(Partida[partida_id].participante)]
             }
         ))
         if len(partida.participante) == partida.maxplayers:
