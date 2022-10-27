@@ -1,4 +1,5 @@
-from .robot import Robot, Position, MAXX, MAXY, HITBOX
+from .robot import Robot, Position
+from .constants import MAXX, MAXY, HITBOX
 from typing import Any, Dict, Generator, List, Tuple
 import logging
 import random

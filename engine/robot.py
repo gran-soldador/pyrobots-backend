@@ -3,11 +3,7 @@ from copy import deepcopy
 import logging
 from math import sin, cos, radians, isclose, sqrt
 from typing import Tuple
-
-MAXX = 1000.0  # in meters
-MAXY = 1000.0
-HITBOX = 10
-MAXSPEED = 10  # in meters/round at 100% speed
+from .constants import *
 
 
 @dataclass
