@@ -44,9 +44,11 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
         await lobby_manager.broadcast(
             partida_id,
             {
-                "event": "join",
-                "robots": [{"id": r.robot_id, "nombre": r.nombre}
-                           for r in list(Partida[partida_id].participante)]
+                "event": "created",
+                "creador": Partida[partida_id].creador.nombre_usuario,
+                "robot": [{"id": r.robot_id, "nombre": r.nombre,
+                           "usuario": r.usuario.nombre_usuario} for r in
+                          list(Partida[partida_id].participante)]
             }
         )
         if len(partida.participante) == partida.maxplayers:
