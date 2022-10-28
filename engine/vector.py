@@ -1,12 +1,17 @@
 from typing import Tuple
 from math import cos, sin, atan2, sqrt, isclose
 
+Pair = Tuple[float, float]
+
 
 class Vector:
-    def __init__(self,
-                 *,
-                 cartesian: Tuple[float, float] = None,
-                 polar: Tuple[float, float] = None):
+    def __init__(self, cartesian: Pair = None, polar: Pair = None):
+        """Vector supporting cartesian and polar coordinates
+
+        Exactly one argument must be provided
+        @cartesian: (x, y) pair
+        @polar: (angle, modulo) pair
+        """
         arg_count = sum(1 for i in [cartesian, polar] if i is not None)
         if arg_count != 1:
             raise ValueError(
@@ -15,44 +20,53 @@ class Vector:
         self._polar = polar
 
     @property
-    def cartesian(self):
-        if self._cartesian is not None:
-            return self._cartesian
-        angle, modulo = self._polar
-        return (cos(angle) * modulo, sin(angle) * modulo)
+    def cartesian(self) -> Pair:
+        if self._cartesian is None:
+            angle, modulo = self._polar
+            self._cartesian = (cos(angle) * modulo, sin(angle) * modulo)
+        return self._cartesian
 
     @cartesian.setter
-    def cartesian(self, val):
+    def cartesian(self, val: Pair):
         self._cartesian = val
         self._polar = None
 
     @property
     def polar(self):
-        if self._polar is not None:
-            return self._polar
-        x, y = self._cartesian
-        return (atan2(x, y), sqrt(x**2 + y**2))
+        if self._polar is None:
+            x, y = self._cartesian
+            self._polar = (atan2(x, y), sqrt(x**2 + y**2))
+        return self._polar
 
     @polar.setter
-    def polar(self, val):
+    def polar(self, val: Pair):
         self._polar = val
         self._cartesian = None
 
     @property
-    def x(self):
+    def x(self) -> float:
         return self.cartesian[0]
 
     @property
-    def y(self):
+    def y(self) -> float:
         return self.cartesian[1]
 
     @property
-    def angle(self):
+    def angle(self) -> float:
         return self.polar[0]
 
     @property
-    def modulo(self):
+    def modulo(self) -> float:
         return self.polar[1]
+
+    def is_bounded(self, minxy, maxxy) -> bool:
+        return ((minxy.x <= self.x <= maxxy.x)
+                and (minxy.y <= self.y <= maxxy.y))
+
+    def bound(self, minxy, maxxy):
+        x = min(maxxy.x, max(minxy.x, self.x))
+        y = min(maxxy.y, max(minxy.y, self.y))
+        return Vector(cartesian=(x, y))
 
     def __eq__(self, other):
         x_eq = isclose(self.x, other.x, rel_tol=1e-7)
@@ -66,7 +80,7 @@ class Vector:
         self.cartesian = (self.x + other.x, self.y + other.y)
         return self
 
-    def __mul__(self, scalar):
+    def __mul__(self, scalar: float):
         if self._cartesian is not None:
             return Vector(cartesian=(self.x * scalar, self.y * scalar))
         else:

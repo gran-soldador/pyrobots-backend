@@ -7,6 +7,9 @@ from .constants import *
 from .vector import Vector
 
 
+BOUNDS = (Vector((0, 0)), Vector((MAXX, MAXY)))
+
+
 @dataclass
 class BotStatus:
     name: str = ""
@@ -75,7 +78,7 @@ class Robot:
         self._commands.drive_direction = direction
         self._commands.drive_velocity = velocity
 
-    def _execute_drive(self) -> None:
+    def _validate_drive(self) -> None:
         if not 0 <= self._commands.drive_velocity <= 100:
             raise ValueError("Invalid speed")
         if not 0 <= self._commands.drive_direction < 360:
@@ -86,25 +89,21 @@ class Robot:
         if changed_dir and not stopped and self._commands.drive_velocity > 50:
             raise ValueError("Too fast for changing direction")
 
-        # Parameters are now valid: calculating desired movement
-        req = Vector(polar=(
+    def _execute_drive(self) -> None:
+        self._validate_drive()
+        requested = Vector(polar=(
             radians(self._commands.drive_direction),
             self._commands.drive_velocity / 100.0 * MAXSPEED
         ))
-        # Accounting for inertia
-        mov = req * (1 - INERTIA) + self._status.movement * INERTIA
-        pos = self._status.position + mov
-        if (not 0 <= pos.x <= MAXX) or (not 0 <= pos.y <= MAXY):
+        movement = requested * (1 - INERTIA) + self._status.movement * INERTIA
+        position = self._status.position + movement
+        if not position.is_bounded(*BOUNDS):
             self._status.damage += 2
-            pos = Vector(cartesian=(
-                min(MAXX, max(0, pos.x)),
-                min(MAXX, max(0, pos.y))
-            ))
-            self._commands.drive_velocity = 0  # Have crashed, is now stopped
+            position = position.bound(*BOUNDS)
+            movement = Vector((0, 0))
 
-        # Saving resulting movement
-        self._status.position = pos
-        self._status.movement = mov
+        self._status.position = position
+        self._status.movement = movement
 
     def get_direction(self) -> float:
         return self._status.direction
