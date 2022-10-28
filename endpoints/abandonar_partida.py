@@ -32,8 +32,10 @@ async def abandonar_partida(user_id: int = Depends(authenticated_user),
             partida_id,
             {
                 "event": "quit",
-                "robots": [{"id": r.robot_id, "nombre": r.nombre}
-                           for r in list(Partida[partida_id].participante)]
+                "creador": Partida[partida_id].creador.nombre_usuario,
+                "robot": [{"id": r.robot_id, "nombre": r.nombre,
+                           "usuario": r.usuario.nombre_usuario} for r in
+                         list(Partida[partida_id].participante)]
             }
         )
         if len(partida.participante) < partida.maxplayers:

@@ -75,12 +75,14 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         p1.participante.add(robot)
         p1.flush()
         partida_id = p1.partida_id
-        asyncio.gather(lobby_manager.broadcast(
+        await lobby_manager.broadcast(
             partida_id,
             {
                 "event": "created",
-                "robots": [{"id": r.robot_id, "nombre": r.nombre}
-                           for r in list(Partida[partida_id].participante)]
+                "creador": Partida[partida_id].creador.nombre_usuario,
+                "robot": [{"id": r.robot_id, "nombre": r.nombre,
+                           "usuario": r.usuario.nombre_usuario} for r in
+                         list(Partida[partida_id].participante)]
             }
-        ))
+        )
         return {'id_partida': partida_id}

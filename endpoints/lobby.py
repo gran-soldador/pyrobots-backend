@@ -16,8 +16,9 @@ async def websocket_manager(websocket: WebSocket, partida_id: int):
             except Exception:
                 msg = {
                     "event": "start",
-                    "robot": [{"id": r.robot_id, "nombre": r.nombre}
-                              for r in
+                    "creador": Partida[partida_id].creador.nombre_usuario,
+                    "robot": [{"id": r.robot_id, "nombre": r.nombre,
+                               "usuario": r.usuario.nombre_usuario} for r in
                               list(Partida[partida_id].participante)]
                 }
                 lobby_manager.last_msg[partida_id] = msg
