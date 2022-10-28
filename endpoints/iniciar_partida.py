@@ -38,7 +38,10 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
             partida_id,
             {
                 "event": "finish",
-                "ganador": ganador
+                "creador": Partida[partida_id].creador.nombre_usuario,
+                "robot": [{"id": r.robot_id, "nombre": r.nombre,
+                           "usuario": r.usuario.nombre_usuario} for r in
+                          list(Partida[partida_id].participante)]
             }
         )
 
