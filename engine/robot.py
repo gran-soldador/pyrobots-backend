@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from copy import deepcopy
 import logging
 from math import radians, isclose, sqrt, degrees
-from typing import Tuple
+from typing import Tuple, Optional
 from .constants import *
 from .vector import Vector
 
@@ -22,12 +22,16 @@ class BotStatus:
     damage: float = 0.0
     movement: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
     position: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
+    # TODO: Add cannon cooldown status
 
 
 @dataclass
 class BotCommands:
     drive_direction: float = 0.0
     drive_velocity: float = 0.0
+    cannon_used: bool = False
+    cannon_degree: float = 0.0
+    cannon_distance: float = 0.0
 
 
 class Robot:
@@ -68,10 +72,33 @@ class Robot:
             self._status.damage = 100
 
     def is_cannon_ready(self) -> bool:
-        pass  # pragma: no cover
+        return True  # TODO: Check if cannon is ready
 
     def cannon(self, degree: float, distance: float) -> None:
-        pass  # pragma: no cover
+        self._commands.cannon_used = True
+        self._commands.cannon_degree = degree
+        self._commands.cannon_distance = distance
+
+    def _validate_cannon(self) -> None:
+        if not self.is_cannon_ready():
+            raise ValueError("Cannon was not available")
+        if not 0 <= self._commands.cannon_degree < 360:
+            raise ValueError("Invalid angle")
+        if self._commands.cannon_distance < 0:
+            raise ValueError("Invalid distance")
+
+    def _execute_cannon(self) -> Optional[Vector]:
+        if not self._commands.cannon_used:
+            return
+        try:
+            self._validate_cannon()
+        except Exception:
+            self._status.damage = 100
+            return
+        return Vector(polar=(
+            radians(self._commands.cannon_degree),
+            self._commands.cannon_distance
+        ))
 
     def point_scanner(self, direction: float,
                       resolution_in_degrees: float) -> None:

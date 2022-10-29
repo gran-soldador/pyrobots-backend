@@ -82,6 +82,9 @@ class Vector:
         y = min(maxxy.y, max(minxy.y, self.y))
         return Vector(cartesian=(x, y))
 
+    def distance(self, other) -> float:
+        return (self - other).modulo
+
     def __eq__(self, other):
         x_eq = isclose(self.x, other.x, abs_tol=EPSILON)
         y_eq = isclose(self.y, other.y, abs_tol=EPSILON)
@@ -89,6 +92,9 @@ class Vector:
 
     def __add__(self, other):
         return Vector(cartesian=(self.x + other.x, self.y + other.y))
+
+    def __sub__(self, other):
+        return Vector(cartesian=(self.x - other.x, self.y - other.y))
 
     def __iadd__(self, other):
         self.cartesian = (self.x + other.x, self.y + other.y)

@@ -51,6 +51,7 @@ class DVDRobot(Robot):
             self.drive(random.uniform(dir+90, dir+270)%360,25)
         else:
             self.drive(dir, 25)
+        self.cannon(dir, 500)
 """)
 
 spiral = (5, "SpiralRobot", """
@@ -64,6 +65,7 @@ class SpiralRobot(Robot):
             self.drive(random.uniform(0,360),50)
         else:
             self.drive((dir + 5) % 360, 50)
+        self.cannon(dir, 500)
 """)
 
 
