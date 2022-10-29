@@ -8,9 +8,9 @@ from itertools import combinations
 class Game:
     def __init__(self,
                  robot_descriptions: List[Tuple[int, str, str]],
-                 rounds: int = 100000):
+                 rounds: int = 10000):
         assert 2 <= len(robot_descriptions) <= 4
-        assert 1 <= rounds <= 100000
+        assert 1 <= rounds <= 10000
         logging.getLogger(__name__).debug("starting game")
         self.rounds = rounds
         self.robots: List[Robot] = []

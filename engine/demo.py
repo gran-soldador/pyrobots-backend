@@ -50,7 +50,7 @@ class DVDRobot(Robot):
         elif x == 1000 or x == 0 or y == 1000 or y == 0:
             self.drive(random.uniform(dir+90, dir+270)%360,25)
         else:
-            self.drive(dir, 25)
+            self.drive(dir, 75)
 """)
 
 spiral = (5, "SpiralRobot", """
