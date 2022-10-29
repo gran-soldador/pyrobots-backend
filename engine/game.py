@@ -8,6 +8,34 @@ import logging
 import random
 from itertools import combinations
 import heapq
+from pydantic import BaseModel
+
+
+# These COULD be dataclasses, as we don't need validation. But we know we are
+# inside a REST API, and using a model eases auto generating docs
+class RobotId(BaseModel):
+    id: int
+    name: str
+
+
+class RobotRoundResult(BaseModel):
+    x: float
+    y: float
+    damage: float
+
+
+class RobotResult(RobotId):
+    statuses: List[RobotRoundResult] = []
+
+
+class MatchResult(BaseModel):
+    rounds_played: int
+    winners: List[RobotId]
+
+
+class SimulationResult(BaseModel):
+    maxrounds: int
+    robots: List[RobotResult]
 
 
 class Game:
@@ -43,35 +71,27 @@ class Game:
         return [r for r in self.robots if r._status.damage < 100]
 
     def simulation(self) -> Dict[str, Any]:
-        result = {
-            "maxrounds": self.rounds,
-            "robotcount": len(self.robots),
-            "robots": [{
-                "name": r._status.name,
-                "positions": [],
-                "damage": []
-            } for r in self.robots]
-        }
+        result = SimulationResult(
+            maxrounds=self.rounds,
+            robots=[RobotResult(id=r._status.robot_id, name=r._status.name)
+                    for r in self.robots]
+        )
 
         self._initialize_robots()
         round_generator = self._execute_rounds()
         try:
             while True:
-                for r in self.robots:
-                    x = r._status.position.x
-                    y = r._status.position.y
-                    damage = r._status.damage
-                    result["robots"][r._status.id]["positions"].append(
-                        {"x": x, "y": y}
+                for (game_r, out_r) in zip(self.robots, result.robots):
+                    curr_status = RobotRoundResult(
+                        x=game_r._status.position.x,
+                        y=game_r._status.position.y,
+                        damage=game_r._status.damage
                     )
-                    result["robots"][r._status.id]["damage"].append(damage)
+                    out_r.statuses.append(curr_status)
                 # TODO: Add missiles in flight to result
                 next(round_generator)
         except StopIteration as ret:
-            (result["rounds"],
-             result["winner_id"],
-             result["winner_name"]) = ret.args[0]
-        return result
+            return result.dict() | ret.args[0].dict()
 
     def match(self) -> Tuple[int, int, str]:
         self._initialize_robots()
@@ -86,7 +106,7 @@ class Game:
         for r in self.alive:
             Robot._initialize_or_die(r)
 
-    def _execute_rounds(self) -> Generator[Any, None, Tuple[int, int, str]]:
+    def _execute_rounds(self) -> Generator[Any, None, MatchResult]:
         # TODO: REFACTOR! Divide into cannon, scanner and movement stages.
         round = 0
         missiles_in_flight: List[MissileInFlight] = []
@@ -124,9 +144,8 @@ class Game:
 
             round += 1
             yield
-        if len(self.alive) == 1:
-            return (round,
-                    self.alive[0]._status.robot_id,
-                    self.alive[0]._status.name)
-        else:
-            return (round, None, None)
+        return MatchResult(
+            rounds_played=round,
+            winners=[RobotId(id=r._status.robot_id, name=r._status.name)
+                     for r in self.alive]
+        )
