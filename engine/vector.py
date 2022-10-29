@@ -1,5 +1,7 @@
 from typing import Tuple
 from math import cos, sin, atan2, sqrt, isclose
+from .constants import EPSILON
+
 
 Pair = Tuple[float, float]
 
@@ -9,8 +11,8 @@ class Vector:
         """Vector supporting cartesian and polar coordinates
 
         Exactly one argument must be provided
-        @cartesian: (x, y) pair
-        @polar: (angle, modulo) pair
+        :param cartesian: (x, y) pair
+        :param polar: (angle, modulo) pair
         """
         arg_count = sum(1 for i in [cartesian, polar] if i is not None)
         if arg_count != 1:
@@ -35,7 +37,7 @@ class Vector:
     def polar(self):
         if self._polar is None:
             x, y = self._cartesian
-            self._polar = (atan2(x, y), sqrt(x**2 + y**2))
+            self._polar = (atan2(y, x), sqrt(x**2 + y**2))
         return self._polar
 
     @polar.setter
@@ -60,17 +62,29 @@ class Vector:
         return self.polar[1]
 
     def is_bounded(self, minxy, maxxy) -> bool:
-        return ((minxy.x <= self.x <= maxxy.x)
-                and (minxy.y <= self.y <= maxxy.y))
+        """ Test whether Vector is inside rectangle
+
+        :param minxy: corner with minimum x and minimum y
+        :param maxxy: corner with maximum x and maximum y
+        :return: True iff self is inside rectangle defined by minxy, maxxy
+        """
+        return ((minxy.x <= self.x <= maxxy.x) and
+                (minxy.y <= self.y <= maxxy.y))
 
     def bound(self, minxy, maxxy):
+        """ Used to ensure Vector is inside rectangle
+
+        :param minxy: corner with minimum x and minimum y
+        :param maxxy: corner with maximum x and maximum y
+        :return: New Vector such that it lies within rectangle
+        """
         x = min(maxxy.x, max(minxy.x, self.x))
         y = min(maxxy.y, max(minxy.y, self.y))
         return Vector(cartesian=(x, y))
 
     def __eq__(self, other):
-        x_eq = isclose(self.x, other.x, rel_tol=1e-7)
-        y_eq = isclose(self.y, other.y, rel_tol=1e-7)
+        x_eq = isclose(self.x, other.x, abs_tol=EPSILON)
+        y_eq = isclose(self.y, other.y, abs_tol=EPSILON)
         return x_eq and y_eq
 
     def __add__(self, other):
@@ -85,3 +99,9 @@ class Vector:
             return Vector(cartesian=(self.x * scalar, self.y * scalar))
         else:
             return Vector(polar=(self.angle, self.modulo * scalar))
+
+    def __repr__(self):
+        if self._cartesian is not None:
+            return f"Vector(cartesian={self._cartesian})"
+        else:
+            return f"Vector(polar={self._polar})"
