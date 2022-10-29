@@ -48,11 +48,10 @@ class R(Robot):
     rounds = 5
     gut = Game([r, r], rounds)
     result = gut.simulation()
-    assert result["robotcount"] == len(result["robots"])
-    assert result["maxrounds"] == result["rounds"] == rounds
-    assert len(result["robots"][0]["positions"]) == result["rounds"] + 1
-    positions = result["robots"][0]["positions"]
-    for prev, curr in zip(positions, positions[1:]):
+    assert result["maxrounds"] == result["rounds_played"] == rounds
+    assert len(result["robots"][0]["statuses"]) == result["rounds_played"] + 1
+    statuses = result["robots"][0]["statuses"]
+    for prev, curr in zip(statuses, statuses[1:]):
         assert curr["x"] > prev["x"] and curr["y"] == curr["y"]
 
 
@@ -76,14 +75,13 @@ class IDieAt3(Robot):
     rounds = 100
     gut = Game([r1, r2], rounds)
     result = gut.simulation()
-    assert result["robotcount"] == len(result["robots"])
-    assert result["rounds"] == 3
+    assert result["rounds_played"] == 3
     assert result["robots"][1]["name"] == r2[1]
-    assert len(result["robots"][1]["positions"]) == result["rounds"] + 1
-    damages = result["robots"][1]["damage"]
-    for damage in damages[:-1]:
-        assert damage == 0
-    assert damages[-1] == 100
+    assert len(result["robots"][1]["statuses"]) == result["rounds_played"] + 1
+    statuses = result["robots"][1]["statuses"]
+    for status in statuses[:-1]:
+        assert status["damage"] == 0
+    assert statuses[-1]["damage"] == 100
 
 
 def test_crashing_robots():
@@ -108,6 +106,7 @@ class IGoToCenter(Robot):
     gut = Game([r(1), r(2), r(3), r(4)], 100000)
     result = gut.simulation()
 
-    assert result["rounds"] < 10000  # Robots should die VERY quickly
-    count = sum(1 for robot in result["robots"] if robot["damage"][-1] >= 100)
+    assert result["rounds_played"] < 10000  # Robots should die VERY quickly
+    count = sum(1 for robot in result["robots"]
+                if robot["statuses"][-1]["damage"] >= 100)
     assert count >= 3
