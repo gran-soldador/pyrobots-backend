@@ -11,6 +11,7 @@ class MissileInFlight:
     origin: Vector = field(compare=False)
     destination: Vector = field(compare=False)
     angle: float = field(compare=False)
+    sender: int = field(compare=False)
 
     def curr_pos(self, round: int) -> Vector:
         movement = Vector(polar=(

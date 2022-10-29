@@ -29,6 +29,7 @@ class RobotStatus(Status):
 
 class MissileStatus(Status):
     angle: float
+    sender: int
 
 
 class ExplosionStatus(Status):
@@ -103,7 +104,8 @@ class Game:
                 for m in self.missiles_in_flight:
                     pos = m.curr_pos(self.round)
                     missiles_status.append(
-                        MissileStatus(x=pos.x, y=pos.y, angle=m.angle))
+                        MissileStatus(x=pos.x, y=pos.y, angle=m.angle,
+                                      sender=m.sender))
                 explosions_status = [
                     ExplosionStatus(x=e.x, y=e.y) for e in self.explosions]
                 self.explosions.clear()  # Delete explosions for next round
@@ -146,7 +148,8 @@ class Game:
                         self.round,
                         r._status.position,
                         r._status.position + shot_vec,
-                        shot_vec.angle
+                        shot_vec.angle,
+                        r._status.id
                     )
                     heapq.heappush(self.missiles_in_flight, missile)
             while (len(self.missiles_in_flight) > 0 and
