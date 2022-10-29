@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 import logging
-from math import radians, isclose, sqrt
+from math import radians, isclose, sqrt, degrees
 from typing import Tuple
 from .constants import *
 from .vector import Vector
@@ -116,10 +116,10 @@ class Robot:
         self._status.movement = movement
 
     def get_direction(self) -> float:
-        return self._status.direction
+        return degrees(self._status.movement.angle)
 
     def get_velocity(self) -> float:
-        return self._status.velocity
+        return self._status.movement.modulo / MAXSPEED
 
     def get_position(self) -> Tuple[float, float]:
         return self._status.position.x, self._status.position.y
