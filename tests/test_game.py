@@ -1,4 +1,5 @@
 from engine import Game
+from engine.constants import MAXROUNDS
 
 
 def test_invalid_codes():
@@ -43,16 +44,16 @@ class R(Robot):
     def initialize(self):
         pass
     def respond(self):
-        self.drive(0,1)
+        self.drive(45,1)
     """)
     rounds = 5
     gut = Game([r, r], rounds)
     result = gut.simulation()
-    assert result["maxrounds"] == result["rounds_played"] == rounds
-    assert len(result["robots"][0]["statuses"]) == result["rounds_played"] + 1
-    statuses = result["robots"][0]["statuses"]
-    for prev, curr in zip(statuses, statuses[1:]):
-        assert curr["x"] > prev["x"] and curr["y"] == curr["y"]
+    assert result.maxrounds == result.rounds_played == rounds
+    assert len(result.rounds) == result.rounds_played + 1
+    for prev, curr in zip(result.rounds, result.rounds[1:]):
+        assert (curr.robots[0].x > prev.robots[0].x and
+                curr.robots[0].y > prev.robots[0].y)
 
 
 def test_early_finish():
@@ -75,13 +76,13 @@ class IDieAt3(Robot):
     rounds = 100
     gut = Game([r1, r2], rounds)
     result = gut.simulation()
-    assert result["rounds_played"] == 3
-    assert result["robots"][1]["name"] == r2[1]
-    assert len(result["robots"][1]["statuses"]) == result["rounds_played"] + 1
-    statuses = result["robots"][1]["statuses"]
-    for status in statuses[:-1]:
-        assert status["damage"] == 0
-    assert statuses[-1]["damage"] == 100
+    print(result)
+    assert result.rounds_played == 3
+    assert result.players[1].name == r2[1]
+    assert len(result.rounds) == result.rounds_played + 1
+    for status in result.rounds[:-1]:
+        assert status.robots[1].damage == 0
+    assert result.rounds[-1].robots[1].damage == 100
 
 
 def test_crashing_robots():
@@ -103,10 +104,10 @@ class IGoToCenter(Robot):
             else: #upper right
                 self.drive(45+180, 50)
     """)
-    gut = Game([r(1), r(2), r(3), r(4)], 100000)
+    gut = Game([r(1), r(2), r(3), r(4)], MAXROUNDS)
     result = gut.simulation()
 
-    assert result["rounds_played"] < 10000  # Robots should die VERY quickly
-    count = sum(1 for robot in result["robots"]
-                if robot["statuses"][-1]["damage"] >= 100)
+    assert result.rounds_played < MAXROUNDS
+    count = sum(1 for robot in result.rounds[-1].robots
+                if robot.damage >= 100)
     assert count >= 3

@@ -70,5 +70,5 @@ class SpiralRobot(Robot):
 
 
 def demo():
-    g = Game([random, square, dvd, spiral])
+    g = Game([random, square, dvd, spiral], 15)
     return g.simulation()

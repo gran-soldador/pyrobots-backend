@@ -93,6 +93,8 @@ class Robot:
         try:
             self._validate_cannon()
         except Exception:
+            logging.getLogger(__name__).debug("Robot failed when shooting",
+                                              exc_info=True)
             self._status.damage = 100
             return
         return Vector(polar=(
@@ -126,6 +128,8 @@ class Robot:
         try:
             self._validate_drive()
         except Exception:
+            logging.getLogger(__name__).debug("Robot failed when moving",
+                                              exc_info=True)
             self._status.damage = 100
             return
         requested = Vector(polar=(
@@ -143,7 +147,7 @@ class Robot:
         self._status.movement = movement
 
     def get_direction(self) -> float:
-        return degrees(self._status.movement.angle)
+        return (degrees(self._status.movement.angle) + 360) % 360
 
     def get_velocity(self) -> float:
         return self._status.movement.modulo / MAXSPEED
