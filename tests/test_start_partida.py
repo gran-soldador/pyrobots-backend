@@ -1,4 +1,4 @@
-def test_correct_start(loggedin_client, partida1, partida2, partida5):
+def test_correct_start(loggedin_client, partida5):
     response = loggedin_client.post(
         '/iniciar-partida',
         data={'partida_id': partida5}
@@ -7,7 +7,7 @@ def test_correct_start(loggedin_client, partida1, partida2, partida5):
     assert response.json() == {'detail': 'iniciada'}
 
 
-def test_incorrect_user(loggedin_client2, partida1, partida2, partida5):
+def test_incorrect_user(loggedin_client2, partida5):
     response = loggedin_client2.post(
         '/iniciar-partida',
         data={'partida_id': partida5}
@@ -16,7 +16,7 @@ def test_incorrect_user(loggedin_client2, partida1, partida2, partida5):
     assert response.json() == {'detail': 'permiso denegado'}
 
 
-def test_incorrect_players(loggedin_client, partida1, partida2, partida3):
+def test_incorrect_players(loggedin_client, partida3):
     response = loggedin_client.post(
         '/iniciar-partida',
         data={'partida_id': partida3}
@@ -34,7 +34,7 @@ def test_incorrect_match(loggedin_client):
     assert response.json() == {'detail': 'la partida no existe'}
 
 
-def test_incorrect_status(loggedin_client, partida1, partida2, partida6):
+def test_incorrect_status(loggedin_client, partida6):
     response = loggedin_client.post(
         '/iniciar-partida',
         data={'partida_id': partida6}

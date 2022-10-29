@@ -33,17 +33,7 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
             robot.flush()
         partida.status = 'finalizada'
         partida.flush()
-        ganador = [u.usuario.nombre_usuario for u in partida.ganador]
-        await lobby_manager.broadcast(
-            partida_id,
-            {
-                "event": "finish",
-                "creador": Partida[partida_id].creador.nombre_usuario,
-                "robot": [{"id": r.robot_id, "nombre": r.nombre,
-                           "usuario": r.usuario.nombre_usuario} for r in
-                          list(Partida[partida_id].participante)]
-            }
-        )
+        await lobby_manager.broadcast(partida_id, 'finish')
 
 
 @router.post('/iniciar-partida')
@@ -71,14 +61,5 @@ async def init_match(user_id: int = Depends(authenticated_user),
                                   partida.numgames, partida.numrondas)
         partida.status = 'iniciada'
         partida.flush()
-        await lobby_manager.broadcast(
-            partida_id,
-            {
-                "event": "init",
-                "creador": Partida[partida_id].creador.nombre_usuario,
-                "robot": [{"id": r.robot_id, "nombre": r.nombre,
-                           "usuario": r.usuario.nombre_usuario} for r in
-                          list(Partida[partida_id].participante)]
-            }
-        )
+        await lobby_manager.broadcast(partida_id, 'init')
         return {'detail': partida.status}

@@ -28,16 +28,7 @@ async def abandonar_partida(user_id: int = Depends(authenticated_user),
                                 detail='ya no tiene permitido abandonar')
         partida.participante.remove(user)
         partida.flush()
-        await lobby_manager.broadcast(
-            partida_id,
-            {
-                "event": "quit",
-                "creador": Partida[partida_id].creador.nombre_usuario,
-                "robot": [{"id": r.robot_id, "nombre": r.nombre,
-                           "usuario": r.usuario.nombre_usuario} for r in
-                          list(Partida[partida_id].participante)]
-            }
-        )
+        await lobby_manager.broadcast(partida_id, 'quit')
         if len(partida.participante) < partida.maxplayers:
             partida.status = 'disponible'
         return {'detail': partida.status}

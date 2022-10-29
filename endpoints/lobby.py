@@ -12,24 +12,16 @@ async def websocket_manager(websocket: WebSocket, partida_id: int):
         if Partida.get(partida_id=partida_id) is not None:
             try:
                 msg = lobby_manager.last_msg[partida_id]
-                await websocket.send_json(msg)
+                await lobby_manager.send_msg(partida_id, websocket, msg)
             except Exception:
-                msg = {
-                    "event": "start",
-                    "creador": Partida[partida_id].creador.nombre_usuario,
-                    "robot": [{"id": r.robot_id, "nombre": r.nombre,
-                               "usuario": r.usuario.nombre_usuario} for r in
-                              list(Partida[partida_id].participante)]
-                }
-                lobby_manager.last_msg[partida_id] = msg
-                await websocket.send_json(msg)
+                await lobby_manager.send_msg(partida_id, websocket, 'start')
             try:
                 while True:
-                    data = await websocket.receive_json()
+                    data = await websocket.receive_text()
                     await lobby_manager.broadcast(partida_id, data)
             except WebSocketDisconnect:
                 lobby_manager.disconnect(websocket, partida_id)
         else:
             lobby_manager.disconnect(websocket, partida_id)
-            await websocket.send_json({"detail": "room doesnt exist"})
+            await lobby_manager.send_msg(partida_id, websocket, 'error')
             await websocket.close()

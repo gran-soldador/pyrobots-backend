@@ -74,14 +74,5 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         p1.participante.add(robot)
         p1.flush()
         partida_id = p1.partida_id
-        await lobby_manager.broadcast(
-            partida_id,
-            {
-                "event": "created",
-                "creador": Partida[partida_id].creador.nombre_usuario,
-                "robot": [{"id": r.robot_id, "nombre": r.nombre,
-                           "usuario": r.usuario.nombre_usuario} for r in
-                          list(Partida[partida_id].participante)]
-            }
-        )
+        await lobby_manager.broadcast(partida_id, 'created')
         return {'id_partida': partida_id}

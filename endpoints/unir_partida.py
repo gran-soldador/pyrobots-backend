@@ -41,16 +41,7 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
                                 detail='el robot no pertenece al usuario')
         partida.participante.add(robot)
         partida.flush()
-        await lobby_manager.broadcast(
-            partida_id,
-            {
-                "event": "join",
-                "creador": Partida[partida_id].creador.nombre_usuario,
-                "robot": [{"id": r.robot_id, "nombre": r.nombre,
-                           "usuario": r.usuario.nombre_usuario} for r in
-                          list(Partida[partida_id].participante)]
-            }
-        )
+        await lobby_manager.broadcast(partida_id, 'join')
         if len(partida.participante) == partida.maxplayers:
             partida.status = 'ocupada'
         return {'detail': partida.status}
