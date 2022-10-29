@@ -10,6 +10,10 @@ from .vector import Vector
 BOUNDS = (Vector((0, 0)), Vector((MAXX, MAXY)))
 
 
+class MisbehavingRobotException(Exception):
+    pass
+
+
 @dataclass
 class BotStatus:
     name: str = ""
@@ -39,7 +43,8 @@ class Robot:
         prev_status = deepcopy(self._status)
         try:
             self.initialize()
-            assert self._status == prev_status
+            if self._status != prev_status:
+                raise MisbehavingRobotException()
         except Exception:
             logging.getLogger(__name__).debug("Robot failed when initializing",
                                               exc_info=True)
@@ -54,7 +59,8 @@ class Robot:
         self._commands = BotCommands()
         try:
             self.respond()
-            assert self._status == prev_status
+            if self._status != prev_status:
+                raise MisbehavingRobotException()
         except Exception:
             logging.getLogger(__name__).debug("Robot failed when responding",
                                               exc_info=True)
@@ -84,13 +90,17 @@ class Robot:
         if not 0 <= self._commands.drive_direction < 360:
             raise ValueError("Invalid angle")
         changed_dir = not isclose(radians(self._commands.drive_direction),
-                                  self._status.movement.angle)
-        stopped = isclose(0.0, self._status.movement.modulo)
+                                  self._status.movement.angle, abs_tol=EPS_ANG)
+        stopped = isclose(0.0, self._status.movement.modulo, abs_tol=EPSILON)
         if changed_dir and not stopped and self._commands.drive_velocity > 50:
             raise ValueError("Too fast for changing direction")
 
     def _execute_drive(self) -> None:
-        self._validate_drive()
+        try:
+            self._validate_drive()
+        except Exception:
+            self._status.damage = 100
+            return
         requested = Vector(polar=(
             radians(self._commands.drive_direction),
             self._commands.drive_velocity / 100.0 * MAXSPEED

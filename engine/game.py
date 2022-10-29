@@ -1,4 +1,4 @@
-from .robot import Robot
+from .robot import Robot, MisbehavingRobotException
 from .vector import Vector
 from .constants import MAXX, MAXY, HITBOX
 from typing import Any, Dict, Generator, List, Tuple
@@ -20,7 +20,8 @@ class Game:
             try:
                 exec(code)
                 robot = eval(name)()
-                assert isinstance(robot, Robot)
+                if not isinstance(robot, Robot):
+                    raise MisbehavingRobotException()
             except Exception:
                 logging.getLogger(__name__).debug(
                     "Robot failed during construction", exc_info=True)

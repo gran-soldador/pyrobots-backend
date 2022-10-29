@@ -2,7 +2,6 @@ from engine.robot import Robot, MAXSPEED, MAXX, MAXY, INERTIA
 from engine.vector import Vector
 from math import isclose
 from copy import deepcopy
-import pytest
 
 
 def test_cheating_robot():
@@ -120,9 +119,9 @@ def test_invalid_speed_robot():
 
     rut = InvalidSpeedRobot()
     Robot._initialize_or_die(rut)
-    with pytest.raises(ValueError):
-        Robot._respond_or_die(rut)
-        Robot._execute_drive(rut)
+    Robot._respond_or_die(rut)
+    Robot._execute_drive(rut)
+    assert rut._status.damage == 100
 
 
 def test_invalid_angle_robot():
@@ -135,9 +134,9 @@ def test_invalid_angle_robot():
 
     rut = InvalidAngleRobot()
     Robot._initialize_or_die(rut)
-    with pytest.raises(ValueError):
-        Robot._respond_or_die(rut)
-        Robot._execute_drive(rut)
+    Robot._respond_or_die(rut)
+    Robot._execute_drive(rut)
+    assert rut._status.damage == 100
 
 
 def test_turning_too_fast_robot():
@@ -157,6 +156,7 @@ def test_turning_too_fast_robot():
     Robot._initialize_or_die(rut)
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
-    with pytest.raises(ValueError):
-        Robot._respond_or_die(rut)
-        Robot._execute_drive(rut)
+    assert rut._status.damage == 0
+    Robot._respond_or_die(rut)
+    Robot._execute_drive(rut)
+    assert rut._status.damage == 100
