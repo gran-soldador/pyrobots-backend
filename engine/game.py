@@ -1,56 +1,16 @@
-from math import ceil
+import logging
+import random
+from typing import Any, Generator, List, Tuple
+from itertools import combinations  # hit calculation
+from math import ceil               # missile flight delay
+
+import heapq                        # missiles_in_flight data structure
+
 from .robot import Robot, MisbehavingRobotException
 from .vector import Vector
 from .missile import MissileInFlight
 from .constants import MAXX, MAXY, HITBOX, MISSILE_SPEED, MAXROUNDS
-from typing import Any, Generator, List, Tuple
-import logging
-import random
-from itertools import combinations
-import heapq
-from pydantic import BaseModel
-
-
-# These COULD be dataclasses, as we don't need validation. But we know we are
-# inside a REST API, and using a model eases auto generating docs
-class RobotId(BaseModel):
-    id: int
-    name: str
-
-
-class Status(BaseModel):
-    x: float
-    y: float
-
-
-class RobotStatus(Status):
-    damage: float
-
-
-class MissileStatus(Status):
-    angle: float
-    sender: int
-
-
-class ExplosionStatus(Status):
-    pass
-
-
-class RoundResult(BaseModel):
-    robots: List[RobotStatus]
-    missiles: List[MissileStatus] = []
-    explosions: List[ExplosionStatus] = []
-
-
-class MatchResult(BaseModel):
-    rounds_played: int
-    players: List[RobotId]
-    winners: List[RobotId]
-
-
-class SimulationResult(MatchResult):
-    maxrounds: int
-    rounds: List[RoundResult]
+from .outputmodels import *
 
 
 class Game:
