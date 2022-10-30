@@ -14,8 +14,10 @@ class MissileInFlight:
     sender: int = field(compare=False)
 
     def curr_pos(self, round: int) -> Vector:
-        movement = Vector(polar=(
-            self.angle,
-            (round - self.start_round) * MISSILE_SPEED
-        ))
-        return self.origin + movement
+        if round < self.hit_round:
+            return (self.origin + Vector(polar=(
+                self.angle,
+                (round - self.start_round) * MISSILE_SPEED
+            )))
+        else:
+            return self.destination
