@@ -5,15 +5,13 @@ from .functions_jwt import *
 from websocket import lobby_manager
 from typing import Tuple, List, Dict
 from engine import Game
+from fastapi.concurrency import run_in_threadpool
 
 router = APIRouter()
 
 
-async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
-                          numgames: int, numrondas: int):
-    scores: Dict[int, int] = {}
-    for (robot_id, _, _) in robots:
-        scores[robot_id] = 0
+def loop(scores: Dict[int, int], robots: List[Tuple[int, str, str]],
+         numgames: int, numrondas: int):
     for game in range(numgames):
         match = Game(robots, numrondas)
         winner = match.match()
@@ -21,6 +19,15 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
             scores[winner[1]] += 1
         except Exception:
             pass
+    return scores
+
+
+async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
+                          numgames: int, numrondas: int):
+    scores: Dict[int, int] = {}
+    for (robot_id, _, _) in robots:
+        scores[robot_id] = 0
+    scores = await run_in_threadpool(loop, scores, robots, numgames, numrondas)
     max_points = max(scores, key=scores.get)
     with db_session:
         partida = Partida[partida_id]
