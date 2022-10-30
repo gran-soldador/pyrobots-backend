@@ -11,7 +11,11 @@ def test_correct_match(client, user1, robot1):
         '/match-result/1'
     )
     assert response.status_code == 200
-    assert response.json() == {'ganador': ['leandro']}
+    assert response.json() == [{
+                               'id': 1,
+                               'robot': 'robocop',
+                               'usuario': 'leandro'
+                               }]
 
 
 def test_unfinished_match(client, partida1):

@@ -16,5 +16,9 @@ async def return_result(partida_id: int):
         if partida.status != 'finalizada':
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no tiene resultados')
-        ganador = [u.usuario.nombre_usuario for u in partida.ganador]
-        return {'ganador': ganador}
+        ganador = [{
+                   'usuario': u.usuario.nombre_usuario,
+                   'robot': u.nombre,
+                   'id': u.usuario.user_id
+                   } for u in partida.ganador]
+        return ganador
