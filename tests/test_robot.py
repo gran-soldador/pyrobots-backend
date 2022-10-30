@@ -1,7 +1,7 @@
-from engine.robot import Position, Robot, MAXSPEED, MAXX, MAXY
+from engine.robot import Robot, MAXSPEED, MAXX, MAXY, INERTIA
+from engine.vector import Vector
 from math import isclose
 from copy import deepcopy
-import pytest
 
 
 def test_cheating_robot():
@@ -58,13 +58,15 @@ def test_moving_robot():
             self.drive(90, 100)
 
     rut = MovingRobot()
-    rut._status.position = Position(.5 * MAXX, .5 * MAXY)
+    rut._status.position = Vector(cartesian=(.5 * MAXX, .5 * MAXY))
     Robot._initialize_or_die(rut)
 
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
-    assert isclose(rut._status.position.x, .5 * MAXX)
-    assert isclose(rut._status.position.y, .5 * MAXY + MAXSPEED)
+    assert isclose(rut._status.position.x, .5 * MAXX,
+                   rel_tol=INERTIA)
+    assert isclose(rut._status.position.y, .5 * MAXY + MAXSPEED,
+                   rel_tol=INERTIA)
 
 
 def test_moving_twice_robot():
@@ -77,13 +79,15 @@ def test_moving_twice_robot():
             self.drive(0, 25)
 
     rut = MovingTwiceRobot()
-    rut._status.position = Position(.5 * MAXX, .5 * MAXY)
+    rut._status.position = Vector(cartesian=(.5 * MAXX, .5 * MAXY))
     Robot._initialize_or_die(rut)
 
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
-    assert isclose(rut._status.position.x, .5 * MAXX + 25 / 100 * MAXSPEED)
-    assert isclose(rut._status.position.y, .5 * MAXY)
+    assert isclose(rut._status.position.x, .5 * MAXX + 25 / 100 * MAXSPEED,
+                   rel_tol=INERTIA)
+    assert isclose(rut._status.position.y, .5 * MAXY,
+                   rel_tol=INERTIA)
 
 
 def test_moving_oob_robot():
@@ -95,7 +99,7 @@ def test_moving_oob_robot():
             self.drive(0, 100)
 
     rut = MovingOOBRobot()
-    rut._status.position = Position(.999 * MAXX, .999 * MAXY)
+    rut._status.position = Vector(cartesian=(.999 * MAXX, .999 * MAXY))
     Robot._initialize_or_die(rut)
 
     Robot._respond_or_die(rut)
@@ -115,9 +119,9 @@ def test_invalid_speed_robot():
 
     rut = InvalidSpeedRobot()
     Robot._initialize_or_die(rut)
-    with pytest.raises(ValueError):
-        Robot._respond_or_die(rut)
-        Robot._execute_drive(rut)
+    Robot._respond_or_die(rut)
+    Robot._execute_drive(rut)
+    assert rut._status.damage == 100
 
 
 def test_invalid_angle_robot():
@@ -130,9 +134,9 @@ def test_invalid_angle_robot():
 
     rut = InvalidAngleRobot()
     Robot._initialize_or_die(rut)
-    with pytest.raises(ValueError):
-        Robot._respond_or_die(rut)
-        Robot._execute_drive(rut)
+    Robot._respond_or_die(rut)
+    Robot._execute_drive(rut)
+    assert rut._status.damage == 100
 
 
 def test_turning_too_fast_robot():
@@ -148,10 +152,11 @@ def test_turning_too_fast_robot():
             self.first = False
 
     rut = TurningTooFastRobot()
-    rut._status.position = Position(.5 * MAXX, .5 * MAXY)
+    rut._status.position = Vector(cartesian=(.5 * MAXX, .5 * MAXY))
     Robot._initialize_or_die(rut)
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
-    with pytest.raises(ValueError):
-        Robot._respond_or_die(rut)
-        Robot._execute_drive(rut)
+    assert rut._status.damage == 0
+    Robot._respond_or_die(rut)
+    Robot._execute_drive(rut)
+    assert rut._status.damage == 100
