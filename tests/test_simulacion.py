@@ -1,4 +1,5 @@
 import mock
+from dataclasses import asdict
 
 from engine.outputmodels import SimulationResult
 
@@ -9,7 +10,7 @@ def test_simulacion_ok(client):
     with mock.patch("engine.run_demo_game", return_value=res):
         response = client.get('/simulacion')
     assert response.status_code == 200
-    assert response.json() == res.dict()
+    assert response.json() == asdict(res)
 
 
 def test_simulacion_fail(client):

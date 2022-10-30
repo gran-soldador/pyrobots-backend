@@ -79,7 +79,7 @@ class Game:
         except StopIteration as ret:
             return SimulationResult(
                 maxrounds=self.maxrounds, rounds=rounds,
-                **dict(ret.args[0])  # MatchResult
+                **ret.args[0].__dict__  # MatchResult
             )
 
     def match(self) -> Tuple[int, int, str]:
