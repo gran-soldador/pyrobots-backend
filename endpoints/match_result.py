@@ -5,8 +5,8 @@ from .functions_jwt import *
 router = APIRouter()
 
 
-@router.post('/match-result')
-async def return_result(partida_id: int = Form(...)):
+@router.get('/match-result/{partida_id}')
+async def return_result(partida_id: int):
     with db_session:
         try:
             partida = Partida[partida_id]
