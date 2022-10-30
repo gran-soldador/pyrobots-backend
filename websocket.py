@@ -43,6 +43,7 @@ class LobbyManager:
     async def send_msg(self, partida_id: int, websocket: WebSocket, msg: str):
         with db_session:
             try:
+                self.last_msg[partida_id] = msg
                 msg = (
                     {
                         "event": msg,
@@ -54,7 +55,6 @@ class LobbyManager:
                                   list(Partida[partida_id].participante)]
                     }
                 )
-                self.last_msg[partida_id] = msg
             except Exception:
                 msg = (
                     {
