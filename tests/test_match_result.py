@@ -14,9 +14,9 @@ def test_correct_match(client, user1, robot1):
     assert response.json() == {'ganador': ['leandro']}
 
 
-def test_unfinished_match(client, partida1, partida2):
+def test_unfinished_match(client, partida1):
     response = client.get(
-        '/match-result/2'
+        '/match-result/1'
     )
     assert response.status_code == 400
     assert response.json() == {'detail': 'la partida no tiene resultados'}
