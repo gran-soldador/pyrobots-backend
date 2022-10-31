@@ -26,6 +26,7 @@ def test_do_nothing_robot():
 
     rut = LazyRobot()
     initial_status = deepcopy(rut._status)
+    initial_status.cannon_cooldown = -10
     Robot._initialize_or_die(rut)
     for _ in range(10):
         Robot._respond_or_die(rut)
