@@ -68,7 +68,6 @@ class Game:
                                       sender=m.sender))
                 explosions_status = [
                     ExplosionStatus(x=e.x, y=e.y) for e in self.explosions]
-                self.explosions.clear()  # Delete explosions for next round
                 # Add to result
                 rounds.append(
                     RoundResult(robots=robots_status,
@@ -112,11 +111,12 @@ class Game:
                         r._status.id
                     )
                     heapq.heappush(self.missiles_in_flight, missile)
+            self.explosions.clear()
             while (len(self.missiles_in_flight) > 0 and
                    self.missiles_in_flight[0].hit_round <= self.round):
                 missile = heapq.heappop(self.missiles_in_flight)
                 explosion = missile.destination
-                for r in self.alive:
+                for r in self.alive:  # pragma: no cover
                     distance = r._status.position.distance(explosion)
                     distance = distance
                     # TODO: Calculate damage
