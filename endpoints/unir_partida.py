@@ -11,10 +11,9 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
                        partida_id: int = Form(...),
                        password: str = Form(None),
                        id_robot: int = Form(...)):
-    with db_session(optimistic=False):
-        try:
-            partida = Partida[partida_id]
-        except Exception:
+    with db_session:
+        partida = Partida.get_for_update(partida_id=partida_id)
+        if partida is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
         if partida.status != 'disponible':
