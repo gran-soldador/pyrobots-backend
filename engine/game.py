@@ -59,7 +59,8 @@ class Game:
                 for r in self.robots:
                     pos = r._status.position
                     robots_status.append(
-                        RobotStatus(x=pos.x, y=pos.y, damage=r._status.damage))
+                        RobotStatus(x=pos.x, y=pos.y,
+                                    damage=min(r._status.damage, 100)))
                 missiles_status = []
                 for m in self.missiles_in_flight:
                     pos = m.curr_pos(self.round)
@@ -113,13 +114,17 @@ class Game:
                     )
                     heapq.heappush(self.missiles_in_flight, missile)
             while (len(self.missiles_in_flight) > 0 and
-                   self.missiles_in_flight[0].hit_round <= self.round):
+                   self.missiles_in_flight[0].hit_round - 1 <= self.round):
                 missile = heapq.heappop(self.missiles_in_flight)
                 explosion = missile.destination
                 for r in self.alive:
                     distance = r._status.position.distance(explosion)
-                    distance = distance
-                    # TODO: Calculate damage
+                    if distance < 5:
+                        r._status.damage += 10
+                    elif distance < 20:
+                        r._status.damage += 5
+                    elif distance < 40:
+                        r._status.damage += 3
                 self.explosions.append(explosion)
 
             for r in self.alive:
