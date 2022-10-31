@@ -29,7 +29,7 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
         scores[robot_id] = 0
     scores = await run_in_threadpool(loop, scores, robots, numgames, numrondas)
     max_points = max(scores, key=scores.get)
-    with db_session:
+    with db_session(optimistic=False):
         partida = Partida[partida_id]
         for robot_id in scores:
             robot = Robot[robot_id]
@@ -47,7 +47,7 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
 async def init_match(user_id: int = Depends(authenticated_user),
                      partida_id: int = Form(...),
                      background_tasks: BackgroundTasks = BackgroundTasks()):
-    with db_session:
+    with db_session(optimistic=False):
         try:
             partida = Partida[partida_id]
         except Exception:

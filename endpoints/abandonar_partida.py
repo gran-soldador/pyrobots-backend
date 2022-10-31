@@ -9,7 +9,7 @@ router = APIRouter()
 @router.post('/abandonar-partida')
 async def abandonar_partida(user_id: int = Depends(authenticated_user),
                             partida_id: int = Form(...)):
-    with db_session:
+    with db_session(optimistic=False):
         try:
             partida = Partida[partida_id]
         except Exception:
