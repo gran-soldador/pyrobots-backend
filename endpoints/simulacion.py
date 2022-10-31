@@ -1,5 +1,4 @@
-from typing import List
-from fastapi import APIRouter, status, HTTPException, Depends, Query, Form
+from fastapi import APIRouter, status, HTTPException, Depends, Form
 from .functions_jwt import *
 import engine
 from db import *
@@ -19,7 +18,7 @@ async def estado_juego():
 @router.post("/create_simulation")
 async def simulation(user_id: int = Depends(authenticated_user),
                      rounds: int = Form(...),
-                     robot_ids: List[int] = Query(...)
+                     robot_ids: list = Form(...)
                     ):
     with db_session:
         if len(robot_ids) > 4:
