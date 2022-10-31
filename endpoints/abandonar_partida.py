@@ -9,7 +9,7 @@ router = APIRouter()
 @router.post('/abandonar-partida')
 async def abandonar_partida(user_id: int = Depends(authenticated_user),
                             partida_id: int = Form(...)):
-    with db_session:
+    with db_session(optimistic=False):
         try:
             partida = Partida[partida_id]
         except Exception:
@@ -28,14 +28,7 @@ async def abandonar_partida(user_id: int = Depends(authenticated_user),
                                 detail='ya no tiene permitido abandonar')
         partida.participante.remove(user)
         partida.flush()
-        await lobby_manager.broadcast(
-            partida_id,
-            {
-                "event": "quit",
-                "robots": [{"id": r.robot_id, "nombre": r.nombre}
-                           for r in list(Partida[partida_id].participante)]
-            }
-        )
+        await lobby_manager.broadcast(partida_id, 'quit')
         if len(partida.participante) < partida.maxplayers:
             partida.status = 'disponible'
         return {'detail': partida.status}

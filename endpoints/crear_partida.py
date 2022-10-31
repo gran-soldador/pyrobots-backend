@@ -2,7 +2,6 @@ from fastapi import APIRouter, Form, status, HTTPException, Depends
 from db import *
 from .functions_jwt import *
 import string
-import asyncio
 from websocket import lobby_manager
 
 router = APIRouter()
@@ -75,12 +74,5 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         p1.participante.add(robot)
         p1.flush()
         partida_id = p1.partida_id
-        asyncio.gather(lobby_manager.broadcast(
-            partida_id,
-            {
-                "event": "created",
-                "robots": [{"id": r.robot_id, "nombre": r.nombre}
-                           for r in list(Partida[partida_id].participante)]
-            }
-        ))
+        await lobby_manager.broadcast(partida_id, 'created')
         return {'id_partida': partida_id}
