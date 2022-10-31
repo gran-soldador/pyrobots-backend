@@ -21,7 +21,7 @@ class BotStatus:
     damage: float = 0.0
     movement: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
     position: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
-    # TODO: Add cannon cooldown status
+    cannon_cooldown: float = 0.0
 
 
 @dataclass
@@ -55,6 +55,7 @@ class Robot:
 
     def _respond_or_die(self):
         self._commands = BotCommands()
+        self._status.cannon_cooldown -= 1
         try:
             self.respond()
         except Exception:
@@ -63,7 +64,7 @@ class Robot:
             self._status.damage = 100
 
     def is_cannon_ready(self) -> bool:
-        return True  # TODO: Check if cannon is ready
+        return self._status.cannon_cooldown <= 0
 
     def cannon(self, degree: float, distance: float) -> None:
         self._commands.cannon_used = True
@@ -88,6 +89,8 @@ class Robot:
                                               exc_info=True)
             self._status.damage = 100
             return
+        self._status.cannon_cooldown = \
+            max(2, self._commands.cannon_distance * CANNON_COOLDOWN_FACTOR)
         return Vector(polar=(
             radians(self._commands.cannon_degree),
             self._commands.cannon_distance
