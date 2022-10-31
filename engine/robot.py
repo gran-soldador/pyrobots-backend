@@ -144,7 +144,7 @@ class Robot:
         return (degrees(self._status.movement.angle) + 360) % 360
 
     def get_velocity(self) -> float:
-        return self._status.movement.modulo / MAXSPEED
+        return self._status.movement.modulo / MAXSPEED * 100
 
     def get_position(self) -> Tuple[float, float]:
         return self._status.position.x, self._status.position.y
