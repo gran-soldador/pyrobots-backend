@@ -1,6 +1,6 @@
-from engine.robot import Robot, MAXSPEED, MAXX, MAXY, INERTIA
+from engine.robot import BotCommands, Robot, MAXSPEED, MAXX, MAXY, INERTIA
 from engine.vector import Vector
-from math import isclose
+from math import isclose, degrees
 from copy import deepcopy
 import pytest
 from pytest import approx
@@ -36,6 +36,7 @@ def test_do_nothing_robot():
         rut._execute_cannon()
         rut._execute_drive()
     assert initial_status == rut._status
+    assert rut._commands == BotCommands()
 
 
 def test_moving_robot():
@@ -94,11 +95,11 @@ def test_moving_oob_robot():
 
 @pytest.mark.parametrize("angle, velocity", [(0, 150), (-10, 25)])
 def test_invalid_drive_robot(angle, velocity):
-    class InvalidSpeedRobot(EmptyBot):
+    class InvalidRobot(EmptyBot):
         def respond(self):
             self.drive(angle, velocity)
 
-    rut = InvalidSpeedRobot()
+    rut = InvalidRobot()
     rut._initialize_or_die()
     rut._respond_or_die()
     rut._execute_cannon()
@@ -126,4 +127,42 @@ def test_turning_too_fast_robot():
     assert rut.get_damage() == 0
     Robot._respond_or_die(rut)
     Robot._execute_drive(rut)
+    assert rut.get_damage() == 100
+
+
+def test_cannon_robot():
+    class CannonRobot(EmptyBot):
+        def respond(self):
+            self.cannon(90, 100)
+
+    rut = CannonRobot()
+    rut._initialize_or_die()
+    rut._respond_or_die()
+    missile = rut._execute_cannon()
+    rut._execute_drive()
+    assert rut._commands.cannon_degree == 90
+    assert rut._commands.cannon_distance == 100
+    assert rut._commands.cannon_used is True
+    assert degrees(missile.angle) == approx(90)
+    assert missile.modulo == approx(100)
+    assert rut._status.cannon_cooldown >= 2
+
+    rut._respond_or_die()
+    missile = rut._execute_cannon()
+    rut._execute_drive()
+    assert missile is None
+    assert rut._status.damage == 100
+
+
+@pytest.mark.parametrize("degree, distance", [(90, -150), (-10, 25)])
+def test_invalid_cannon_robot(degree, distance):
+    class InvalidRobot(EmptyBot):
+        def respond(self):
+            self.cannon(degree, distance)
+
+    rut = InvalidRobot()
+    rut._initialize_or_die()
+    rut._respond_or_die()
+    rut._execute_cannon()
+    rut._execute_drive()
     assert rut.get_damage() == 100
