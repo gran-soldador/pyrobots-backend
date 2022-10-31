@@ -4,22 +4,6 @@ from math import isclose
 from copy import deepcopy
 
 
-def test_cheating_robot():
-    class CheatingRobot(Robot):
-        def initialize(self):
-            self._status.damage = 1.1
-
-        def respond(self):
-            self._status.damage = 1.1
-
-    rut = CheatingRobot()
-    Robot._initialize_or_die(rut)
-    assert rut._status.damage == 100
-    rut = CheatingRobot()
-    Robot._respond_or_die(rut)
-    assert rut._status.damage == 100
-
-
 def test_incomplete_robot():
     class IncompleteRobot(Robot):
         pass

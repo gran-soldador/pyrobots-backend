@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from copy import deepcopy
 import logging
 from math import radians, isclose, sqrt, degrees
 from typing import Tuple, Optional
@@ -44,31 +43,23 @@ class Robot:
         raise NotImplementedError("Robot has no initialize code")
 
     def _initialize_or_die(self):
-        prev_status = deepcopy(self._status)
         try:
             self.initialize()
-            if self._status != prev_status:
-                raise MisbehavingRobotException()
         except Exception:
             logging.getLogger(__name__).debug("Robot failed when initializing",
                                               exc_info=True)
-            self._status = prev_status
             self._status.damage = 100
 
     def respond(self):
         raise NotImplementedError("Robot has no respond code")
 
     def _respond_or_die(self):
-        prev_status = deepcopy(self._status)
         self._commands = BotCommands()
         try:
             self.respond()
-            if self._status != prev_status:
-                raise MisbehavingRobotException()
         except Exception:
             logging.getLogger(__name__).debug("Robot failed when responding",
                                               exc_info=True)
-            self._status = prev_status
             self._status.damage = 100
 
     def is_cannon_ready(self) -> bool:
