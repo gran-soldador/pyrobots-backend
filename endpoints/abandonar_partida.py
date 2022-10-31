@@ -8,10 +8,9 @@ router = APIRouter()
 @router.post('/abandonar-partida')
 async def abandonar_partida(user_id: int = Depends(authenticated_user),
                             partida_id: int = Form(...)):
-    with db_session(optimistic=False):
-        try:
-            partida = Partida[partida_id]
-        except Exception:
+    with db_session:
+        partida = Partida.get_for_update(partida_id=partida_id)
+        if partida is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
         user = list(partida.participante)
