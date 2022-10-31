@@ -40,7 +40,7 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
                                 detail='el robot no pertenece al usuario')
         partida.participante.add(robot)
         partida.flush()
-        await lobby_manager.broadcast(partida_id, 'join')
         if len(partida.participante) == partida.maxplayers:
             partida.status = 'ocupada'
-        return {'detail': partida.status}
+    await lobby_manager.broadcast(partida_id, 'join')
+    return {'detail': partida.status}
