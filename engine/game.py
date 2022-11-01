@@ -1,4 +1,7 @@
-from .robot import Robot, Position, MAXX, MAXY, HITBOX
+from .robot import Robot, MAXX, MAXY, HITBOX
+from .robot import MisbehavingRobotException
+from .vector import Vector
+from .constants import MAXX, MAXY, HITBOX
 from typing import Any, Dict, Generator, List, Tuple
 import logging
 import random
@@ -18,15 +21,16 @@ class Game:
             try:
                 exec(code)
                 robot = eval(name)()
-                assert isinstance(robot, Robot)
+                if not isinstance(robot, Robot):
+                    raise MisbehavingRobotException()
             except Exception:
                 logging.getLogger(__name__).debug(
                     "Robot failed during construction", exc_info=True)
                 robot = Robot()
                 robot._status.damage = 100
-            robot._status.position = Position(
+            robot._status.position = Vector(cartesian=(
                 random.uniform(.1, .9) * MAXX,
-                random.uniform(.1, .9) * MAXY)
+                random.uniform(.1, .9) * MAXY))
             robot._status.name = name
             robot._status.robot_id = robot_id
             robot._status.id = num

@@ -84,3 +84,30 @@ class IDieAt3(Robot):
     for damage in damages[:-1]:
         assert damage == 0
     assert damages[-1] == 100
+
+
+def test_crashing_robots():
+    def r(n):
+        return (n, "IGoToCenter", """
+class IGoToCenter(Robot):
+    def initialize(self):
+        pass
+    def respond(self):
+        x,y=self.get_position()
+        if x < 500:
+            if y < 500: #lower left
+                self.drive(45+0,50)
+            else: #upper left
+                self.drive(45+270, 50)
+        else:
+            if y < 500: #lower right
+                self.drive(45+90, 50)
+            else: #upper right
+                self.drive(45+180, 50)
+    """)
+    gut = Game([r(1), r(2), r(3), r(4)], 100000)
+    result = gut.simulation()
+
+    assert result["rounds"] < 10000  # Robots should die VERY quickly
+    count = sum(1 for robot in result["robots"] if robot["damage"][-1] >= 100)
+    assert count >= 3
