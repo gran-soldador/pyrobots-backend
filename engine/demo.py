@@ -50,7 +50,8 @@ class DVDRobot(Robot):
         elif x == 1000 or x == 0 or y == 1000 or y == 0:
             self.drive(random.uniform(dir+90, dir+270)%360,25)
         else:
-            self.drive(dir, 75)
+            self.drive(dir, 25)
+        self.cannon(dir, 500)
 """)
 
 spiral = (5, "SpiralRobot", """
@@ -64,9 +65,17 @@ class SpiralRobot(Robot):
             self.drive(random.uniform(0,360),50)
         else:
             self.drive((dir + 5) % 360, 50)
+        self.cannon(dir, 500)
 """)
+
+config = ([random, square, dvd, spiral], 10000)
 
 
 def demo():
-    g = Game([random, square, dvd, spiral])
+    g = Game(*config)
     return g.simulation()
+
+
+def demo_match():
+    g = Game(*config)
+    return g.match()

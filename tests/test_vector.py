@@ -63,9 +63,12 @@ def test_bounds():
     assert new.is_bounded(minxy, maxxy)
 
 
-def test_add_mul():
+def test_add_mul_sub():
     vec = Vector(cartesian=(randfloat(-10e6, 10e6), randfloat(-10e6, 10e6)))
-    assert vec + vec == vec * 2
+    doublevec = vec * 2
+    assert vec + vec == doublevec
+    assert vec == doublevec - vec
+    assert vec - vec == ZEROVEC
 
 
 def test_iadd():
@@ -73,6 +76,11 @@ def test_iadd():
     orig = Vector(cartesian=vec.cartesian)
     vec += vec
     assert vec == orig + orig
+
+
+def test_distance():
+    vec = Vector(cartesian=(randfloat(-10e6, 10e6), randfloat(-10e6, 10e6)))
+    assert vec.distance(vec * -1) == (vec * -1).distance(vec) == 2 * vec.modulo
 
 
 def test_both_mul():
