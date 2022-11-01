@@ -1,6 +1,7 @@
 from pony.orm import *
 from db import *
 
+
 #  Verifica si el nombre de usuario existe
 def user_exist(username: str):
     return Usuario.get(nombre_usuario=username) is not None

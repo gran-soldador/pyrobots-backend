@@ -8,7 +8,8 @@ router = APIRouter()
 @router.get("/lista-robots")
 async def listar_robots(user_id: int = Depends(authenticated_user)):
     with db_session:
-        lista = [{'id': r.robot_id, 'nombre': r.nombre, 'avatar': "http://0.0.0.0:9000/" + r.avatar[12:]}
+        lista = [{'id': r.robot_id, 'nombre': r.nombre,
+                  'avatar': "http://0.0.0.0:9000/" + r.avatar[12:]}
                  for r in Usuario[user_id].robot]
         if lista == []:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
