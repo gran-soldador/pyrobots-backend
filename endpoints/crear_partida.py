@@ -6,8 +6,8 @@ from websocket import lobby_manager
 
 router = APIRouter()
 
-VALID_CHAR = (string.ascii_lowercase + string.ascii_uppercase
-              + ''.join([str(i) for i in range(0, 10)]) + '-_'
+VALID_CHAR = (string.ascii_lowercase + string.ascii_uppercase +
+              ''.join([str(i) for i in range(0, 10)]) + '-_'
               )
 
 

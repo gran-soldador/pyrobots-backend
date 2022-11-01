@@ -67,9 +67,10 @@ def user2():
 @pytest.fixture
 @db_session
 def robot1(user1):
-    robot = Robot(nombre='robocop', implementacion='super-robot.py',
-                  partidas_ganadas=0, partidas_jugadas=0,
-                  defectuoso=False, usuario=Usuario[user1])
+    with open("tests/archivosParaTests/defaultrobot1.py") as f:
+        robot = Robot(nombre='RandomRobot', implementacion=f.read(),
+                      partidas_ganadas=0, partidas_jugadas=0,
+                      defectuoso=False, usuario=Usuario[user1])
     robot.flush()
     return robot.robot_id
 
@@ -77,9 +78,10 @@ def robot1(user1):
 @pytest.fixture
 @db_session
 def robot2(user2):
-    robot = Robot(nombre='robocop', implementacion='super-robot.py',
-                  partidas_ganadas=0, partidas_jugadas=0,
-                  defectuoso=False, usuario=Usuario[user2])
+    with open("tests/archivosParaTests/defaultrobot2.py") as f:
+        robot = Robot(nombre='GuardRobot', implementacion=f.read(),
+                      partidas_ganadas=0, partidas_jugadas=0,
+                      defectuoso=False, usuario=Usuario[user2])
     robot.flush()
     return robot.robot_id
 
@@ -87,9 +89,10 @@ def robot2(user2):
 @pytest.fixture
 @db_session
 def robot3(user1):
-    robot = Robot(nombre='robot', implementacion='super-robot.py',
-                  partidas_ganadas=0, partidas_jugadas=0,
-                  defectuoso=False, usuario=Usuario[user1])
+    with open("tests/archivosParaTests/defaultrobot3.py") as f:
+        robot = Robot(nombre='SpiralRobot', implementacion=f.read(),
+                      partidas_ganadas=0, partidas_jugadas=0,
+                      defectuoso=False, usuario=Usuario[user1])
     robot.flush()
     return robot.robot_id
 
