@@ -100,7 +100,14 @@ class GuardRobot(Robot):
         if self.is_cannon_ready(): self.cannon(0, random.uniform(100,800))
 """)
 
+config = ([random, square, dvd, spiral], 10000)
+
 
 def demo():
-    g = Game([random, dvd, guard, spiral])
+    g = Game(*config)
     return g.simulation()
+
+
+def demo_match():
+    g = Game(*config)
+    return g.match()
