@@ -14,11 +14,9 @@ def loop(scores: Dict[int, int], robots: List[Tuple[int, str, str]],
          numgames: int, numrondas: int):
     for game in range(numgames):
         match = Game(robots, numrondas)
-        winner = match.match()
-        try:
-            scores[winner[1]] += 1
-        except Exception:
-            pass
+        result = match.match()
+        for winner in result.winners:
+            scores[winner.id] += 1
     return scores
 
 
