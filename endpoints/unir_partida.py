@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Form, status, HTTPException, Depends
 from db import *
 from .functions_jwt import *
+from websocket import lobby_manager
 
 router = APIRouter()
 
@@ -41,4 +42,5 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
         partida.flush()
         if len(partida.participante) == partida.maxplayers:
             partida.status = 'ocupada'
-        return {'detail': partida.status}
+    await lobby_manager.broadcast(partida_id, 'join')
+    return {'detail': partida.status}

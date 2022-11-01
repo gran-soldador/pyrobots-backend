@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Form, status, HTTPException, Depends
 from db import *
 from .functions_jwt import *
+from websocket import lobby_manager
 
 router = APIRouter()
 
@@ -26,6 +27,6 @@ async def abandonar_partida(user_id: int = Depends(authenticated_user),
                                 detail='ya no tiene permitido abandonar')
         partida.participante.remove(user)
         partida.flush()
-        if len(partida.participante) < partida.maxplayers:
-            partida.status = 'disponible'
-        return {'detail': partida.status}
+        partida.status = 'disponible'
+    await lobby_manager.broadcast(partida_id, 'quit')
+    return {'detail': partida.status}

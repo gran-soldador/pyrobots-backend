@@ -1,4 +1,5 @@
-from .robot import Robot, MisbehavingRobotException
+from .robot import Robot, MAXX, MAXY, HITBOX
+from .robot import MisbehavingRobotException
 from .vector import Vector
 from .constants import MAXX, MAXY, HITBOX
 from typing import Any, Dict, Generator, List, Tuple
