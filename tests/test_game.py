@@ -1,4 +1,6 @@
-from engine import Game
+import random
+
+from engine import Game, run_demo_game, run_demo_match
 from engine.constants import MAXROUNDS
 
 
@@ -111,3 +113,54 @@ class IGoToCenter(Robot):
     count = sum(1 for robot in result.rounds[-1].robots
                 if robot.damage >= 100)
     assert count >= 3
+
+
+def test_shooting_robot():
+    def r(n):
+        return (n, "IGoToCenter", """
+class IGoToCenter(Robot):
+    def initialize(self):
+        pass
+    def respond(self):
+        x,y=self.get_position()
+        if x < 500:
+            if y < 500: #lower left
+                self.drive(45+0,50)
+            else: #upper left
+                self.drive(45+270, 50)
+        else:
+            if y < 500: #lower right
+                self.drive(45+90, 50)
+            else: #upper right
+                self.drive(45+180, 50)
+        if self.is_cannon_ready():
+            self.cannon(random.uniform(0,360),random.uniform(100,400))
+    """)
+    shooter = (100, "ShooterRobot", """
+class ShooterRobot(Robot):
+    def initialize(self):
+        self.a = 1
+    def respond(self):
+        from math import atan2, sqrt, degrees
+        x, y = self.get_position()
+        x -= 500
+        y -= 500
+        angle, distance = degrees(atan2(y,x)), sqrt(x**2 + y**2)
+        if self.is_cannon_ready():
+            self.cannon((angle+180)%360, distance)
+""")
+    gut = Game([r(1), r(2), r(3), shooter], MAXROUNDS)
+    result = gut.simulation()
+
+    assert len(result.rounds[-1].missiles) > 0
+    assert sum(len(r.explosions) for r in result.rounds[-10:]) > 0
+
+
+def test_match_equals_simulation():
+    random.seed(1)
+    match = run_demo_match()
+    random.seed(1)
+    sim = run_demo_game()
+    assert match.players == sim.players
+    assert match.winners == sim.winners
+    assert match.rounds_played == sim.rounds_played

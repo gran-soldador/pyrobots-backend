@@ -81,7 +81,7 @@ class Game:
                 **ret.args[0].__dict__  # MatchResult
             )
 
-    def match(self) -> Tuple[int, int, str]:
+    def match(self) -> MatchResult:
         self._initialize_robots()
         round_generator = self._execute_rounds()
         try:

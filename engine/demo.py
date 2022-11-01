@@ -68,7 +68,14 @@ class SpiralRobot(Robot):
         self.cannon(dir, 500)
 """)
 
+config = ([random, square, dvd, spiral], 10000)
+
 
 def demo():
-    g = Game([random, square, dvd, spiral], 15)
+    g = Game(*config)
     return g.simulation()
+
+
+def demo_match():
+    g = Game(*config)
+    return g.match()
