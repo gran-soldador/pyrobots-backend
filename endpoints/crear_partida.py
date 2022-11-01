@@ -2,6 +2,7 @@ from fastapi import APIRouter, Form, status, HTTPException, Depends
 from db import *
 from .functions_jwt import *
 import string
+from websocket import lobby_manager
 
 router = APIRouter()
 
@@ -26,6 +27,7 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
                         numgames: int = Form(...),
                         numrondas: int = Form(...),
                         idrobot: int = Form(...)):
+    partida_id = None
     if (len(namepartida) <= 32 and check_string(namepartida)) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='namepartida invalido')
@@ -73,4 +75,5 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         p1.participante.add(robot)
         p1.flush()
         partida_id = p1.partida_id
-        return {'id_partida': partida_id}
+    await lobby_manager.broadcast(partida_id, 'created')
+    return {'id_partida': partida_id}
