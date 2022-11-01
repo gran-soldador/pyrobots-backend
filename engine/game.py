@@ -1,4 +1,4 @@
-from .robot import Robot, Position, MAXX, MAXY, HITBOX
+from .robot import Robot, MAXX, MAXY, HITBOX
 from .robot import MisbehavingRobotException
 from .vector import Vector
 from .constants import MAXX, MAXY, HITBOX
