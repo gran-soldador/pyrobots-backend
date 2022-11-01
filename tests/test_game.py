@@ -154,6 +154,8 @@ class ShooterRobot(Robot):
 
     assert len(result.rounds[-1].missiles) > 0
     assert sum(len(r.explosions) for r in result.rounds[-10:]) > 0
+    assert result.rounds_played < MAXROUNDS
+    assert len(result.winners) == 1 and result.winners[0].id == 100
 
 
 def test_match_equals_simulation():
