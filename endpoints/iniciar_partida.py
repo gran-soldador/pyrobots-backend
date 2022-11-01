@@ -47,7 +47,7 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
 async def init_match(user_id: int = Depends(authenticated_user),
                      partida_id: int = Form(...),
                      background_tasks: BackgroundTasks = BackgroundTasks()):
-    with db_session(optimistic=False):
+    with db_session:
         partida = Partida.get_for_update(partida_id=partida_id)
         if partida is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
