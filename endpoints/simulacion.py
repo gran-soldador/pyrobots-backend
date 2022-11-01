@@ -20,6 +20,7 @@ async def simulation(user_id: int = Depends(authenticated_user),
                      rounds: int = Form(...),
                      robot_ids: list = Form(...)
                     ):
+    robot_ids = robot_ids[0].split(",")
     with db_session:
         if len(robot_ids) > 4:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
