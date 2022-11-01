@@ -59,3 +59,33 @@ def robot1(user1):
                   defectuoso=False, usuario=Usuario[user1])
     robot.flush()
     return robot.robot_id
+
+
+@pytest.fixture
+@db_session
+def robot2(user1):
+    robot = Robot(nombre='robocop1', implementacion='super-robot.py',
+                  partidas_ganadas=0, partidas_jugadas=0,
+                  defectuoso=False, usuario=Usuario[user1])
+    robot.flush()
+    return robot.robot_id
+
+
+@pytest.fixture
+@db_session
+def robot3(user1):
+    robot = Robot(nombre='robocop2', implementacion='super-robot.py',
+                  partidas_ganadas=0, partidas_jugadas=0,
+                  defectuoso=False, usuario=Usuario[user1])
+    robot.flush()
+    return robot.robot_id
+
+
+@pytest.fixture
+@db_session
+def robot4(user1):
+    robot = Robot(nombre='robocop4', implementacion='super-robot.py',
+                  partidas_ganadas=0, partidas_jugadas=0,
+                  defectuoso=False, usuario=Usuario[user1])
+    robot.flush()
+    return robot.robot_id
