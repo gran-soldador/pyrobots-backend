@@ -1,13 +1,20 @@
-class defaultrobot2(Robot):
+class GuardRobot(Robot):  # noqa: F821
     def initialize(self):
-        pass
+        self.dir = 90
 
     def respond(self):
+        import random
         x, y = self.get_position()
-        vel, dir = self.get_velocity(), self.get_direction()
-        if vel == 0:
-            self.drive(random.uniform(0, 360), 25)
-        elif x == 1000 or x == 0 or y == 1000 or y == 0:
-            self.drive(random.uniform(dir + 90, dir + 270) % 360, 25)
+        if x < 100:
+            self.drive(0, 50)
+        elif x > 150:
+            self.drive(180, 50)
         else:
-            self.drive(dir, 75)
+            if y > 900:
+                self.dir = 270
+            elif y < 100:
+                self.dir = 90
+            self.drive(self.dir, 50)
+
+        if self.is_cannon_ready():
+            self.cannon(0, random.uniform(100, 800))
