@@ -155,11 +155,12 @@ def partida5(user1, robot1, robot3):
 
 @pytest.fixture
 @db_session
-def partida6(user1, robot2):
+def partida6(user1, robot2, robot1):
     p5 = Partida(namepartida='my_partida', password='leandro',
                  status='iniciada',
-                 minplayers=2, maxplayers=3, numgames=10, numrondas=10,
+                 minplayers=2, maxplayers=2, numgames=10, numrondas=10,
                  creador=Usuario[user1])
+    p5.participante.add(Robot[robot1])
     p5.participante.add(Robot[robot2])
     p5.flush()
     return p5.partida_id
