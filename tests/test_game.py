@@ -78,7 +78,6 @@ class IDieAt3(Robot):
     rounds = 100
     gut = Game([r1, r2], rounds)
     result = gut.simulation()
-    print(result)
     assert result.rounds_played == 3
     assert result.players[1].name == r2[1]
     assert len(result.rounds) == result.rounds_played + 1
