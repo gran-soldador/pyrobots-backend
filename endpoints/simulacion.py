@@ -15,13 +15,8 @@ router = APIRouter()
 @router.post("/create_simulation", response_model=SimulationResult)
 async def simulation(user_id: int = Depends(authenticated_user),
                      rounds: int = Form(...),
-                     robot_ids: str = Form(...)  # comma separated list
+                     robot_ids: list[int] = Form(...)
                      ):
-    try:
-        robot_ids = [int(id) for id in robot_ids.split(",")]
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='invalid robot list') from e
     if len(robot_ids) > 4:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='too many robots')

@@ -4,25 +4,12 @@ from dataclasses import asdict
 from engine.outputmodels import SimulationResult
 
 
-def test_simulation_wrong_robots(loggedin_client):
-    response = loggedin_client.post(
-        '/create_simulation',
-        data={
-            "rounds": 1,
-            "robot_ids": 'asd'
-        }
-    )
-    assert response.status_code == 400
-    detail = 'invalid robot list'
-    assert response.json() == {'detail': detail}
-
-
 def test_simulation_less_robots(loggedin_client):
     response = loggedin_client.post(
         '/create_simulation',
         data={
             "rounds": 1,
-            "robot_ids": '1'
+            "robot_ids": [1]
         }
     )
     assert response.status_code == 400
@@ -35,7 +22,7 @@ def test_simulation_many_robots(loggedin_client):
         '/create_simulation',
         data={
             "rounds": 1,
-            "robot_ids": '1,2,3,4,5'
+            "robot_ids": [1, 2, 3, 4, 5]
         }
     )
     assert response.status_code == 400
@@ -47,7 +34,7 @@ def test_simulation_bad_rounds(loggedin_client):
         '/create_simulation',
         data={
             "rounds": 10000000,
-            "robot_ids": '1,2,3,4'
+            "robot_ids": [1, 2, 3, 4]
         }
     )
     assert response.status_code == 400
@@ -60,7 +47,7 @@ def test_simulation_bad_id(loggedin_client, robot1, robot2, robot3):
         '/create_simulation',
         data={
             "rounds": 1,
-            "robot_ids": f'{robot1},{robot2},{robot3}'
+            "robot_ids": [robot1, robot2, robot3]
         }
     )
     assert response.status_code == 404
@@ -72,7 +59,7 @@ def test_simulation_robot_not_mine(loggedin_client, robot1, robot2, robot3):
         '/create_simulation',
         data={
             "rounds": 1,
-            "robot_ids": f'{robot1},{robot2},{robot3}'
+            "robot_ids": [robot1, robot2, robot3]
         }
     )
     assert response.status_code == 404
@@ -87,7 +74,7 @@ def test_simulation_ok(loggedin_client, robot1, robot3, robot4):
             '/create_simulation',
             data={
                 "rounds": 1,
-                "robot_ids": f'{robot1},{robot4},{robot3}'
+                "robot_ids": [robot1, robot4, robot3]
             }
         )
     assert response.status_code == 200
@@ -100,7 +87,7 @@ def test_simulation_fail(loggedin_client, robot1, robot3, robot4):
             '/create_simulation',
             data={
                 "rounds": 1,
-                "robot_ids": f'{robot1},{robot4},{robot3}'
+                "robot_ids": [robot1, robot4, robot3]
             }
         )
     assert response.status_code == 500
