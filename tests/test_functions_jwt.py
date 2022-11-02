@@ -36,15 +36,15 @@ def test_decode_trash():
     assert check_session_token(token) is None
 
 
-@pytest.mark.xfail(reason="Mock is currently not working as expected")
-def test_expired_session():
+def test_authenticated_user_expired():
     data = {"testData": 42}
     past_datetime = datetime.now() - timedelta(days=10)
     with mock.patch("endpoints.functions_jwt.expire_date",
                     return_value=past_datetime):
-        token = gen_verification_token(data)
-    decoded = check_verification_token(token)
-    assert decoded is None
+        token = gen_session_token(data)
+    with pytest.raises(HTTPException):
+        authenticated_user(
+            HTTPAuthorizationCredentials(scheme="Bearer", credentials=token))
 
 
 def test_authenticated_user():
