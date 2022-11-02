@@ -77,7 +77,7 @@ def user3():
 @pytest.fixture
 @db_session
 def robot1(user1):
-    with open("tests/archivosParaTests/defaultrobot1.py") as f:
+    with open("tests/archivosParaTests/RandomRobot.py") as f:
         robot = Robot(nombre='RandomRobot', implementacion=f.read(),
                       avatar='robotAvatars/1robocopAvatar.png',
                       partidas_ganadas=0, partidas_jugadas=0,
@@ -89,7 +89,7 @@ def robot1(user1):
 @pytest.fixture
 @db_session
 def robot2(user2):
-    with open("tests/archivosParaTests/defaultrobot2.py") as f:
+    with open("tests/archivosParaTests/GuardRobot.py") as f:
         robot = Robot(nombre='GuardRobot', implementacion=f.read(),
                       partidas_ganadas=0, partidas_jugadas=0,
                       defectuoso=False, usuario=Usuario[user2])
@@ -100,7 +100,7 @@ def robot2(user2):
 @pytest.fixture
 @db_session
 def robot3(user1):
-    with open("tests/archivosParaTests/defaultrobot3.py") as f:
+    with open("tests/archivosParaTests/SpiralRobot.py") as f:
         robot = Robot(nombre='SpiralRobot', implementacion=f.read(),
                       partidas_ganadas=0, partidas_jugadas=0,
                       defectuoso=False, usuario=Usuario[user1])
@@ -111,7 +111,7 @@ def robot3(user1):
 @pytest.fixture
 @db_session
 def robot4(user1):
-    with open("tests/archivosParaTests/defaultrobot2.py") as f:
+    with open("tests/archivosParaTests/GuardRobot.py") as f:
         robot = Robot(nombre='GuardRobot', implementacion=f.read(),
                       partidas_ganadas=0, partidas_jugadas=0,
                       defectuoso=False, usuario=Usuario[user1])

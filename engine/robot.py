@@ -80,7 +80,7 @@ class Robot:
             raise ValueError("Cannon was not available")
         if not 0 <= self._commands.cannon_degree < 360:
             raise ValueError("Invalid angle")
-        if self._commands.cannon_distance < 0:
+        if not 0 < self._commands.cannon_distance <= 700:
             raise ValueError("Invalid distance")
 
     def _execute_cannon(self) -> Optional[Vector]:
@@ -112,7 +112,7 @@ class Robot:
     def _validate_scanner(self) -> None:
         if not 0 <= self._commands.scanner_direction < 360:
             raise ValueError("Invalid direction")
-        if not 0 < self._commands.scanner_resolution <= 360:
+        if not 0 < self._commands.scanner_resolution <= 20:
             raise ValueError("Invalid resolution")
 
     def _execute_scanner(self, positions: List[Vector]) -> None:
