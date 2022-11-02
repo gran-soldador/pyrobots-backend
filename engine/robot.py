@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import logging
-from math import radians, isclose, sqrt, degrees
-from typing import Tuple, Optional
+from math import radians, isclose, degrees
+from typing import Tuple, Optional, List
 from .constants import *
 from .vector import Vector
 
@@ -22,6 +22,7 @@ class BotStatus:
     movement: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
     position: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
     cannon_cooldown: float = 0.0
+    scan_result: Optional[float] = None
 
 
 @dataclass
@@ -31,6 +32,9 @@ class BotCommands:
     cannon_used: bool = False
     cannon_degree: float = 0.0
     cannon_distance: float = 0.0
+    scanner_used: bool = False
+    scanner_direction: float = 0.0
+    scanner_resolution: float = 0.0
 
 
 class Robot:
@@ -98,10 +102,46 @@ class Robot:
 
     def point_scanner(self, direction: float,
                       resolution_in_degrees: float) -> None:
-        pass  # pragma: no cover
+        self._commands.scanner_used = True
+        self._commands.scanner_direction = direction
+        self._commands.scanner_resolution = resolution_in_degrees
 
     def scanned(self) -> float:
-        pass  # pragma: no cover
+        return self._status.scan_result
+
+    def _validate_scanner(self) -> None:
+        if not 0 <= self._commands.scanner_direction < 360:
+            raise ValueError("Invalid direction")
+        if not 0 < self._commands.scanner_resolution <= 360:
+            raise ValueError("Invalid resolution")
+
+    def _execute_scanner(self, positions: List[Vector]) -> None:
+        self._status.scan_result = None
+        if not self._commands.scanner_used:
+            return
+        try:
+            self._validate_scanner()
+        except Exception:
+            logging.getLogger(__name__).debug("Robot failed when scanning",
+                                              exc_info=True)
+            self._status.damage = 100
+            return
+        min_angle = (self._commands.scanner_direction -
+                     self._commands.scanner_resolution / 2 + 360) % 360
+        max_angle = (self._commands.scanner_direction +
+                     self._commands.scanner_resolution / 2 + 360) % 360
+        best = float("inf")
+        for other in positions:
+            vec = other - self._status.position
+            angle = (degrees(vec.angle) + 360) % 360
+            if min_angle < max_angle:
+                if min_angle <= angle <= max_angle:
+                    best = min(best, vec.modulo)
+            else:  # an angle has wrapped around
+                if not max_angle < angle < min_angle:
+                    best = min(best, vec.modulo)
+        if best < float("inf"):
+            self._status.scan_result = best
 
     def drive(self, direction: float, velocity: float) -> None:
         self._commands.drive_direction = direction
@@ -151,9 +191,3 @@ class Robot:
 
     def get_damage(self) -> float:
         return self._status.damage
-
-    def _get_distance(self, other) -> float:
-        x1, y1 = self._status.position.x, self._status.position.y
-        x2, y2 = other._status.position.x, other._status.position.y
-        dx, dy = abs(x1 - x2), abs(y1 - y2)
-        return sqrt(dx**2 + dy**2)

@@ -1,6 +1,6 @@
 from engine.robot import BotCommands, Robot, MAXSPEED, MAXX, MAXY, INERTIA
 from engine.vector import Vector
-from math import isclose, degrees
+from math import isclose, degrees, sqrt
 from copy import deepcopy
 import pytest
 from pytest import approx
@@ -164,5 +164,45 @@ def test_invalid_cannon_robot(degree, distance):
     rut._initialize_or_die()
     rut._respond_or_die()
     rut._execute_cannon()
+    rut._execute_drive()
+    assert rut.get_damage() == 100
+
+
+@pytest.mark.parametrize(
+    "direction, resolution, found",
+    [(90, 360, True), (45, 5, True), (180, 20, False), (0, 20, False)])
+def test_scanner_robot(direction, resolution, found):
+    class ScannerRobot(EmptyBot):
+        def respond(self):
+            self.point_scanner(direction, resolution)
+
+    rut = ScannerRobot()
+    rut._status.position = Vector(cartesian=(500, 500))
+    others = [Vector(cartesian=(600, 600)), Vector(cartesian=(700, 700))]
+    distance = approx(sqrt(2) * 100)
+    rut._initialize_or_die()
+    rut._respond_or_die()
+    rut._execute_cannon()
+    rut._execute_scanner(others)
+    rut._execute_drive()
+    assert degrees((others[0] - rut._status.position).angle) == approx(45)
+    assert rut._commands.scanner_direction == direction
+    assert rut._commands.scanner_resolution == resolution
+    assert rut._commands.scanner_used is True
+    assert rut.scanned() == (distance if found else None)
+
+
+@pytest.mark.parametrize("direction, resolution",
+                         [(90, -150), (-10, 25), (370, 359), (15, 400)])
+def test_invalid_scanner_robot(direction, resolution):
+    class InvalidRobot(EmptyBot):
+        def respond(self):
+            self.point_scanner(direction, resolution)
+
+    rut = InvalidRobot()
+    rut._initialize_or_die()
+    rut._respond_or_die()
+    rut._execute_cannon()
+    rut._execute_scanner([Vector(cartesian=(10, 20))])
     rut._execute_drive()
     assert rut.get_damage() == 100

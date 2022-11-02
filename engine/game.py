@@ -128,9 +128,14 @@ class Game:
                 self.explosions.append(explosion)
 
             for r in self.alive:
+                others = [other._status.position
+                          for other in self.alive if other is not r]
+                r._execute_scanner(others)
+
+            for r in self.alive:
                 Robot._execute_drive(r)
             for r1, r2 in combinations(self.alive, 2):
-                if Robot._get_distance(r1, r2) < HITBOX:
+                if (r1._status.position - r2._status.position).modulo < HITBOX:
                     r1._status.damage += 2
                     r2._status.damage += 2
 
