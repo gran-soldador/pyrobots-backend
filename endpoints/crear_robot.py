@@ -27,16 +27,15 @@ async def creacion_de_robot(user_id: int = Depends(authenticated_user),
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="You already have"
                                 "a robot with that name.")
-        rpic_location = "userUploads/robotAvatars/defaultAvatarRobot.png"
+        rpic_location = "robotAvatars/defaultAvatarRobot.png"
         if robotAvatar is not None:
             ext = robotAvatar.filename.split(".")[-1]
             if ext not in ['png', 'jpg', 'jpeg', 'tiff', 'bmp']:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                     detail="File is not an image.")
 
-            rpic_location = "userUploads/"
-            rpic_location += f"robotAvatars/{user_id}{robotName}Avatar.{ext}"
-            with open(rpic_location, "wb+") as file_object:
+            rpic_location = f"robotAvatars/{user_id}{robotName}Avatar.{ext}"
+            with open("userUploads/"+rpic_location, "wb+") as file_object:
                 file_object.write(robotAvatar.file.read())
         Robot(
             nombre=robotName,
