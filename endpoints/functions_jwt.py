@@ -53,8 +53,8 @@ def check_session_token(token: str) -> Optional[Dict[str, Any]]:
 
 def authenticated_user(
         token: HTTPAuthorizationCredentials = Depends(HTTPBearer())) -> int:
-    user_id = check_session_token(token.credentials)
-    if user_id is None:
+    data = check_session_token(token.credentials)
+    if data is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Invalid Token")
-    return user_id
+    return data["user_id"]

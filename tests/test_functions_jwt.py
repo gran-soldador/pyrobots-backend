@@ -37,7 +37,7 @@ def test_decode_trash():
 
 
 def test_authenticated_user_expired():
-    data = {"testData": 42}
+    data = {"user_id": 42}
     past_datetime = datetime.now() - timedelta(days=10)
     with mock.patch("endpoints.functions_jwt.expire_date",
                     return_value=past_datetime):
@@ -48,8 +48,8 @@ def test_authenticated_user_expired():
 
 
 def test_authenticated_user():
-    data = {"testData": 42}
+    data = {"user_id": 42}
     token = gen_session_token(data)
     result = authenticated_user(
         HTTPAuthorizationCredentials(scheme="Bearer", credentials=token))
-    assert result == data
+    assert result == 42
