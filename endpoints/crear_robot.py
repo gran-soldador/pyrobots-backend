@@ -35,7 +35,7 @@ async def creacion_de_robot(user_id: int = Depends(authenticated_user),
                                     detail="File is not an image.")
 
             rpic_location = f"robotAvatars/{user_id}{robotName}Avatar.{ext}"
-            with open("userUploads/"+rpic_location, "wb+") as file_object:
+            with open("userUploads/" + rpic_location, "wb+") as file_object:
                 file_object.write(robotAvatar.file.read())
         Robot(
             nombre=robotName,

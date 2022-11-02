@@ -1,32 +1,34 @@
+import mock
 from db import *
 
 
 def test_correct_form_withdefaultavatar(client):
-    response = client.post(
-        'user/registro_de_usuario/',
-        headers={'Content-type': 'application/x-www-form-urlencoded'},
-        data={
-            "username": "myUsuarioDeTestSinAvatar",
-            "password": "myPasswordDeTest444",
-            "useremail": "emailTest1SinAvatar@test.com",
-            "userAvatar": None
-        }
-    )
+    with mock.patch("yagmail.SMTP"):
+        response = client.post(
+            'user/registro_de_usuario/',
+            data={
+                "username": "myUsuarioDeTestSinAvatar",
+                "password": "myPasswordDeTest444",
+                "useremail": "emailTest1SinAvatar@test.com",
+                "userAvatar": None
+            }
+        )
     assert response.status_code == 200
     assert response.json() == {"new user created": "myUsuarioDeTestSinAvatar"}
 
 
 def test_correct_form_with_avatar(client):
     with open("tests/archivosParaTests/DefaultAvatar.png", "rb") as f:
-        response = client.post(
-            'user/registro_de_usuario/',
-            data={
-                "username": "myUsuarioDeTestConAvatar",
-                "password": "myPasswordDeTest444",
-                "useremail": "emailTest1ConAvatar@test.com"
-            },
-            files={"userAvatar": f}
-        )
+        with mock.patch("yagmail.SMTP"):
+            response = client.post(
+                'user/registro_de_usuario/',
+                data={
+                    "username": "myUsuarioDeTestConAvatar",
+                    "password": "myPasswordDeTest444",
+                    "useremail": "emailTest1ConAvatar@test.com"
+                },
+                files={"userAvatar": f}
+            )
         assert response.status_code == 200
         assert response.json() == {
             "new user created": "myUsuarioDeTestConAvatar"}

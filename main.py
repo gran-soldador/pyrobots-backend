@@ -1,11 +1,10 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from endpoints import registrar_usuario, endpoint_login, listar_robot
-from endpoints import crear_robot
 from dotenv import load_dotenv
-from endpoints import crear_partida, simulacion, listar_partidas
-from endpoints import unir_partida, abandonar_partida, match_result
-from endpoints import lobby, iniciar_partida
+from endpoints import (registrar_usuario, endpoint_login, listar_robot,
+                       crear_robot, verify_user, crear_partida, simulacion,
+                       listar_partidas, unir_partida, abandonar_partida,
+                       match_result, lobby, iniciar_partida)
 
 app = FastAPI()
 
@@ -18,6 +17,7 @@ app.include_router(crear_partida.router)
 app.include_router(listar_partidas.router)
 app.include_router(listar_robot.router)
 app.include_router(simulacion.router)
+app.include_router(verify_user.router)
 app.include_router(unir_partida.router)
 app.include_router(abandonar_partida.router)
 app.include_router(match_result.router)
