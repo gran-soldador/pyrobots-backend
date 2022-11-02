@@ -34,3 +34,4 @@ tomli==2.0.1
 typing_extensions==4.4.0
 urllib3==1.26.12
 uvicorn==0.18.3
+yagmail==0.15.293

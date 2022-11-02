@@ -1,6 +1,7 @@
 from pony.orm import *
 from db import *
-
+import yagmail
+from endpoints.functions_jwt import write_token
 
 #  Verifica si el nombre de usuario existe
 def user_exist(username: str):
@@ -24,3 +25,18 @@ def password_is_correct(pas: str):
 # Se fija si los datos de logue ingresados son válidos
 def correct_login(name: str, password: str):
     return Usuario.get(nombre_usuario=name, contraseña=password) is not None
+
+
+# Envía correo electronico con link para verificar su cuenta
+def send_email(mail: str):
+    user = 'emaildepruebagransoldador@gmail.com'
+    app_password = 'blzgkxlqypwmqfdv' # a token for gmail
+    to = mail
+    token = write_token({'email': mail})
+    token = token['accessToken']
+    subject = 'Verify Your Account from PYRobots'
+    content = ['Copy the following link in your browser to verify your account:\n',
+               "http://localhost:3000/verify/"+ token]
+    
+    with yagmail.SMTP(user, app_password) as yag:
+        yag.send(to, subject, content)

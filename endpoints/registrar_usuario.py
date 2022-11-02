@@ -53,7 +53,8 @@ async def registro_usuario(username: str = Form(...),
             nombre_usuario=username,
             contraseña=password,
             email=useremail,
-            verificado=True,
+            verificado=False,
             avatar=avatar_location
         )
+        send_email(useremail)
         return {"new user created": username}
