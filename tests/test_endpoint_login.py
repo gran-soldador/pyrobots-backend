@@ -42,4 +42,5 @@ def test_unverified_user_login(client, user3):
         }
     )
     assert response.status_code == 401
-    assert response.json() == {'detail': "User isn't verified yet. Please verify your account."}
+    detail = "User isn't verified yet. Please verify your account."
+    assert response.json() == {'detail': detail}

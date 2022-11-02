@@ -47,7 +47,7 @@ async def registro_usuario(username: str = Form(...),
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                     detail="File is not an image.")
             avatar_location = f"avatars/{username}UserAvatar.{ext}"
-            with open("userUploads/"+avatar_location, "wb+") as file_object:
+            with open("userUploads/" + avatar_location, "wb+") as file_object:
                 file_object.write(userAvatar.file.read())
         Usuario(
             nombre_usuario=username,
