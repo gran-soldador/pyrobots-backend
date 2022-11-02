@@ -6,6 +6,7 @@
 python3 -m venv env
 source env/bin/activate
 pip3 install -r requirements.txt
+python3 -m http.server --directory userUploads/ 9000
 uvicorn main:app --reload --port 8000
 ```
 
