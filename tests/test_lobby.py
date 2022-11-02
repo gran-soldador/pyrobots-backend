@@ -7,7 +7,7 @@ def test_websocket(client, partida1):
         assert data == {'event': 'created',
                         'creador': 'leandro',
                         'contraseña': False,
-                        'robot': [{'id': 1, 'nombre': 'RandomRobot',
+                        'robot': [{'id': 1, 'nombre': 'robocop',
                                    'usuario': 'leandro'}]
                         }
 
@@ -30,7 +30,7 @@ def test_websocket_send(client, partida1):
         assert data == {'event': 'finish',
                         'creador': 'leandro',
                         'contraseña': False,
-                        'robot': [{'id': 1, 'nombre': 'RandomRobot',
+                        'robot': [{'id': 1, 'nombre': 'robocop',
                                    'usuario': 'leandro'}]
                         }
 
@@ -42,6 +42,6 @@ def test_websocket_except(client, partida1):
         assert data == {'event': 'start',
                         'creador': 'leandro',
                         'contraseña': False,
-                        'robot': [{'id': 1, 'nombre': 'RandomRobot',
+                        'robot': [{'id': 1, 'nombre': 'robocop',
                                   'usuario': 'leandro'}]
                         }
