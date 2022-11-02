@@ -25,4 +25,4 @@ async def login(username: str = Form(...),
                                 detail="User isn't verified yet. Please verify your account.")
         else:
             user_id = Usuario.get(nombre_usuario=username).user_id
-            return gen_session_token({"user_id": user_id})
+            return {'accessToken': gen_session_token({"user_id": user_id})}
