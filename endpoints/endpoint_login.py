@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Form
 from pony.orm import *
 from db import *
-from .functions_jwt import write_token
+from .functions_jwt import gen_session_token
 from .validation import *
 
 
@@ -22,4 +22,4 @@ async def login(username: str = Form(...),
                                 detail="Wrong Password.")
         else:
             user_id = Usuario.get(nombre_usuario=username).user_id
-            return write_token({"user_id": user_id})
+            return gen_session_token({"user_id": user_id})

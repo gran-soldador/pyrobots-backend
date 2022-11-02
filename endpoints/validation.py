@@ -1,7 +1,10 @@
 from pony.orm import *
 from db import *
 import yagmail
-from endpoints.functions_jwt import write_token
+from os import getenv
+
+from endpoints.functions_jwt import gen_verification_token
+
 
 #  Verifica si el nombre de usuario existe
 def user_exist(username: str):
@@ -30,16 +33,14 @@ def correct_login(name: str, password: str):
 # Envía correo electronico con link para verificar su cuenta
 def send_email(mail: str):
     user = 'emaildepruebagransoldador@gmail.com'
-    app_password = 'blzgkxlqypwmqfdv' # a token for gmail
-    to = mail
-    token = write_token({'email': mail})
-    token = token['accessToken']
-    link = "http://localhost:3000/verify/"+ token
+    app_password = getenv("GMAIL_APP_PW")  # a token for gmail
+    token = gen_verification_token({'email': mail})
+    link = f"http://localhost:3000/verify/{token}"
     subject = 'Verifica tu cuenta de PYRobot'
-    content = [f'<a href="{link}">Clickeá aca para verificar tu cuenta en PYRobots</a>\n',
-               "En caso de que no funcione, copia y pega el siguiente link en tu navegador:\n",
-               link 
-              ]
-
+    content = f"""
+<a href="{link}">Clickeá aca para verificar tu cuenta en PYRobots</a>
+En caso de que no funcione, copia y pega el siguiente link en tu navegador:
+{link}
+"""
     with yagmail.SMTP(user, app_password) as yag:
-        yag.send(to, subject, content)
+        yag.send(mail, subject, content)
