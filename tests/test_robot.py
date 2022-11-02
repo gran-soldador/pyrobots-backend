@@ -154,7 +154,9 @@ def test_cannon_robot():
     assert rut._status.damage == 100
 
 
-@pytest.mark.parametrize("degree, distance", [(90, -150), (-10, 25)])
+@pytest.mark.parametrize(
+    "degree, distance",
+    [(90, -150), (-10, 25), (0, 1000)])
 def test_invalid_cannon_robot(degree, distance):
     class InvalidRobot(EmptyBot):
         def respond(self):
@@ -170,7 +172,7 @@ def test_invalid_cannon_robot(degree, distance):
 
 @pytest.mark.parametrize(
     "direction, resolution, found",
-    [(90, 360, True), (45, 5, True), (180, 20, False), (0, 20, False)])
+    [(54, 20, True), (45, 5, True), (180, 20, False), (0, 20, False)])
 def test_scanner_robot(direction, resolution, found):
     class ScannerRobot(EmptyBot):
         def respond(self):

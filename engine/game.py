@@ -117,7 +117,7 @@ class Game:
                    self.missiles_in_flight[0].hit_round - 1 <= self.round):
                 missile = heapq.heappop(self.missiles_in_flight)
                 explosion = missile.destination
-                for r in self.alive:  # pragma: no cover
+                for r in self.alive:
                     distance = r._status.position.distance(explosion)
                     if distance < 5:
                         r._status.damage += 10

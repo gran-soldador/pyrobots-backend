@@ -3,8 +3,8 @@ class GuardRobot(Robot):  # noqa: F821
         self.dir = 90
 
     def respond(self):
-        import random
         x, y = self.get_position()
+
         if x < 100:
             self.drive(0, 50)
         elif x > 150:
@@ -16,5 +16,8 @@ class GuardRobot(Robot):  # noqa: F821
                 self.dir = 90
             self.drive(self.dir, 50)
 
-        if self.is_cannon_ready():
-            self.cannon(0, random.uniform(100, 800))
+        self.point_scanner(0, 10)
+        result = self.scanned()
+
+        if result is not None and self.is_cannon_ready():
+            self.cannon(0, min(result, 699))
