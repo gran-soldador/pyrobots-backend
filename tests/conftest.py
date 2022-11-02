@@ -69,7 +69,7 @@ def user2():
 def robot1(user1):
     with open("tests/archivosParaTests/defaultrobot1.py") as f:
         robot = Robot(nombre='RandomRobot', implementacion=f.read(),
-                      avatar='UserUploads/robotAvatars/1robocopAvatar.png',
+                      avatar='robotAvatars/1robocopAvatar.png',
                       partidas_ganadas=0, partidas_jugadas=0,
                       defectuoso=False, usuario=Usuario[user1])
     robot.flush()
