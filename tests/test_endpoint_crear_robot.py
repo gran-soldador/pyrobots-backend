@@ -31,7 +31,7 @@ def test_user_robot_already_exist(loggedin_client, user1, robot1):
         with open("tests/archivosParaTests/codeOfRobot.py", "rb") as c:
             response = loggedin_client.post(
                 '/user/creacion_de_robot/',
-                data={"robotName": "robocop"},
+                data={"robotName": "RandomRobot"},
                 files={"robotAvatar": f, "robotCode": c},
             )
             assert response.status_code == 400
