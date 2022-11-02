@@ -4,10 +4,9 @@ import sys
 db = Database()
 
 if "pytest" in sys.modules:
-    db.bind(provider="sqlite", filename=":sharedmemory:")  # pragma: no cover
+    db.bind(provider="sqlite", filename=":sharedmemory:")
 else:
-    db.bind(provider="sqlite", filename="main.db",
-            create_db=True)  # pragma: no cover
+    db.bind(provider="sqlite", filename="main.db", create_db=True)
 
 
 class Usuario(db.Entity):
