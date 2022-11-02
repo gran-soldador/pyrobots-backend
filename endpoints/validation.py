@@ -34,9 +34,12 @@ def send_email(mail: str):
     to = mail
     token = write_token({'email': mail})
     token = token['accessToken']
-    subject = 'Verify Your Account from PYRobots'
-    content = ['Copy the following link in your browser to verify your account:\n',
-               "http://localhost:3000/verify/"+ token]
-    
+    link = "http://localhost:3000/verify/"+ token
+    subject = 'Verifica tu cuenta de PYRobot'
+    content = [f'<a href="{link}">Clickeá aca para verificar tu cuenta en PYRobots</a>\n',
+               "En caso de que no funcione, copia y pega el siguiente link en tu navegador:\n",
+               link 
+              ]
+
     with yagmail.SMTP(user, app_password) as yag:
         yag.send(to, subject, content)
