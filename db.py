@@ -1,8 +1,13 @@
 from pony.orm import *
+import sys
 
 db = Database()
 
-db.bind(provider="sqlite", filename="main.db", create_db=True)
+if "pytest" in sys.modules:
+    db.bind(provider="sqlite", filename=":sharedmemory:")  # pragma: no cover
+else:
+    db.bind(provider="sqlite", filename="main.db",
+            create_db=True)  # pragma: no cover
 
 
 class Usuario(db.Entity):
@@ -40,7 +45,7 @@ class Partida(db.Entity):
     numrondas = Required(int)
     participante = Set(Robot, reverse='participa')
     creador = Required(Usuario, reverse='partida')
-    ganador = Optional(Robot, reverse='gano')
+    ganador = Set(Robot, reverse='gano')
 
 
 db.generate_mapping(create_tables=True)

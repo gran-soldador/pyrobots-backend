@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Form, status, HTTPException
+from fastapi import APIRouter, Form, status, HTTPException, Depends
 from db import *
+from .functions_jwt import *
 import string
+from websocket import lobby_manager
 
 router = APIRouter()
 
-VALID_CHAR = (string.ascii_lowercase + string.ascii_uppercase
-              + ''.join([str(i) for i in range(0, 10)]) + '-_'
+VALID_CHAR = (string.ascii_lowercase + string.ascii_uppercase +
+              ''.join([str(i) for i in range(0, 10)]) + '-_'
               )
 
 
@@ -17,14 +19,15 @@ def check_string(string: str) -> bool:
 
 
 @router.post("/crear-partida")
-async def crear_partida(namepartida: str = Form(...),
+async def crear_partida(user_id: int = Depends(authenticated_user),
+                        namepartida: str = Form(...),
                         password: str = Form(None),
                         minplayers: int = Form(...),
                         maxplayers: int = Form(...),
                         numgames: int = Form(...),
                         numrondas: int = Form(...),
-                        idrobot: int = Form(...),
-                        status_code=status.HTTP_200_OK):
+                        idrobot: int = Form(...)):
+    partida_id = None
     if (len(namepartida) <= 32 and check_string(namepartida)) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='namepartida invalido')
@@ -47,6 +50,9 @@ async def crear_partida(namepartida: str = Form(...),
         except Exception:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot no valido')
+        if robot.usuario.user_id != user_id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                detail="robot no pertenece al usuario")
         if robot.defectuoso is True:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot defectuoso')
@@ -69,4 +75,5 @@ async def crear_partida(namepartida: str = Form(...),
         p1.participante.add(robot)
         p1.flush()
         partida_id = p1.partida_id
-        return {'id_partida': partida_id}
+    await lobby_manager.broadcast(partida_id, 'created')
+    return {'id_partida': partida_id}

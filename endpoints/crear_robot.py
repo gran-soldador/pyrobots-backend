@@ -1,14 +1,15 @@
-from fastapi import APIRouter, HTTPException, status, File, UploadFile, Form
+from fastapi import (APIRouter, HTTPException, status, File, UploadFile, Form,
+                     Depends)
 from db import *
 from .validation import *
-
+from .functions_jwt import *
 router = APIRouter()
 
 
 @router.post("/user/creacion_de_robot/",
              name="Subida de Robots por el Usuario")
-async def creacion_de_robot(username: str = Form(),
-                            robotName: str = Form(),
+async def creacion_de_robot(user_id: int = Depends(authenticated_user),
+                            robotName: str = Form(...),
                             robotAvatar: UploadFile = File(None),
                             robotCode: UploadFile = File(...)
                             ):
@@ -18,28 +19,24 @@ async def creacion_de_robot(username: str = Form(),
     # Acá me transforma el codigo a str
     code_of_robot = str(code_of_robot, encoding)
     with db_session:
-        if not user_exist(username):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail="User doesn't exist.")
-        elif not robotCode.filename.lower().endswith(('.py')):
+        user = Usuario[user_id]
+        if not robotCode.filename.lower().endswith('.py'):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="File must be a .py")
-        elif user_robot_already_exist(username, robotName):
+        if Robot.get(nombre=robotName, usuario=user) is not None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="You already have"
                                 "a robot with that name.")
-        rpic_location = "userUploads/robotAvatars/defaultAvatarRobot.png"
+        rpic_location = "robotAvatars/defaultAvatarRobot.png"
         if robotAvatar is not None:
             ext = robotAvatar.filename.split(".")[-1]
             if ext not in ['png', 'jpg', 'jpeg', 'tiff', 'bmp']:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                     detail="File is not an image.")
 
-            rpic_location = "userUploads/"
-            rpic_location += f"robotAvatars/{username}{robotName}Avatar.{ext}"
-            with open(rpic_location, "wb+") as file_object:
+            rpic_location = f"robotAvatars/{user_id}{robotName}Avatar.{ext}"
+            with open("userUploads/" + rpic_location, "wb+") as file_object:
                 file_object.write(robotAvatar.file.read())
-        myUser_id = Usuario.get(nombre_usuario=username).user_id
         Robot(
             nombre=robotName,
             implementacion=code_of_robot,
@@ -47,19 +44,6 @@ async def creacion_de_robot(username: str = Form(),
             partidas_ganadas=0,
             partidas_jugadas=0,
             defectuoso=False,
-            usuario=myUser_id
+            usuario=user
         )
         return {"new robot created": robotName}
-
-
-@router.post("/lista-robots",
-             name="Subida de Robots por el Usuario")
-async def listar_robots(username: str = Form(...)):
-    with db_session:
-        lista = []
-        for r in Usuario.get(nombre_usuario=username).robot:
-            lista.append({'id': r.robot_id, 'nombre': r.nombre})
-        if lista == []:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail='No se encontraron robots')
-        return lista
