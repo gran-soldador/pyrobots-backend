@@ -97,10 +97,14 @@ class GuardRobot(Robot):
                 self.dir = 90
             self.drive(self.dir, 50)
 
-        if self.is_cannon_ready(): self.cannon(0, random.uniform(100,800))
+        self.point_scanner(0, 10)
+        result = self.scanned()
+
+        if result is not None and self.is_cannon_ready():
+            self.cannon(0, result)
 """)
 
-config = ([random, square, dvd, spiral], 10000)
+config = ([guard, square, dvd, spiral], 10000)
 
 
 def demo():
