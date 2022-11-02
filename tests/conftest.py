@@ -53,6 +53,16 @@ def user2():
 
 @pytest.fixture
 @db_session
+def user3():
+    user = Usuario(nombre_usuario='rocio',
+                   email='rocio.cordoba@mi.unc.edu.ar',
+                   contraseña='asdASD123$', verificado=False)
+    user.flush()
+    return user.user_id
+
+
+@pytest.fixture
+@db_session
 def robot1(user1):
     robot = Robot(nombre='robocop', implementacion='super-robot.py',
                   partidas_ganadas=0, partidas_jugadas=0,

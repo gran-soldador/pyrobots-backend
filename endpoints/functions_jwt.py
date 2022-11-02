@@ -43,7 +43,8 @@ async def authenticated_user(
 def check_verification_token(token):
     try:
         data = decode(token, key=getenv("SECRET"), algorithms=["HS256"])
-        if data["kind"] != 2:
-            return None
+        if data["kind"] == 2:
+            return data
     except exceptions.PyJWTError:
-        return None
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid Token")

@@ -31,3 +31,15 @@ def test_wrong_password_login(client, user1):
     )
     assert response.status_code == 401
     assert response.json() == {'detail': "Wrong Password."}
+
+
+def test_unverified_user_login(client, user3):
+    response = client.post(
+        '/login',
+        data={
+            "username": "rocio",
+            "password": "asdASD123$"
+        }
+    )
+    assert response.status_code == 401
+    assert response.json() == {'detail': "User isn't verified yet. Please verify your account."}
