@@ -127,20 +127,19 @@ class Robot:
             self._status.damage = 100
             return
         min_angle = (self._commands.scanner_direction -
-                     self._commands.scanner_resolution / 2) % 360
+                     self._commands.scanner_resolution / 2 + 360) % 360
         max_angle = (self._commands.scanner_direction +
-                     self._commands.scanner_resolution / 2) % 360
+                     self._commands.scanner_resolution / 2 + 360) % 360
         best = float("inf")
         for other in positions:
             vec = other - self._status.position
-            angle = degrees(vec.angle)
+            angle = (degrees(vec.angle) + 360) % 360
             if min_angle < max_angle:
                 if min_angle <= angle <= max_angle:
                     best = min(best, vec.modulo)
             else:  # an angle has wrapped around
-                if not min_angle <= angle <= max_angle:
+                if not max_angle < angle < min_angle:
                     best = min(best, vec.modulo)
-
         if best < float("inf"):
             self._status.scan_result = best
 
