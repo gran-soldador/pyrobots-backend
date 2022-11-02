@@ -34,6 +34,7 @@ def check_verification_token(token: str) -> Optional[Dict[str, Any]]:
     try:
         data = decode(token, key=getenv("SECRET"), algorithms=["HS256"])
         if data["kind"] == JWTKinds.VERIFICATION:
+            del data["kind"]
             return data
     except exceptions.PyJWTError:
         return
@@ -43,12 +44,14 @@ def check_session_token(token: str) -> Optional[Dict[str, Any]]:
     try:
         data = decode(token, key=getenv("SECRET"), algorithms=["HS256"])
         if data["kind"] == JWTKinds.SESSION:
+            del data["kind"]
+            del data["exp"]
             return data
     except exceptions.PyJWTError:
         return
 
 
-async def authenticated_user(
+def authenticated_user(
         token: HTTPAuthorizationCredentials = Depends(HTTPBearer())) -> int:
     user_id = check_session_token(token.credentials)
     if user_id is None:
