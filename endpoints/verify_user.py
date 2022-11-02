@@ -17,5 +17,8 @@ async def verify_user(token):
         if user is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="User doesn't exist.")
+        elif user.verificado:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail="User already verified.")
         user.verificado = True
         return {'detail': "user succesfully verified!"}

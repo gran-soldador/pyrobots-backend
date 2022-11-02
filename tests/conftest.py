@@ -66,6 +66,16 @@ def user2():
 
 @pytest.fixture
 @db_session
+def user3():
+    user = Usuario(nombre_usuario='rocio',
+                   email='rocio.cordoba@mi.unc.edu.ar',
+                   contraseña='asdASD123$', verificado=False)
+    user.flush()
+    return user.user_id
+
+
+@pytest.fixture
+@db_session
 def robot1(user1):
     with open("tests/archivosParaTests/defaultrobot1.py") as f:
         robot = Robot(nombre='RandomRobot', implementacion=f.read(),
