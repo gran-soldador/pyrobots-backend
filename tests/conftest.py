@@ -100,6 +100,17 @@ def robot3(user1):
 
 @pytest.fixture
 @db_session
+def robot4(user1):
+    with open("tests/archivosParaTests/defaultrobot2.py") as f:
+        robot = Robot(nombre='GuardRobot', implementacion=f.read(),
+                      partidas_ganadas=0, partidas_jugadas=0,
+                      defectuoso=False, usuario=Usuario[user1])
+    robot.flush()
+    return robot.robot_id
+
+
+@pytest.fixture
+@db_session
 def partida1(robot1, user1):
     p1 = Partida(namepartida='my_partida', status='disponible',
                  minplayers=3, maxplayers=3, numgames=10, numrondas=10,
