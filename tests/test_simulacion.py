@@ -1,6 +1,19 @@
 import mock
 
 
+def test_simulacion_wrong_robots(loggedin_client):
+    response = loggedin_client.post(
+        '/create_simulation',
+        data={
+            "rounds": 1,
+            "robot_ids": 'asd'
+        }
+    )
+    assert response.status_code == 400
+    detail = 'invalid robot list'
+    assert response.json() == {'detail': detail}
+
+
 def test_simulacion_less_robots(loggedin_client):
     response = loggedin_client.post(
         '/create_simulation',
@@ -71,5 +84,5 @@ def test_simulacion_fail(loggedin_client, robot1, robot2, robot3, robot4):
                 "robot_ids": '1,2,3,4'
             }
         )
-    assert response.status_code == 400
-    assert response.json() == {'detail': 'error en la simulación'}
+    assert response.status_code == 500
+    assert response.json() == {'detail': 'Simulation error'}
