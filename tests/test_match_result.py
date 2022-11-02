@@ -13,7 +13,7 @@ def test_correct_match(client, user1, robot1):
     assert response.status_code == 200
     assert response.json() == [{
                                'id': 1,
-                               'robot': 'RandomRobot',
+                               'robot': 'robocop',
                                'usuario': 'leandro'
                                }]
 

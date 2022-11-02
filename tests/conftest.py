@@ -67,10 +67,10 @@ def user2():
 @pytest.fixture
 @db_session
 def robot1(user1):
-    with open("tests/archivosParaTests/defaultrobot1.py") as f:
-        robot = Robot(nombre='RandomRobot', implementacion=f.read(),
-                      partidas_ganadas=0, partidas_jugadas=0,
-                      defectuoso=False, usuario=Usuario[user1])
+    robot = Robot(nombre='robocop', implementacion='super-robot.py',
+                  avatar='UserUploads/robotAvatars/1robocopAvatar.png',
+                  partidas_ganadas=0, partidas_jugadas=0,
+                  defectuoso=False, usuario=Usuario[user1])
     robot.flush()
     return robot.robot_id
 
