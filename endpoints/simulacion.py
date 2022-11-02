@@ -1,13 +1,18 @@
-from fastapi import APIRouter, status, HTTPException, Depends, Form
-from .functions_jwt import *
-import engine
+from cattrs.preconf.json import make_converter
+# TODO: Test other cattrs preconfs for performance
+from fastapi import APIRouter, status, HTTPException, Depends, Form, Response
+
 from db import *
+import engine
+from engine.outputmodels import SimulationResult
+from .functions_jwt import *
 
 
+converter = make_converter()
 router = APIRouter()
 
 
-@router.post("/create_simulation")
+@router.post("/create_simulation", response_model=SimulationResult)
 async def simulation(user_id: int = Depends(authenticated_user),
                      rounds: int = Form(...),
                      robot_ids: str = Form(...)  # comma separated list
@@ -37,7 +42,11 @@ async def simulation(user_id: int = Depends(authenticated_user),
                                     detail='Robot does not exist')
             robots.append((id, robot.nombre, robot.implementacion))
     try:
-        return engine.Game(robots, rounds).simulation()
+        result = engine.Game(robots, rounds).simulation()
+        # We COULD do `return result`, but some quick measurements show that
+        # is ~10 times slower.
+        json_str = converter.dumps(result)
+        return Response(json_str, media_type="application/json")
     except Exception:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail='Simulation error')

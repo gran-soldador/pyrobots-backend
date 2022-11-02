@@ -44,7 +44,7 @@ class Partida(db.Entity):
     numrondas = Required(int)
     participante = Set(Robot, reverse='participa')
     creador = Required(Usuario, reverse='partida')
-    ganador = Optional(Robot, reverse='gano')
+    ganador = Set(Robot, reverse='gano')
 
 
 db.generate_mapping(create_tables=True)
