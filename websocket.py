@@ -37,7 +37,7 @@ class LobbyManager:
             for connection in room:
                 if room != []:
                     await connection.send_json(msg)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
     async def send_msg(self, partida_id: int, websocket: WebSocket, msg: str):

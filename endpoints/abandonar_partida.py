@@ -6,7 +6,9 @@ from websocket import lobby_manager
 router = APIRouter()
 
 
-@router.post('/abandonar-partida')
+@router.post('/abandonar-partida',
+             tags=["Match Methods"],
+             name="Abandono de partida")
 async def abandonar_partida(user_id: int = Depends(authenticated_user),
                             partida_id: int = Form(...)):
     with db_session:
@@ -29,4 +31,3 @@ async def abandonar_partida(user_id: int = Depends(authenticated_user),
         partida.flush()
         partida.status = 'disponible'
     await lobby_manager.broadcast(partida_id, 'quit')
-    return {'detail': partida.status}

@@ -6,7 +6,9 @@ from websocket import lobby_manager
 router = APIRouter()
 
 
-@router.post('/unir-partida')
+@router.post('/unir-partida',
+             tags=["Match Methods"],
+             name="Unión a partida")
 async def unir_partida(user_id: int = Depends(authenticated_user),
                        partida_id: int = Form(...),
                        password: str = Form(None),
@@ -43,4 +45,3 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
         if len(partida.participante) == partida.maxplayers:
             partida.status = 'ocupada'
     await lobby_manager.broadcast(partida_id, 'join')
-    return {'detail': partida.status}

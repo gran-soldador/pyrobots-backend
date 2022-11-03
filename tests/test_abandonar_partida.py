@@ -1,10 +1,13 @@
+import mock
+
+
 def test_correct_quit(loggedin_client2, partida4):
-    response = loggedin_client2.post(
-        '/abandonar-partida',
-        data={'partida_id': partida4}
-    )
+    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+        response = loggedin_client2.post(
+            '/abandonar-partida',
+            data={'partida_id': partida4}
+        )
     assert response.status_code == 200
-    assert response.json() == {'detail': 'disponible'}
 
 
 def test_creator_quit(loggedin_client, partida2):

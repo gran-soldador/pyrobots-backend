@@ -4,7 +4,9 @@ from db import *
 router = APIRouter()
 
 
-@router.get("/lista-partidas")
+@router.get("/lista-partidas",
+            tags=["Match Methods"],
+            name="Lista de partidas")
 async def listar_partidas():
     with db_session:
         lista = []

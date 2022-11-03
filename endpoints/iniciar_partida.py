@@ -41,7 +41,9 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
     await lobby_manager.broadcast(partida_id, 'finish')
 
 
-@router.post('/iniciar-partida')
+@router.post('/iniciar-partida',
+             tags=["Match Methods"],
+             name="Inicio de partida")
 async def init_match(user_id: int = Depends(authenticated_user),
                      partida_id: int = Form(...),
                      background_tasks: BackgroundTasks = BackgroundTasks()):
@@ -66,4 +68,3 @@ async def init_match(user_id: int = Depends(authenticated_user),
         partida.status = 'iniciada'
         partida.flush()
     await lobby_manager.broadcast(partida_id, 'init')
-    return {'detail': partida.status}

@@ -1,5 +1,6 @@
 import pytest
 from db import *
+import mock
 
 
 @pytest.fixture
@@ -17,12 +18,12 @@ def valid_form(robot1):
 
 @pytest.mark.parametrize("password", [None, "42787067"])
 def test_correct_form(loggedin_client, valid_form, user1, password):
-    response = loggedin_client.post(
-        'crear-partida',
-        data={**valid_form, "password": password}
-    )
+    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+        response = loggedin_client.post(
+            'crear-partida',
+            data={**valid_form, "password": password}
+        )
     assert response.status_code == 200
-    assert response.json() == {'id_partida': 1}
     with db_session:
         assert Partida.select().count() == 1
         assert Partida[1].creador.user_id == user1

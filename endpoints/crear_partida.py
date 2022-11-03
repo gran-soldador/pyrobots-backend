@@ -18,7 +18,9 @@ def check_string(string: str) -> bool:
     return True
 
 
-@router.post("/crear-partida")
+@router.post("/crear-partida",
+             tags=["Match Methods"],
+             name="Creación de partida")
 async def crear_partida(user_id: int = Depends(authenticated_user),
                         namepartida: str = Form(...),
                         password: str = Form(None),
@@ -76,4 +78,3 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         p1.flush()
         partida_id = p1.partida_id
     await lobby_manager.broadcast(partida_id, 'created')
-    return {'id_partida': partida_id}

@@ -1,26 +1,29 @@
+import mock
+
+
 def test_correct_union(loggedin_client2, partida1, robot2):
-    response = loggedin_client2.post(
-        '/unir-partida',
-        data={
-            'partida_id': partida1,
-            'id_robot': robot2
-        }
-    )
+    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+        response = loggedin_client2.post(
+            '/unir-partida',
+            data={
+                'partida_id': partida1,
+                'id_robot': robot2
+            }
+        )
     assert response.status_code == 200
-    assert response.json() == {'detail': 'disponible'}
 
 
 def test_correct_password_union(loggedin_client2, partida2, robot2):
-    response = loggedin_client2.post(
-        '/unir-partida',
-        data={
-            'partida_id': partida2,
-            'password': 'leandro',
-            'id_robot': robot2
-        }
-    )
+    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+        response = loggedin_client2.post(
+            '/unir-partida',
+            data={
+                'partida_id': partida2,
+                'password': 'leandro',
+                'id_robot': robot2
+            }
+        )
     assert response.status_code == 200
-    assert response.json() == {'detail': 'disponible'}
 
 
 def test_incorrect_password_union(loggedin_client2, partida2, robot2):
@@ -115,13 +118,13 @@ def test_same_user_union(loggedin_client2, partida4, robot2):
 
 
 def test_full_user_union(loggedin_client2, partida5, robot2):
-    response = loggedin_client2.post(
-        '/unir-partida',
-        data={
-            'partida_id': partida5,
-            'password': 'leandro',
-            'id_robot': robot2
-        }
-    )
+    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+        response = loggedin_client2.post(
+            '/unir-partida',
+            data={
+                'partida_id': partida5,
+                'password': 'leandro',
+                'id_robot': robot2
+            }
+        )
     assert response.status_code == 200
-    assert response.json() == {'detail': 'ocupada'}

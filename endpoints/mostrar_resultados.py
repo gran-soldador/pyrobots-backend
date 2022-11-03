@@ -5,7 +5,9 @@ from .functions_jwt import *
 router = APIRouter()
 
 
-@router.get('/match-result/{partida_id}')
+@router.get('/mostrar-resultados/{partida_id}',
+            tags=["Match Methods"],
+            name="Resultados de partida")
 async def return_result(partida_id: int):
     with db_session:
         try:

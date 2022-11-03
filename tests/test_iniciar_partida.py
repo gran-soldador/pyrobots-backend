@@ -1,10 +1,13 @@
+import mock
+
+
 def test_correct_start(loggedin_client, partida5):
-    response = loggedin_client.post(
-        '/iniciar-partida',
-        data={'partida_id': partida5}
-    )
+    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+        response = loggedin_client.post(
+            '/iniciar-partida',
+            data={'partida_id': partida5}
+        )
     assert response.status_code == 200
-    assert response.json() == {'detail': 'iniciada'}
 
 
 def test_incorrect_user(loggedin_client2, partida5):
