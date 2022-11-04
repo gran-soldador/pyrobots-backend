@@ -7,6 +7,7 @@ router = APIRouter()
 
 
 @router.post("/user/creacion_de_robot/",
+             tags=['Robot Methods'],
              name="Subida de Robots por el Usuario")
 async def creacion_de_robot(user_id: int = Depends(authenticated_user),
                             robotName: str = Form(...),
