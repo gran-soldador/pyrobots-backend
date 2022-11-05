@@ -19,7 +19,7 @@ class LobbyManager:
     def disconnect(self, websocket: WebSocket, partida_id: int):
         self.room[partida_id].remove(websocket)
 
-    def create_msg(self, partida_id:int, msg:str):
+    def create_msg(self, partida_id: int, msg: str):
         if msg == 'error':
             return {
                 "event": 'room not found',
