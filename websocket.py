@@ -10,14 +10,14 @@ class LobbyManager:
 
     async def connect(self, websocket: WebSocket, partida_id: int):
         await websocket.accept()
-        try:
-            self.room[partida_id]
-        except Exception:
+        if self.room.get(partida_id) is None:
             self.room[partida_id] = []
         self.room[partida_id].append(websocket)
 
     def disconnect(self, websocket: WebSocket, partida_id: int):
-        self.room[partida_id].remove(websocket)
+        room = self.room.get(partida_id)
+        if room is not None and websocket in room:
+            self.room[partida_id].remove(websocket)
 
     def create_msg(self, partida_id: int, msg: str):
         if msg == 'error':
@@ -40,13 +40,11 @@ class LobbyManager:
 
     async def broadcast(self, partida_id: int, msg: str):
         self.last_msg[partida_id] = msg
-        try:
-            room = self.room[partida_id]
+        room = self.room.get(partida_id)
+        if room is not None:
             msg = self.create_msg(partida_id, msg)
             for connection in room:
                 await connection.send_json(msg)
-        except Exception:  # pragma: no cover
-            pass
 
     async def send_msg(self, partida_id: int, websocket: WebSocket, msg: str):
         if msg != 'error':

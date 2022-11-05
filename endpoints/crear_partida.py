@@ -47,9 +47,8 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='numrondas invalido')
     with db_session:
-        try:
-            robot = Robot[idrobot]
-        except Exception:
+        robot = Robot.get(robot_id=idrobot)
+        if robot is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot no valido')
         if robot.usuario.user_id != user_id:
@@ -58,22 +57,13 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         if robot.defectuoso is True:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot defectuoso')
-        if password:
-            p1 = Partida(namepartida=namepartida, password=password,
-                         status='disponible',
-                         minplayers=minplayers,
-                         maxplayers=maxplayers,
-                         numgames=numgames,
-                         numrondas=numrondas,
-                         creador=robot.usuario)
-        else:
-            p1 = Partida(namepartida=namepartida,
-                         status='disponible',
-                         minplayers=minplayers,
-                         maxplayers=maxplayers,
-                         numgames=numgames,
-                         numrondas=numrondas,
-                         creador=robot.usuario)
+        p1 = Partida(namepartida=namepartida, password=password,
+                     status='disponible',
+                     minplayers=minplayers,
+                     maxplayers=maxplayers,
+                     numgames=numgames,
+                     numrondas=numrondas,
+                     creador=robot.usuario)
         p1.participante.add(robot)
         p1.flush()
         partida_id = p1.partida_id

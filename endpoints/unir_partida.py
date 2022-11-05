@@ -32,9 +32,8 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
         if user != []:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='usuario ya unido')
-        try:
-            robot = Robot[id_robot]
-        except Exception:
+        robot = Robot.get(robot_id=id_robot)
+        if robot is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='el robot no existe')
         if robot.usuario.user_id != user_id:

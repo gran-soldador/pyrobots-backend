@@ -11,10 +11,10 @@ async def websocket_manager(websocket: WebSocket, partida_id: int):
     with db_session:
         partida = Partida.get(partida_id=partida_id) is not None
     if partida is True:
-        try:
-            msg = lobby_manager.last_msg[partida_id]
+        msg = lobby_manager.last_msg.get(partida_id)
+        if msg is not None:
             await lobby_manager.send_msg(partida_id, websocket, msg)
-        except Exception:
+        else:
             await lobby_manager.send_msg(partida_id, websocket, 'start')
         try:
             while True:
