@@ -22,15 +22,15 @@ def check_string(string: str) -> bool:
              tags=["Match Methods"],
              name="Create a new match")
 async def crear_partida(user_id: int = Depends(authenticated_user),
-                        namepartida: str = Form(...),
+                        name: str = Form(...),
                         password: str = Form(None),
                         minplayers: int = Form(...),
                         maxplayers: int = Form(...),
                         numgames: int = Form(...),
-                        numrondas: int = Form(...),
-                        idrobot: int = Form(...)):
+                        numrounds: int = Form(...),
+                        robot_id: int = Form(...)):
     partida_id = None
-    if (len(namepartida) <= 32 and check_string(namepartida)) is False:
+    if (len(name) <= 32 and check_string(name)) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='namepartida invalido')
     if password:
@@ -43,11 +43,11 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
     if (numgames >= 1 and numgames <= 200) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='numgames invalido')
-    if (numrondas >= 1 and numrondas <= 10000) is False:
+    if (numrounds >= 1 and numrounds <= 10000) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='numrondas invalido')
     with db_session:
-        robot = Robot.get(robot_id=idrobot)
+        robot = Robot.get(robot_id=robot_id)
         if robot is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot no valido')
@@ -57,12 +57,12 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         if robot.defectuoso is True:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot defectuoso')
-        p1 = Partida(namepartida=namepartida, password=password,
+        p1 = Partida(namepartida=name, password=password,
                      status='disponible',
                      minplayers=minplayers,
                      maxplayers=maxplayers,
                      numgames=numgames,
-                     numrondas=numrondas,
+                     numrondas=numrounds,
                      creador=robot.usuario)
         p1.participante.add(robot)
         p1.flush()

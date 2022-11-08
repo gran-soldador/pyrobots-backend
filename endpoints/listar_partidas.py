@@ -8,15 +8,15 @@ router = APIRouter()
 
 @dataclass(slots=True)
 class MatchResult:
-    partida_id: int
-    namepartida: str
+    match_id: int
+    name: str
     status: str
     numcurrentplayers: int
     minplayers: int
     maxplayers: int
     numgames: int
-    numrondas: int
-    creador: str
+    numrounds: int
+    creator: str
     password: bool
 
 
@@ -27,15 +27,15 @@ class MatchResult:
 async def listar_partidas():
     with db_session:
         lista = [MatchResult(
-            partida_id=p.partida_id,
-            namepartida=p.namepartida,
+            match_id=p.partida_id,
+            name=p.namepartida,
             status=p.status,
             numcurrentplayers=len(p.participante),
             minplayers=p.minplayers,
             maxplayers=p.maxplayers,
             numgames=p.numgames,
-            numrondas=p.numrondas,
-            creador=p.creador.nombre_usuario,
+            numrounds=p.numrondas,
+            creator=p.creador.nombre_usuario,
             password=p.password is not None
         ) for p in Partida.select()]
     if lista == []:

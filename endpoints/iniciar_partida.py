@@ -45,10 +45,10 @@ async def calculate_match(partida_id: int, robots: List[Tuple[int, str, str]],
              tags=["Match Methods"],
              name="Start match")
 async def init_match(user_id: int = Depends(authenticated_user),
-                     partida_id: int = Form(...),
+                     match_id: int = Form(...),
                      background_tasks: BackgroundTasks = BackgroundTasks()):
     with db_session:
-        partida = Partida.get_for_update(partida_id=partida_id)
+        partida = Partida.get_for_update(partida_id=match_id)
         if partida is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
@@ -63,8 +63,8 @@ async def init_match(user_id: int = Depends(authenticated_user),
                                 detail='la partida ya fue iniciada')
         robots = [(r.robot_id, r.nombre, r.implementacion) for r in
                   partida.participante]
-        background_tasks.add_task(calculate_match, partida_id, robots,
+        background_tasks.add_task(calculate_match, match_id, robots,
                                   partida.numgames, partida.numrondas)
         partida.status = 'iniciada'
         partida.flush()
-    await lobby_manager.broadcast(partida_id, 'init')
+    await lobby_manager.broadcast(match_id, 'init')

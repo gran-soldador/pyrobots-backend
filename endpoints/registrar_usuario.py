@@ -15,8 +15,8 @@ MIN_PASSWORD_SIZE = 8
              name="Register new user")
 async def registro_usuario(username: str = Form(...),
                            password: str = Form(...),
-                           useremail: str = Form(...),
-                           userAvatar: UploadFile = File(None)
+                           email: str = Form(...),
+                           avatar: UploadFile = File(None)
                            ):
     with db_session:
         if len(username) > MAX_NICKNAME_SIZE:
@@ -28,7 +28,7 @@ async def registro_usuario(username: str = Form(...),
         elif user_exist(username):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="User name already exist.")
-        elif email_exist(useremail):
+        elif email_exist(email):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Email already registered.")
         elif (not password_is_correct(password)):
@@ -36,25 +36,25 @@ async def registro_usuario(username: str = Form(...),
                                 detail="Password inválido, el password "
                                        "requiere al menos una mayuscula, una "
                                        "minusucula y un numero.")
-        elif not ("@" in useremail):
+        elif not ("@" in email):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Email inválido.")
 
         avatar_location = "avatars/DefaultAvatar.png"
-        if userAvatar is not None:
-            ext = userAvatar.filename.split(".")[-1]
+        if avatar is not None:
+            ext = avatar.filename.split(".")[-1]
             if ext not in ['png', 'jpg', 'jpeg', 'tiff', 'bmp']:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                     detail="File is not an image.")
             avatar_location = f"avatars/{username}UserAvatar.{ext}"
             with open("userUploads/" + avatar_location, "wb+") as file_object:
-                file_object.write(userAvatar.file.read())
+                file_object.write(avatar.file.read())
         Usuario(
             nombre_usuario=username,
             contraseña=password,
-            email=useremail,
+            email=email,
             verificado=False,
             avatar=avatar_location
         )
-        send_email(useremail)
+        send_email(email)
         return {"new user created": username}

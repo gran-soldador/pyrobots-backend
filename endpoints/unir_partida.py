@@ -10,11 +10,11 @@ router = APIRouter()
              tags=["Match Methods"],
              name="Join a match")
 async def unir_partida(user_id: int = Depends(authenticated_user),
-                       partida_id: int = Form(...),
+                       match_id: int = Form(...),
                        password: str = Form(None),
-                       id_robot: int = Form(...)):
+                       robot_id: int = Form(...)):
     with db_session:
-        partida = Partida.get_for_update(partida_id=partida_id)
+        partida = Partida.get_for_update(partida_id=match_id)
         if partida is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
@@ -32,7 +32,7 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
         if user != []:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='usuario ya unido')
-        robot = Robot.get(robot_id=id_robot)
+        robot = Robot.get(robot_id=robot_id)
         if robot is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='el robot no existe')
@@ -43,4 +43,4 @@ async def unir_partida(user_id: int = Depends(authenticated_user),
         partida.flush()
         if len(partida.participante) == partida.maxplayers:
             partida.status = 'ocupada'
-    await lobby_manager.broadcast(partida_id, 'join')
+    await lobby_manager.broadcast(match_id, 'join')

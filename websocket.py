@@ -23,18 +23,18 @@ class LobbyManager:
         if msg == 'error':
             return {
                 "event": 'room not found',
-                "creador": None,
-                "contraseña": None,
-                "robot": None
+                "creator": None,
+                "password": None,
+                "robots": None
             }
         with db_session:
             msg = {
                 "event": msg,
-                "creador": Partida[partida_id].creador.nombre_usuario,
-                "contraseña": Partida[partida_id].password is not None,
-                "robot": [{"id": r.robot_id, "nombre": r.nombre,
-                           "usuario": r.usuario.nombre_usuario} for r in
-                          list(Partida[partida_id].participante)]
+                "creator": Partida[partida_id].creador.nombre_usuario,
+                "password": Partida[partida_id].password is not None,
+                "robots": [{"id": r.robot_id, "name": r.nombre,
+                           "username": r.usuario.nombre_usuario} for r in
+                           list(Partida[partida_id].participante)]
             }
         return msg
 

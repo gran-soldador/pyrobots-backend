@@ -9,18 +9,18 @@ router = APIRouter()
 
 @dataclass(slots=True)
 class WinnerResult:
-    usuario: str
+    user: str
     robot: str
     id: int
 
 
-@router.get('/match/results/{partida_id}',
+@router.get('/match/results/{match_id}',
             tags=["Match Methods"],
             name="Match results",
             response_model=List[WinnerResult])
-async def return_result(partida_id: int):
+async def return_result(match_id: int):
     with db_session:
-        partida = Partida.get(partida_id=partida_id)
+        partida = Partida.get(partida_id=match_id)
         if partida is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
@@ -28,7 +28,7 @@ async def return_result(partida_id: int):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no tiene resultados')
         ganador = [WinnerResult(
-                   usuario=u.usuario.nombre_usuario,
+                   user=u.usuario.nombre_usuario,
                    robot=u.nombre,
                    id=u.usuario.user_id
                    ) for u in partida.ganador]

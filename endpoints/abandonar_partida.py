@@ -10,9 +10,9 @@ router = APIRouter()
              tags=["Match Methods"],
              name="Exit joined match")
 async def abandonar_partida(user_id: int = Depends(authenticated_user),
-                            partida_id: int = Form(...)):
+                            match_id: int = Form(...)):
     with db_session:
-        partida = Partida.get_for_update(partida_id=partida_id)
+        partida = Partida.get_for_update(partida_id=match_id)
         if partida is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
@@ -30,4 +30,4 @@ async def abandonar_partida(user_id: int = Depends(authenticated_user),
         partida.participante.remove(user)
         partida.flush()
         partida.status = 'disponible'
-    await lobby_manager.broadcast(partida_id, 'quit')
+    await lobby_manager.broadcast(match_id, 'quit')
