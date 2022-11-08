@@ -14,9 +14,9 @@ class WinnerResult:
     id: int
 
 
-@router.get('/mostrar-resultados/{partida_id}',
+@router.get('/match/results/{partida_id}',
             tags=["Match Methods"],
-            name="Resultados de partida",
+            name="Match results",
             response_model=List[WinnerResult])
 async def return_result(partida_id: int):
     with db_session:

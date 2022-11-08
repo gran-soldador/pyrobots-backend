@@ -7,7 +7,7 @@ router = APIRouter()
 
 @router.get('/verify/{token}',
             tags=['User Methods'],
-            name='verificación de email')
+            name='Verify new user')
 async def verify_user(token):
     with db_session:
         token = check_verification_token(token)

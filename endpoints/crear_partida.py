@@ -18,9 +18,9 @@ def check_string(string: str) -> bool:
     return True
 
 
-@router.post("/crear-partida",
+@router.post("/match/new",
              tags=["Match Methods"],
-             name="Creación de partida")
+             name="Create a new match")
 async def crear_partida(user_id: int = Depends(authenticated_user),
                         namepartida: str = Form(...),
                         password: str = Form(None),

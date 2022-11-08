@@ -6,9 +6,9 @@ from websocket import lobby_manager
 router = APIRouter()
 
 
-@router.post('/abandonar-partida',
+@router.post('/match/exit',
              tags=["Match Methods"],
-             name="Abandono de partida")
+             name="Exit joined match")
 async def abandonar_partida(user_id: int = Depends(authenticated_user),
                             partida_id: int = Form(...)):
     with db_session:

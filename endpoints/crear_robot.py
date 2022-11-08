@@ -6,9 +6,9 @@ from .functions_jwt import *
 router = APIRouter()
 
 
-@router.post("/user/creacion_de_robot/",
+@router.post("/robot/new",
              tags=['Robot Methods'],
-             name="Subida de Robots por el Usuario")
+             name="Upload user robot")
 async def creacion_de_robot(user_id: int = Depends(authenticated_user),
                             robotName: str = Form(...),
                             robotAvatar: UploadFile = File(None),

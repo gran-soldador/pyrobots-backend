@@ -6,9 +6,9 @@ from websocket import lobby_manager
 router = APIRouter()
 
 
-@router.post('/unir-partida',
+@router.post('/match/join',
              tags=["Match Methods"],
-             name="Unión a partida")
+             name="Join a match")
 async def unir_partida(user_id: int = Depends(authenticated_user),
                        partida_id: int = Form(...),
                        password: str = Form(None),

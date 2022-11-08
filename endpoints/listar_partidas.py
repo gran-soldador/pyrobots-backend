@@ -20,9 +20,9 @@ class MatchResult:
     password: bool
 
 
-@router.get("/lista-partidas",
+@router.get("/match/list",
             tags=["Match Methods"],
-            name="Lista de partidas",
+            name="List matches",
             response_model=List[MatchResult])
 async def listar_partidas():
     with db_session:

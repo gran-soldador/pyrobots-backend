@@ -10,9 +10,9 @@ MIN_PASSWORD_SIZE = 8
 
 
 #  Creacion de usuario con o sin avatar
-@router.post("/user/registro_de_usuario/",
+@router.post("/user/register",
              tags=["User Methods"],
-             name="Registro de Usuarios")
+             name="Register new user")
 async def registro_usuario(username: str = Form(...),
                            password: str = Form(...),
                            useremail: str = Form(...),

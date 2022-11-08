@@ -14,9 +14,9 @@ class RobotResult:
     avatar: str
 
 
-@router.get("/lista-robots",
+@router.get("/robot/list",
             tags=['Robot Methods'],
-            name='lista los robots del usuario',
+            name='List user robots',
             response_model=List[RobotResult])
 async def listar_robots(user_id: int = Depends(authenticated_user)):
     with db_session:
