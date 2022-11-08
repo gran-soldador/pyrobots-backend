@@ -4,7 +4,7 @@ import mock
 def test_correct_union(loggedin_client2, partida1, robot2):
     with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
         response = loggedin_client2.post(
-            '/unir-partida',
+            '/match/join',
             data={
                 'partida_id': partida1,
                 'id_robot': robot2
@@ -16,7 +16,7 @@ def test_correct_union(loggedin_client2, partida1, robot2):
 def test_correct_password_union(loggedin_client2, partida2, robot2):
     with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
         response = loggedin_client2.post(
-            '/unir-partida',
+            '/match/join',
             data={
                 'partida_id': partida2,
                 'password': 'leandro',
@@ -28,7 +28,7 @@ def test_correct_password_union(loggedin_client2, partida2, robot2):
 
 def test_incorrect_password_union(loggedin_client2, partida2, robot2):
     response = loggedin_client2.post(
-        '/unir-partida',
+        '/match/join',
         data={
             'partida_id': partida2,
             'password': 'leandr',
@@ -41,7 +41,7 @@ def test_incorrect_password_union(loggedin_client2, partida2, robot2):
 
 def test_creator_union(loggedin_client, partida2, robot2):
     response = loggedin_client.post(
-        '/unir-partida',
+        '/match/join',
         data={
             'partida_id': partida2,
             'password': 'leandro',
@@ -54,7 +54,7 @@ def test_creator_union(loggedin_client, partida2, robot2):
 
 def test_incorrect_robot_union(loggedin_client2, partida2, user2, robot1):
     response = loggedin_client2.post(
-        '/unir-partida',
+        '/match/join',
         data={
             'partida_id': partida2,
             'password': 'leandro',
@@ -67,7 +67,7 @@ def test_incorrect_robot_union(loggedin_client2, partida2, user2, robot1):
 
 def test_inex_robot_union(loggedin_client2, partida2, user2):
     response = loggedin_client2.post(
-        '/unir-partida',
+        '/match/join',
         data={
             'partida_id': partida2,
             'password': 'leandro',
@@ -80,7 +80,7 @@ def test_inex_robot_union(loggedin_client2, partida2, user2):
 
 def test_inex_match_union(loggedin_client2, robot2):
     response = loggedin_client2.post(
-        '/unir-partida',
+        '/match/join',
         data={
             'partida_id': 15,
             'password': 'leandro',
@@ -93,7 +93,7 @@ def test_inex_match_union(loggedin_client2, robot2):
 
 def test_non_disp_union(loggedin_client2, partida3, robot2):
     response = loggedin_client2.post(
-        '/unir-partida',
+        '/match/join',
         data={
             'partida_id': partida3,
             'password': 'leandro',
@@ -106,7 +106,7 @@ def test_non_disp_union(loggedin_client2, partida3, robot2):
 
 def test_same_user_union(loggedin_client2, partida4, robot2):
     response = loggedin_client2.post(
-        '/unir-partida',
+        '/match/join',
         data={
             'partida_id': partida4,
             'password': 'leandro',
@@ -120,7 +120,7 @@ def test_same_user_union(loggedin_client2, partida4, robot2):
 def test_full_user_union(loggedin_client2, partida5, robot2):
     with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
         response = loggedin_client2.post(
-            '/unir-partida',
+            '/match/join',
             data={
                 'partida_id': partida5,
                 'password': 'leandro',

@@ -6,7 +6,7 @@ from engine.outputmodels import SimulationResult
 
 def test_simulation_less_robots(loggedin_client):
     response = loggedin_client.post(
-        '/create_simulation',
+        '/simulation',
         data={
             "rounds": 1,
             "robot_ids": [1]
@@ -19,7 +19,7 @@ def test_simulation_less_robots(loggedin_client):
 
 def test_simulation_many_robots(loggedin_client):
     response = loggedin_client.post(
-        '/create_simulation',
+        '/simulation',
         data={
             "rounds": 1,
             "robot_ids": [1, 2, 3, 4, 5]
@@ -31,7 +31,7 @@ def test_simulation_many_robots(loggedin_client):
 
 def test_simulation_bad_rounds(loggedin_client):
     response = loggedin_client.post(
-        '/create_simulation',
+        '/simulation',
         data={
             "rounds": 10000000,
             "robot_ids": [1, 2, 3, 4]
@@ -44,7 +44,7 @@ def test_simulation_bad_rounds(loggedin_client):
 
 def test_simulation_bad_id(loggedin_client, robot1, robot2, robot3):
     response = loggedin_client.post(
-        '/create_simulation',
+        '/simulation',
         data={
             "rounds": 1,
             "robot_ids": [robot1, robot2, robot3]
@@ -56,7 +56,7 @@ def test_simulation_bad_id(loggedin_client, robot1, robot2, robot3):
 
 def test_simulation_robot_not_mine(loggedin_client, robot1, robot2, robot3):
     response = loggedin_client.post(
-        '/create_simulation',
+        '/simulation',
         data={
             "rounds": 1,
             "robot_ids": [robot1, robot2, robot3]
@@ -71,7 +71,7 @@ def test_simulation_ok(loggedin_client, robot1, robot3, robot4):
                            maxrounds=10, rounds=[])
     with mock.patch("engine.Game.simulation", return_value=res):
         response = loggedin_client.post(
-            '/create_simulation',
+            '/simulation',
             data={
                 "rounds": 1,
                 "robot_ids": [robot1, robot4, robot3]
@@ -84,7 +84,7 @@ def test_simulation_ok(loggedin_client, robot1, robot3, robot4):
 def test_simulation_fail(loggedin_client, robot1, robot3, robot4):
     with mock.patch("engine.Game.simulation", side_effect=ValueError()):
         response = loggedin_client.post(
-            '/create_simulation',
+            '/simulation',
             data={
                 "rounds": 1,
                 "robot_ids": [robot1, robot4, robot3]

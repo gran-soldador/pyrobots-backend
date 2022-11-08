@@ -8,7 +8,7 @@ def test_correct_match(client, user1, robot1):
                     creador=Usuario[user1], ganador=Robot[robot1])
         p.participante.add(Robot[robot1])
     response = client.get(
-        '/mostrar-resultados/1'
+        '/match/results/1'
     )
     assert response.status_code == 200
     assert response.json() == [{
@@ -20,7 +20,7 @@ def test_correct_match(client, user1, robot1):
 
 def test_unfinished_match(client, partida1):
     response = client.get(
-        '/mostrar-resultados/1'
+        '/match/results/1'
     )
     assert response.status_code == 400
     assert response.json() == {'detail': 'la partida no tiene resultados'}
@@ -28,7 +28,7 @@ def test_unfinished_match(client, partida1):
 
 def test_nonexist_match(client):
     response = client.get(
-        '/mostrar-resultados/7'
+        '/match/results/7'
     )
     assert response.status_code == 400
     assert response.json() == {'detail': 'la partida no existe'}
