@@ -6,13 +6,13 @@ import mock
 @pytest.fixture
 def valid_form(robot1):
     return {
-        "namepartida": "my-partida",
+        "name": "my-partida",
         "password": None,
         "minplayers": 3,
         "maxplayers": 3,
         "numgames": 2,
-        "numrondas": 3,
-        "idrobot": robot1
+        "numrounds": 3,
+        "robot_id": robot1
     }
 
 
@@ -40,11 +40,11 @@ def test_logged_out(client, valid_form):
 
 @pytest.mark.parametrize("invalid_params, expected_detail", [
     pytest.param(
-        {"namepartida": "sdlsjdldksldkdldskdslkdsldskldskdslkdslsdk"},
+        {"name": "sdlsjdldksldkdldskdslkdsldskldskdslkdslsdk"},
         'namepartida invalido',
         id="name_too_long"),
     pytest.param(
-        {"namepartida": "my.partida"},
+        {"name": "my.partida"},
         'namepartida invalido',
         id="name_with_invalid_char"),
     pytest.param(
@@ -76,15 +76,15 @@ def test_logged_out(client, valid_form):
         'numgames invalido',
         id="numgames_too_large"),
     pytest.param(
-        {"numrondas": 0},
+        {"numrounds": 0},
         'numrondas invalido',
-        id="numrondas_too_small"),
+        id="numrounds_too_small"),
     pytest.param(
-        {"numrondas": 1000000},
+        {"numrounds": 1000000},
         'numrondas invalido',
-        id="numrondas_too_large"),
+        id="numrounds_too_large"),
     pytest.param(
-        {"idrobot": 27},
+        {"robot_id": 27},
         'robot no valido',
         id="robot_not_existent"),
 ])

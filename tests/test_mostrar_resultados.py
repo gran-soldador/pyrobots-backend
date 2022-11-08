@@ -14,7 +14,7 @@ def test_correct_match(client, user1, robot1):
     assert response.json() == [{
                                'id': 1,
                                'robot': 'RandomRobot',
-                               'usuario': 'leandro'
+                               'user': 'leandro'
                                }]
 
 

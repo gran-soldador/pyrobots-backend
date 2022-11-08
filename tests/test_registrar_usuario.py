@@ -9,12 +9,12 @@ def test_correct_form_withdefaultavatar(client):
             data={
                 "username": "myUsuarioDeTestSinAvatar",
                 "password": "myPasswordDeTest444",
-                "useremail": "emailTest1SinAvatar@test.com",
-                "userAvatar": None
+                "email": "emailTest1SinAvatar@test.com",
+                "avatar": None
             }
         )
-    assert response.status_code == 200
     assert response.json() == {"new user created": "myUsuarioDeTestSinAvatar"}
+    assert response.status_code == 200
 
 
 def test_correct_form_with_avatar(client):
@@ -25,9 +25,9 @@ def test_correct_form_with_avatar(client):
                 data={
                     "username": "myUsuarioDeTestConAvatar",
                     "password": "myPasswordDeTest444",
-                    "useremail": "emailTest1ConAvatar@test.com"
+                    "email": "emailTest1ConAvatar@test.com"
                 },
-                files={"userAvatar": f}
+                files={"avatar": f}
             )
         assert response.status_code == 200
         assert response.json() == {
@@ -41,8 +41,8 @@ def test_name_too_long(client):
         data={
             "username": "NombreDemasiadoLargoParaHacerLaPruebaDeNombre",
             "password": "myPasswordDeTest444",
-            "useremail": "emailtest2@test.com",
-            "userAvatar": None
+            "email": "emailtest2@test.com",
+            "avatar": None
         }
     )
     assert response.status_code == 400
@@ -56,8 +56,8 @@ def test_password_too_short(client):
         data={
             "username": "usuarioPasswordCorto",
             "password": "hOl4",
-            "useremail": "emailtest3@test.com",
-            "userAvatar": None
+            "email": "emailtest3@test.com",
+            "avatar": None
         }
     )
     assert response.status_code == 400
@@ -71,8 +71,8 @@ def test_password_without_lower(client):
         data={
             "username": "usuarioPassword",
             "password": "PASSWORDSINLETRACHICA444",
-            "useremail": "emailtest3@test.com",
-            "userAvatar": None
+            "email": "emailtest3@test.com",
+            "avatar": None
         }
     )
     assert response.status_code == 400
@@ -88,8 +88,8 @@ def test_password_without_upper(client):
         data={
             "username": "usuarioPassword",
             "password": "passwordsinmayuscula444",
-            "useremail": "emailtest3@test.com",
-            "userAvatar": None
+            "email": "emailtest3@test.com",
+            "avatar": None
         }
     )
     assert response.status_code == 400
@@ -105,8 +105,8 @@ def test_password_without_digit(client):
         data={
             "username": "usuarioPassword",
             "password": "passwordSinNumeros",
-            "useremail": "emailtest3@test.com",
-            "userAvatar": None
+            "email": "emailtest3@test.com",
+            "avatar": None
         }
     )
     assert response.status_code == 400
@@ -126,8 +126,8 @@ def test_user_already_exist(client):
         data={
             "username": "usuarioQueExiste",
             "password": "pasWordCualquiera4313",
-            "useremail": "emailtestUsuarioExiste@test.com",
-            "userAvatar": None
+            "email": "emailtestUsuarioExiste@test.com",
+            "avatar": None
         }
     )
     assert response.status_code == 400
@@ -144,8 +144,8 @@ def test_email_already_exist(client):
         data={
             "username": "usuarioCualquiera",
             "password": "pasWordCualquiera4313",
-            "useremail": "emailtestEmailExiste@test.com",
-            "userAvatar": None
+            "email": "emailtestEmailExiste@test.com",
+            "avatar": None
         }
     )
     assert response.status_code == 400
@@ -159,8 +159,8 @@ def test_invalid_email(client):
         data={
             "username": "usuarioEmailChoto",
             "password": "passwordRandom444",
-            "useremail": "emailNovalidotest",
-            "userAvatar": None
+            "email": "emailNovalidotest",
+            "avatar": None
         }
     )
     assert response.status_code == 400
@@ -174,9 +174,9 @@ def test_invalid_avatar(client):
             data={
                 "username": "usuarioAvatarIncorrecto",
                 "password": "myPasswordDeTest444",
-                "useremail": "avatarincorrecto@test.com",
+                "email": "avatarincorrecto@test.com",
             },
-            files={"userAvatar": f},
+            files={"avatar": f},
         )
 
     assert response.status_code == 400
