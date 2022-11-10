@@ -12,6 +12,8 @@ class RobotResult:
     id: int
     name: str
     avatar: str
+    played: int
+    won: int
 
 
 @router.get("/robot/list",
@@ -21,7 +23,9 @@ class RobotResult:
 async def listar_robots(user_id: int = Depends(authenticated_user)):
     with db_session:
         lista = [RobotResult(id=r.robot_id, name=r.nombre,
-                 avatar="http://localhost:9000/" + r.avatar)
+                 avatar="http://localhost:9000/" + r.avatar,
+                 played=r.partidas_jugadas,
+                 won=r.partidas_ganadas)
                  for r in Usuario[user_id].robot]
         # TODO: Get static file server URL from env
         if lista == []:
