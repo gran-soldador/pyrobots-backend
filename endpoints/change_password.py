@@ -12,7 +12,11 @@ MIN_PASSWORD_SIZE = 8
              tags=['User Methods'],
              name='Change user password')
 async def change_password(user_id: int = Depends(authenticated_user),
+                          old_password: str = Form(...),
                           new_password: str = Form(...)):
+    if old_password == new_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="La contraseña debe ser distinta")
     if len(new_password) < MIN_PASSWORD_SIZE:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Password too Short.")
@@ -23,8 +27,8 @@ async def change_password(user_id: int = Depends(authenticated_user),
                                    "minusucula y un numero.")
     with db_session:
         user = Usuario.get(user_id=user_id)
-        if user.contraseña == new_password:
+        if user.contraseña != old_password:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail="La contraseña debe ser distinta")
+                                detail="contraseña incorrecta")           
         user.contraseña = new_password
         user.flush()
