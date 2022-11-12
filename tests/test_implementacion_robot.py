@@ -1,7 +1,7 @@
 def test_correct_robot(loggedin_client, robot1):
     response = loggedin_client.get(f'/robot/code/{robot1}')
     assert response.status_code == 200
-    assert 'class RandomRobot(Robot):' in response.json()['code']
+    assert 'class RandomRobot(Robot):' in response.json()
 
 
 def test_non_exist_robot(loggedin_client):
