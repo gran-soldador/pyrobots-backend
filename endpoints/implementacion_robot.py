@@ -19,5 +19,4 @@ async def implementacion_robot(robot_id: int,
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='El robot no pertenece al usuario')
         code = robot.implementacion
-    print(code)
     return code
