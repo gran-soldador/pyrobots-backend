@@ -10,42 +10,44 @@ MIN_PASSWORD_SIZE = 8
 
 defaultrobots = [
     ("SpiralRobot", """
-    class SpiralRobot(Robot):
-        def initialize(self):
-            pass
-        def respond(self):
-            x, y = self.get_position()
-            vel, dir = self.get_velocity(), self.get_direction()
-            if vel == 0:
-                self.drive(random.uniform(0,360),50)
-            else:
-                self.drive((dir + 5) % 360, 50)
-            if self.is_cannon_ready(): self.cannon(dir, 80)"""),
+class SpiralRobot(Robot):
+    def initialize(self):
+        pass
+    def respond(self):
+        x, y = self.get_position()
+        vel, dir = self.get_velocity(), self.get_direction()
+        if vel == 0:
+            self.drive(random.uniform(0,360),50)
+        else:
+            self.drive((dir + 5) % 360, 50)
+        if self.is_cannon_ready(): self.cannon(dir, 80)
+"""),
     ("GuardRobot", """
-    class GuardRobot(Robot):
-        def initialize(self):
-            self.dir = 90
+class GuardRobot(Robot):
+    def initialize(self):
+        self.dir = 90
 
-        def respond(self):
-            x, y = self.get_position()
-            vel, dir = self.get_velocity(), self.get_direction()
+    def respond(self):
+        x, y = self.get_position()
+        vel, dir = self.get_velocity(), self.get_direction()
 
-            if x < 100:
-                self.drive(0, 50)
-            elif x > 150:
-                self.drive(180, 50)
-            else:
-                if y > 900:
-                    self.dir = 270
-                elif y < 100:
-                    self.dir = 90
-                self.drive(self.dir, 50)
+        if x < 100:
+            self.drive(0, 50)
+        elif x > 150:
+            self.drive(180, 50)
+        else:
+            if y > 900:
+                self.dir = 270
+            elif y < 100:
+                self.dir = 90
+            self.drive(self.dir, 50)
 
-            self.point_scanner(0, 10)
-            result = self.scanned()
+        self.point_scanner(0, 10)
+        result = self.scanned()
 
-            if result is not None and self.is_cannon_ready():
-                self.cannon(0, result)""")
+        if result is not None and self.is_cannon_ready():
+            self.cannon(0, result)
+""")
 ]
 
 
