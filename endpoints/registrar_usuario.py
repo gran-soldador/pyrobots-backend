@@ -91,24 +91,24 @@ async def registro_usuario(username: str = Form(...),
         elif email_exist(email):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Email already registered.")
-        user = Usuario(
-            nombre_usuario=username,
-            contraseña=password,
+        user = User(
+            name=username,
+            password=password,
             email=email,
-            verificado=False,
+            verified=False,
             avatar=avatar_location
         )
         for robot in defaultrobots:
             Robot(
-                nombre=robot[0],
-                implementacion=robot[1],
+                name=robot[0],
+                code=robot[1],
                 avatar="robotAvatars/defaultAvatarRobot.png",
-                partidas_ganadas=0,
-                partidas_jugadas=0,
-                juegos_ganados=0,
-                rondas_ganadas=0,
-                defectuoso=False,
-                usuario=user
+                matches_num_won=0,
+                matches_num_played=0,
+                games_won=0,
+                rounds_won=0,
+                defective=False,
+                user=user
             )
     send_email(email)
     return {"new user created": username}

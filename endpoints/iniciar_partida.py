@@ -26,27 +26,27 @@ def loop(scores: Dict[int, int],
 async def calculate_match(match_id: int, robots: List[Tuple[int, str, str]],
                           numgames: int, numrondas: int):
     scores: Dict[int, int] = {}
-    rondas: Dict[int, int] = {}
+    rounds: Dict[int, int] = {}
     for (robot_id, _, _) in robots:
-        rondas[robot_id] = 0
+        rounds[robot_id] = 0
         scores[robot_id] = 0
-    rondas, scores = await run_in_threadpool(loop, scores, rondas,
+    rounds, scores = await run_in_threadpool(loop, scores, rounds,
                                              robots, numgames,
                                              numrondas)
     max_points = max(scores, key=scores.get)
     with db_session:
-        partida = Partida[match_id]
+        match = Match[match_id]
         for robot_id in scores:
             robot = Robot.get_for_update(robot_id=robot_id)
             if scores[robot_id] == scores[max_points]:
-                robot.partidas_ganadas += 1
-                robot.juegos_ganados += scores[max_points]
-                robot.rondas_ganadas += rondas[max_points]
-                partida.ganador.add(robot)
-            robot.partidas_jugadas += 1
+                robot.matches_num_won += 1
+                robot.games_won += scores[max_points]
+                robot.rounds_won += rounds[max_points]
+                match.winner.add(robot)
+            robot.matches_num_played += 1
             robot.flush()
-        partida.status = 'finalizada'
-        partida.flush()
+        match.status = 'finalizada'
+        match.flush()
     await lobby_manager.broadcast(match_id, 'finish')
 
 
@@ -57,23 +57,23 @@ async def init_match(user_id: int = Depends(authenticated_user),
                      match_id: int = Form(...),
                      background_tasks: BackgroundTasks = BackgroundTasks()):
     with db_session:
-        partida = Partida.get_for_update(partida_id=match_id)
-        if partida is None:
+        match = Match.get_for_update(id=match_id)
+        if match is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
-        if partida.creador.user_id != user_id:
+        if match.creador.user_id != user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='permiso denegado')
-        if len(partida.participante) < partida.minplayers:
+        if len(match.players) < match.min_players:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='jugadores insuficientes')
-        if partida.status not in ['disponible', 'ocupada']:
+        if match.status not in ['disponible', 'ocupada']:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida ya fue iniciada')
-        robots = [(r.robot_id, r.nombre, r.implementacion) for r in
-                  partida.participante]
+        robots = [(r.id, r.name, r.code) for r in
+                  match.players]
         background_tasks.add_task(calculate_match, match_id, robots,
-                                  partida.numgames, partida.numrondas)
-        partida.status = 'iniciada'
-        partida.flush()
+                                  match.num_games, match.num_rounds)
+        match.status = 'iniciada'
+        match.flush()
     await lobby_manager.broadcast(match_id, 'init')

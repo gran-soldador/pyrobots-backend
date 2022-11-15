@@ -20,11 +20,11 @@ async def creacion_de_robot(user_id: int = Depends(authenticated_user),
     # Acá me transforma el codigo a str
     code_of_robot = str(code_of_robot, encoding)
     with db_session:
-        user = Usuario[user_id]
+        user = User[user_id]
         if not code.filename.lower().endswith('.py'):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="File must be a .py")
-        if Robot.get(nombre=name, usuario=user) is not None:
+        if Robot.get(name=name, user=user) is not None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="You already have"
                                 "a robot with that name.")
@@ -39,14 +39,14 @@ async def creacion_de_robot(user_id: int = Depends(authenticated_user),
             with open("userUploads/" + rpic_location, "wb+") as file_object:
                 file_object.write(avatar.file.read())
         Robot(
-            nombre=name,
-            implementacion=code_of_robot,
+            name=name,
+            code=code_of_robot,
             avatar=rpic_location,
-            partidas_ganadas=0,
-            partidas_jugadas=0,
-            juegos_ganados=0,
-            rondas_ganadas=0,
-            defectuoso=False,
-            usuario=user
+            matches_num_won=0,
+            matches_num_played=0,
+            games_won=0,
+            rounds_won=0,
+            defective=False,
+            user=user
         )
         return {"new robot created": name}
