@@ -17,9 +17,18 @@ class Status:
 
 
 @dataclass
+class ScannerStatus:
+    __slots__ = ["used", "angle", "amplitude"]
+    used: bool
+    angle: float
+    amplitude: float
+
+
+@dataclass
 class RobotStatus(Status):
-    __slots__ = ["damage"]
+    __slots__ = ["damage", "scanner"]
     damage: float
+    scanner: ScannerStatus
 
 
 @dataclass

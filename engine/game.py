@@ -58,9 +58,16 @@ class Game:
                 robots_status = []
                 for r in self.robots:
                     pos = r._status.position
+                    if r._commands.scanner_used:
+                        scanner = ScannerStatus(True,
+                                                r._commands.scanner_direction,
+                                                r._commands.scanner_resolution)
+                    else:
+                        scanner = ScannerStatus(False, 0.0, 0.0)
                     robots_status.append(
                         RobotStatus(x=pos.x, y=pos.y,
-                                    damage=min(r._status.damage, 100)))
+                                    damage=min(r._status.damage, 100),
+                                    scanner=scanner))
                 missiles_status = []
                 for m in self.missiles_in_flight:
                     pos = m.curr_pos(self.round)
