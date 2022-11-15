@@ -2,7 +2,7 @@ import logging
 import random
 from typing import Any, Generator, List, Tuple
 from itertools import combinations  # hit calculation
-from math import ceil               # missile flight delay
+from math import ceil, radians
 
 import heapq                        # missiles_in_flight data structure
 
@@ -59,9 +59,10 @@ class Game:
                 for r in self.robots:
                     pos = r._status.position
                     if r._commands.scanner_used:
-                        scanner = ScannerStatus(True,
-                                                r._commands.scanner_direction,
-                                                r._commands.scanner_resolution)
+                        scanner = ScannerStatus(
+                            True,
+                            radians(r._commands.scanner_direction),
+                            radians(r._commands.scanner_resolution))
                     else:
                         scanner = ScannerStatus(False, 0.0, 0.0)
                     robots_status.append(
