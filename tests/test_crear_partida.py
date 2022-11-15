@@ -25,9 +25,9 @@ def test_correct_form(loggedin_client, valid_form, user1, password):
         )
     assert response.status_code == 200
     with db_session:
-        assert Partida.select().count() == 1
-        assert Partida[1].creador.user_id == user1
-        assert Partida[1].password == password
+        assert Match.select().count() == 1
+        assert Match[1].owner.id == user1
+        assert Match[1].password == password
 
 
 def test_logged_out(client, valid_form):
@@ -35,7 +35,7 @@ def test_logged_out(client, valid_form):
     assert response.status_code == 403
     assert response.json() == {'detail': 'Not authenticated'}
     with db_session:
-        assert not Partida.select().exists()
+        assert not Match.select().exists()
 
 
 @pytest.mark.parametrize("invalid_params, expected_detail", [
@@ -97,12 +97,12 @@ def test_incorrect_field(loggedin_client, valid_form, invalid_params,
     assert response.status_code == 400
     assert response.json() == {'detail': expected_detail}
     with db_session:
-        assert not Partida.select().exists()
+        assert not Match.select().exists()
 
 
 def test_defective_robot(loggedin_client, valid_form, robot1):
     with db_session:
-        Robot[robot1].defectuoso = True
+        Robot[robot1].defective = True
     response = loggedin_client.post(
         '/match/new',
         data=valid_form
@@ -110,14 +110,14 @@ def test_defective_robot(loggedin_client, valid_form, robot1):
     assert response.status_code == 400
     assert response.json() == {'detail': 'robot defectuoso'}
     with db_session:
-        assert not Partida.select().exists()
+        assert not Match.select().exists()
 
 
 def test_not_my_robot(loggedin_client, valid_form, robot1, user2):
     with db_session:
-        Robot[robot1].usuario = Usuario[user2]
+        Robot[robot1].user = User[user2]
     response = loggedin_client.post('/match/new', data=valid_form)
     assert response.status_code == 401
     assert response.json() == {'detail': 'robot no pertenece al usuario'}
     with db_session:
-        assert not Partida.select().exists()
+        assert not Match.select().exists()

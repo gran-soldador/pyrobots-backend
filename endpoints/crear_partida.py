@@ -21,15 +21,15 @@ def check_string(string: str) -> bool:
 @router.post("/match/new",
              tags=["Match Methods"],
              name="Create a new match")
-async def crear_partida(user_id: int = Depends(authenticated_user),
-                        name: str = Form(...),
-                        password: str = Form(None),
-                        minplayers: int = Form(...),
-                        maxplayers: int = Form(...),
-                        numgames: int = Form(...),
-                        numrounds: int = Form(...),
-                        robot_id: int = Form(...)):
-    partida_id = None
+async def new_match(user_id: int = Depends(authenticated_user),
+                    name: str = Form(...),
+                    password: str = Form(None),
+                    minplayers: int = Form(...),
+                    maxplayers: int = Form(...),
+                    numgames: int = Form(...),
+                    numrounds: int = Form(...),
+                    robot_id: int = Form(...)):
+    match_id = None
     if (len(name) <= 32 and check_string(name)) is False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='namepartida invalido')
@@ -47,24 +47,24 @@ async def crear_partida(user_id: int = Depends(authenticated_user),
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='numrondas invalido')
     with db_session:
-        robot = Robot.get(robot_id=robot_id)
+        robot = Robot.get(id=robot_id)
         if robot is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot no valido')
-        if robot.usuario.user_id != user_id:
+        if robot.user.id != user_id:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                 detail="robot no pertenece al usuario")
-        if robot.defectuoso is True:
+        if robot.defective is True:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='robot defectuoso')
-        p1 = Partida(namepartida=name, password=password,
-                     status='disponible',
-                     minplayers=minplayers,
-                     maxplayers=maxplayers,
-                     numgames=numgames,
-                     numrondas=numrounds,
-                     creador=robot.usuario)
-        p1.participante.add(robot)
+        p1 = Match(name=name, password=password,
+                   status='disponible',
+                   min_players=minplayers,
+                   max_players=maxplayers,
+                   num_games=numgames,
+                   num_rounds=numrounds,
+                   owner=robot.user)
+        p1.players.add(robot)
         p1.flush()
-        partida_id = p1.partida_id
-    await lobby_manager.broadcast(partida_id, 'created')
+        match_id = p1.id
+    await lobby_manager.broadcast(match_id, 'created')
