@@ -9,25 +9,25 @@ router = APIRouter()
 @router.post('/match/exit',
              tags=["Match Methods"],
              name="Exit joined match")
-async def abandonar_partida(user_id: int = Depends(authenticated_user),
-                            match_id: int = Form(...)):
+async def exit_match(user_id: int = Depends(authenticated_user),
+                     match_id: int = Form(...)):
     with db_session:
-        partida = Partida.get_for_update(partida_id=match_id)
-        if partida is None:
+        match = Match.get_for_update(id=match_id)
+        if match is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
-        user = list(partida.participante)
-        user = list(filter(lambda r: r.usuario.user_id == user_id, user))
+        user = list(match.players)
+        user = list(filter(lambda r: r.user.id == user_id, user))
         if user == []:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='no es un participante')
-        if partida.creador.user_id == user_id:
+        if match.owner.id == user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='el creador no puede abandonar')
-        if partida.status not in ['disponible', 'ocupada']:
+        if match.status not in ['disponible', 'ocupada']:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='ya no tiene permitido abandonar')
-        partida.participante.remove(user)
-        partida.flush()
-        partida.status = 'disponible'
+        match.players.remove(user)
+        match.flush()
+        match.status = 'disponible'
     await lobby_manager.broadcast(match_id, 'quit')
