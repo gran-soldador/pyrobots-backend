@@ -24,21 +24,21 @@ class MatchResult:
             tags=["Match Methods"],
             name="List matches",
             response_model=List[MatchResult])
-async def listar_partidas():
+async def list_matches():
     with db_session:
-        lista = [MatchResult(
-            match_id=p.partida_id,
-            name=p.namepartida,
+        matches = [MatchResult(
+            match_id=p.id,
+            name=p.name,
             status=p.status,
-            numcurrentplayers=len(p.participante),
-            minplayers=p.minplayers,
-            maxplayers=p.maxplayers,
-            numgames=p.numgames,
-            numrounds=p.numrondas,
-            creator=p.creador.nombre_usuario,
+            numcurrentplayers=len(p.players),
+            minplayers=p.min_players,
+            maxplayers=p.max_players,
+            numgames=p.num_games,
+            numrounds=p.num_rounds,
+            creator=p.owner.name,
             password=p.password is not None
-        ) for p in Partida.select()]
-    if lista == []:
+        ) for p in Match.select()]
+    if matches == []:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='No se encontraron partidas')
-    return lista
+    return matches
