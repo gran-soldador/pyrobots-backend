@@ -6,16 +6,11 @@ from websocket import lobby_manager
 
 router = APIRouter()
 
-VALID_CHAR = (string.ascii_lowercase + string.ascii_uppercase +
-              ''.join([str(i) for i in range(0, 10)]) + '-_'
-              )
+VALID_CHAR = (string.ascii_letters + string.digits + '-_')
 
 
 def check_string(string: str) -> bool:
-    for i in string:
-        if i not in VALID_CHAR:
-            return False
-    return True
+    return all(c in VALID_CHAR for c in string)
 
 
 @router.post("/match/new",
