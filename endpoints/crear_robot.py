@@ -9,11 +9,11 @@ router = APIRouter()
 @router.post("/robot/new",
              tags=['Robot Methods'],
              name="Upload user robot")
-async def creacion_de_robot(user_id: int = Depends(authenticated_user),
-                            name: str = Form(...),
-                            avatar: UploadFile = File(None),
-                            code: UploadFile = File(...)
-                            ):
+async def new_robot(user_id: int = Depends(authenticated_user),
+                    name: str = Form(...),
+                    avatar: UploadFile = File(None),
+                    code: UploadFile = File(...)
+                    ):
     # Me da el codigo del robot en bytes -> b'<codigo de robot>
     code_of_robot = code.file.read()
     encoding = 'utf-8'

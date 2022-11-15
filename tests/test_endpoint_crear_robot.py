@@ -1,6 +1,3 @@
-# from db import *
-
-
 def test_correct_form_subir_robot(loggedin_client, user1):
     with open("tests/archivosParaTests/DefaultAvatar.png", "rb") as f:
         with open("tests/archivosParaTests/codeOfRobot.py", "rb") as c:
