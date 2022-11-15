@@ -11,33 +11,33 @@ router = APIRouter()
 
 
 def loop(scores: Dict[int, int],
-         rondas: Dict[int, int],
+         rounds: Dict[int, int],
          robots: List[Tuple[int, str, str]],
-         numgames: int, numrondas: int):
-    for game in range(numgames):
-        match = Game(robots, numrondas)
+         num_games: int, num_rounds: int):
+    for game in range(num_games):
+        match = Game(robots, num_rounds)
         result = match.match()
         for winner in result.winners:
-            rondas[winner.id] += result.rounds_played
+            rounds[winner.id] += result.rounds_played
             scores[winner.id] += 1
-    return rondas, scores
+    return rounds, scores
 
 
 async def calculate_match(match_id: int, robots: List[Tuple[int, str, str]],
-                          numgames: int, numrondas: int):
+                          num_games: int, num_rounds: int):
     scores: Dict[int, int] = {}
     rounds: Dict[int, int] = {}
     for (robot_id, _, _) in robots:
         rounds[robot_id] = 0
         scores[robot_id] = 0
     rounds, scores = await run_in_threadpool(loop, scores, rounds,
-                                             robots, numgames,
-                                             numrondas)
+                                             robots, num_games,
+                                             num_rounds)
     max_points = max(scores, key=scores.get)
     with db_session:
         match = Match[match_id]
         for robot_id in scores:
-            robot = Robot.get_for_update(robot_id=robot_id)
+            robot = Robot.get_for_update(id=robot_id)
             if scores[robot_id] == scores[max_points]:
                 robot.matches_num_won += 1
                 robot.games_won += scores[max_points]
@@ -61,7 +61,7 @@ async def init_match(user_id: int = Depends(authenticated_user),
         if match is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
-        if match.creador.user_id != user_id:
+        if match.owner.user_id != user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='permiso denegado')
         if len(match.players) < match.min_players:
@@ -70,8 +70,7 @@ async def init_match(user_id: int = Depends(authenticated_user),
         if match.status not in ['disponible', 'ocupada']:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida ya fue iniciada')
-        robots = [(r.id, r.name, r.code) for r in
-                  match.players]
+        robots = [(r.id, r.name, r.code) for r in match.players]
         background_tasks.add_task(calculate_match, match_id, robots,
                                   match.num_games, match.num_rounds)
         match.status = 'iniciada'
