@@ -5,7 +5,8 @@ from endpoints import (registrar_usuario, endpoint_login, listar_robot,
                        crear_robot, verify_user, crear_partida, simulacion,
                        listar_partidas, unir_partida, abandonar_partida,
                        mostrar_resultados, lobby, iniciar_partida,
-                       enviar_mail_recuperacion_contrasena)
+                       enviar_mail_recuperacion_contrasena,
+                       recuperar_contrasena)
 
 app = FastAPI()
 
@@ -25,6 +26,7 @@ app.include_router(mostrar_resultados.router)
 app.include_router(lobby.router)
 app.include_router(iniciar_partida.router)
 app.include_router(enviar_mail_recuperacion_contrasena.router)
+app.include_router(recuperar_contrasena.router)
 
 origins = [
     'http://localhost:3000'
