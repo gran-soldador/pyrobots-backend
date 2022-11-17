@@ -3,10 +3,10 @@ from db import *
 
 def test_correct_match(client, user1, robot1):
     with db_session:
-        p = Partida(namepartida='partida', status='finalizada', minplayers=2,
-                    maxplayers=2, numgames=10, numrondas=10,
-                    creador=Usuario[user1], ganador=Robot[robot1])
-        p.participante.add(Robot[robot1])
+        p = Match(name='partida', status='finalizada', min_players=2,
+                  max_players=2, num_games=10, num_rounds=10,
+                  owner=User[user1], winner=Robot[robot1])
+        p.players.add(Robot[robot1])
     response = client.get(
         '/match/results/1'
     )

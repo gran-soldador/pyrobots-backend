@@ -20,16 +20,16 @@ class WinnerResult:
             response_model=List[WinnerResult])
 async def return_result(match_id: int):
     with db_session:
-        partida = Partida.get(partida_id=match_id)
-        if partida is None:
+        match = Match.get(id=match_id)
+        if match is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
-        if partida.status != 'finalizada':
+        if match.status != 'finalizada':
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no tiene resultados')
-        ganador = [WinnerResult(
-                   user=u.usuario.nombre_usuario,
-                   robot=u.nombre,
-                   id=u.usuario.user_id
-                   ) for u in partida.ganador]
-        return ganador
+        winner = [WinnerResult(
+                  user=u.user.name,
+                  robot=u.name,
+                  id=u.user.id
+                  ) for u in match.winner]
+        return winner
