@@ -9,11 +9,11 @@ def test_invalid_email(client, user3):
     assert response.json() == {'detail': "Email doesn't exist in database"}
 
 
-def test_valid_email(client, user3):
+def test_valid_email(client, user4):
     response = client.post(
         '/send_email_password_recover',
         data={
-            "email": "rocio.cordoba@mi.unc.edu.ar"
+            "email": "test_gran_soldador@hotmail.com"
         }
     )
     assert response.status_code == 200
