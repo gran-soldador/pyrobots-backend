@@ -10,7 +10,9 @@ auth_routes = APIRouter()
 # Login de usuario que genera token de autenticación
 
 
-@auth_routes.post("/login")
+@auth_routes.post("/login",
+                  tags=['User Methods'],
+                  name='ingresar como usuario')
 async def login(username: str = Form(...),
                 password: str = Form(...)):
     with db_session:
