@@ -30,11 +30,11 @@ class LobbyManager:
         with db_session:
             msg = {
                 "event": msg,
-                "creator": Partida[partida_id].creador.nombre_usuario,
-                "password": Partida[partida_id].password is not None,
-                "robots": [{"id": r.robot_id, "name": r.nombre,
-                           "username": r.usuario.nombre_usuario} for r in
-                           list(Partida[partida_id].participante)]
+                "creator": Match[partida_id].owner.name,
+                "password": Match[partida_id].password is not None,
+                "robots": [{"id": r.id, "name": r.name,
+                           "username": r.user.name} for r in
+                           list(Match[partida_id].players)]
             }
         return msg
 

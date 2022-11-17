@@ -3,9 +3,9 @@ from db import *
 
 def test_websocket(client, user1):
     with db_session:
-        Partida(partida_id=-1, namepartida='my_partida', status='disponible',
-                minplayers=3, maxplayers=3, numgames=10, numrondas=10,
-                creador=Usuario[user1])
+        Match(id=-1, name='my_partida', status='disponible',
+              min_players=3, max_players=3, num_games=10, num_rounds=10,
+              owner=User[user1])
     with client.websocket_connect("/ws/-1") as websocket:
         data = websocket.receive_json()
     assert data == {'event': 'start',
@@ -27,9 +27,9 @@ def test_websocket_incorrect(client):
 
 def test_websocket_send(client, user1):
     with db_session:
-        Partida(partida_id=-2, namepartida='my_partida', status='disponible',
-                minplayers=3, maxplayers=3, numgames=10, numrondas=10,
-                creador=Usuario[user1])
+        Match(id=-2, name='my_partida', status='disponible',
+              min_players=3, max_players=3, num_games=10, num_rounds=10,
+              owner=User[user1])
     with client.websocket_connect("/ws/-2") as websocket:
         data = websocket.receive_json()
         websocket.send_text("finish")
@@ -43,9 +43,9 @@ def test_websocket_send(client, user1):
 
 def test_websocket_last_msg(client, user1):
     with db_session:
-        Partida(partida_id=-3, namepartida='my_partida', status='disponible',
-                minplayers=3, maxplayers=3, numgames=10, numrondas=10,
-                creador=Usuario[user1])
+        Match(id=-3, name='my_partida', status='disponible',
+              min_players=3, max_players=3, num_games=10, num_rounds=10,
+              owner=User[user1])
     with client.websocket_connect("/ws/-3") as websocket:
         data = websocket.send_text('test')
     with client.websocket_connect("/ws/-3") as websocket:

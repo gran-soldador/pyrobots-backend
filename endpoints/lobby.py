@@ -9,7 +9,7 @@ router = APIRouter()
 async def websocket_manager(websocket: WebSocket, match_id: int):
     await lobby_manager.connect(websocket, match_id)
     with db_session:
-        partida = Partida.get(partida_id=match_id) is not None
+        partida = Match.get(id=match_id) is not None
     if partida is True:
         msg = lobby_manager.last_msg.get(match_id)
         if msg is not None:
