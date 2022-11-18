@@ -10,22 +10,29 @@ from fastapi.concurrency import run_in_threadpool
 router = APIRouter()
 
 
-def loop(scores: Dict[int, int], robots: List[Tuple[int, str, str]],
+def loop(scores: Dict[int, int],
+         rondas: Dict[int, int],
+         robots: List[Tuple[int, str, str]],
          numgames: int, numrondas: int):
     for game in range(numgames):
         match = Game(robots, numrondas)
         result = match.match()
         for winner in result.winners:
+            rondas[winner.id] += result.rounds_played
             scores[winner.id] += 1
-    return scores
+    return rondas, scores
 
 
 async def calculate_match(match_id: int, robots: List[Tuple[int, str, str]],
                           numgames: int, numrondas: int):
     scores: Dict[int, int] = {}
+    rondas: Dict[int, int] = {}
     for (robot_id, _, _) in robots:
+        rondas[robot_id] = 0
         scores[robot_id] = 0
-    scores = await run_in_threadpool(loop, scores, robots, numgames, numrondas)
+    rondas, scores = await run_in_threadpool(loop, scores, rondas,
+                                             robots, numgames,
+                                             numrondas)
     max_points = max(scores, key=scores.get)
     with db_session:
         partida = Partida[match_id]
@@ -33,6 +40,8 @@ async def calculate_match(match_id: int, robots: List[Tuple[int, str, str]],
             robot = Robot.get_for_update(robot_id=robot_id)
             if scores[robot_id] == scores[max_points]:
                 robot.partidas_ganadas += 1
+                robot.juegos_ganados += scores[max_points]
+                robot.rondas_ganadas += rondas[max_points]
                 partida.ganador.add(robot)
             robot.partidas_jugadas += 1
             robot.flush()

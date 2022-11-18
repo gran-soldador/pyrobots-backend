@@ -44,6 +44,8 @@ async def creacion_de_robot(user_id: int = Depends(authenticated_user),
             avatar=rpic_location,
             partidas_ganadas=0,
             partidas_jugadas=0,
+            juegos_ganados=0,
+            rondas_ganadas=0,
             defectuoso=False,
             usuario=user
         )
