@@ -44,3 +44,19 @@ En caso de que no funcione, copia y pega el siguiente link en tu navegador:
 """
     with yagmail.SMTP(user, app_password) as yag:
         yag.send(mail, subject, content)
+
+
+# Envía correo electronico con link para recuperar contraseña
+def send_email_recover(mail: str):
+    user = 'emaildepruebagransoldador@gmail.com'
+    app_password = getenv("GMAIL_APP_PW")  # a token for gmail
+    token = gen_verification_token({'email': mail})
+    link = f"http://localhost:3000/recover/{token}"  # TODO: Get URL from env
+    subject = 'Recuperá la contraseña de tu cuenta en PYRobots.'
+    content = f"""
+<a href="{link}">Clickeá aca para recuperar la contraseña de tu cuenta</a>
+En caso de que no funcione, copia y pega el siguiente link en tu navegador:
+{link}
+"""
+    with yagmail.SMTP(user, app_password) as yag:
+        yag.send(mail, subject, content)
