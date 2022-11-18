@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, File, UploadFile, Form
 from db import *
 from utils.validation import *
+from utils.mailing import send_verification_email
 
 router = APIRouter()
 
@@ -109,5 +110,5 @@ async def user_register(username: str = Form(...),
                 defective=False,
                 user=user
             )
-    send_email(email)
+    send_verification_email(email)
     return {"new user created": username}
