@@ -1,4 +1,4 @@
-from fastapi import (APIRouter, HTTPException, Form, File, status,
+from fastapi import (APIRouter, HTTPException, File, status,
                      UploadFile, Depends)
 from db import *
 from .functions_jwt import *
@@ -9,8 +9,8 @@ router = APIRouter()
 @router.post("/user/profile/change_avatar",
              tags=['User Methods'],
              name='Change Profile Picture')
-async def edit_profile_picture(user_id: int=Depends(authenticated_user),
-                               new_profile: UploadFile=File(...)
+async def edit_profile_picture(user_id: int = Depends(authenticated_user),
+                               new_profile: UploadFile = File(...)
                                ):
     ext = new_profile.filename.split(".")[-1]
     if ext not in ['png', 'jpg', 'jpeg', 'tiff', 'bmp']:

@@ -6,7 +6,7 @@ from endpoints import (registrar_usuario, endpoint_login, listar_robot,
                        listar_partidas, unir_partida, abandonar_partida,
                        mostrar_resultados, lobby, iniciar_partida,
                        editar_implementacion_robot, cambiar_imagen_pefil
-                      )
+                       )
 
 app = FastAPI()
 
