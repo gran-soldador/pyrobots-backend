@@ -31,7 +31,7 @@ async def list_robots(user_id: int = Depends(authenticated_user)):
                               rounds=r.rounds_won,
                               avg_rounds=r.rounds_won / r.games_won if
                               r.games_won != 0 else 0)
-                  for r in User[user_id].robot]
+                  for r in User[user_id].robots]
         # TODO: Get static file server URL from env
         if robots == []:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,

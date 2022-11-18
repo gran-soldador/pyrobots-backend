@@ -61,7 +61,7 @@ async def init_match(user_id: int = Depends(authenticated_user),
         if match is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='la partida no existe')
-        if match.owner.user_id != user_id:
+        if match.owner.id != user_id:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='permiso denegado')
         if len(match.players) < match.min_players:
