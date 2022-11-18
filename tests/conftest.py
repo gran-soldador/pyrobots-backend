@@ -137,7 +137,7 @@ def robot4(user1):
 
 @pytest.fixture
 @db_session
-def partida1(robot1, user1):
+def match1(robot1, user1):
     p1 = Match(name='my_partida', status='disponible',
                min_players=3, max_players=3, num_games=10, num_rounds=10,
                owner=User[user1])
@@ -148,7 +148,7 @@ def partida1(robot1, user1):
 
 @pytest.fixture
 @db_session
-def partida2(robot1, user1):
+def match2(robot1, user1):
     p2 = Match(name='my_partida', password='leandro',
                status='disponible',
                min_players=3, max_players=3, num_games=10, num_rounds=10,
@@ -160,7 +160,7 @@ def partida2(robot1, user1):
 
 @pytest.fixture
 @db_session
-def partida3(user1):
+def match3(user1):
     p3 = Match(name='my_partida', password='leandro',
                status='ocupada',
                min_players=3, max_players=3, num_games=10, num_rounds=10,
@@ -171,7 +171,7 @@ def partida3(user1):
 
 @pytest.fixture
 @db_session
-def partida4(user1, robot2):
+def match4(user1, robot2):
     p4 = Match(name='my_partida', password='leandro',
                status='disponible',
                min_players=3, max_players=3, num_games=10, num_rounds=10,
@@ -183,7 +183,7 @@ def partida4(user1, robot2):
 
 @pytest.fixture
 @db_session
-def partida5(user1, robot1, robot3):
+def match5(user1, robot1, robot3):
     p5 = Match(name='my_partida', password='leandro',
                status='disponible',
                min_players=2, max_players=3, num_games=10, num_rounds=10,
@@ -196,7 +196,7 @@ def partida5(user1, robot1, robot3):
 
 @pytest.fixture
 @db_session
-def partida6(user1, robot2, robot1):
+def match6(user1, robot2, robot1):
     p5 = Match(name='my_partida', password='leandro',
                status='iniciada',
                min_players=2, max_players=2, num_games=10, num_rounds=10,

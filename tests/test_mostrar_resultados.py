@@ -18,7 +18,7 @@ def test_correct_match(client, user1, robot1):
                                }]
 
 
-def test_unfinished_match(client, partida1):
+def test_unfinished_match(client, match1):
     response = client.get(
         '/match/results/1'
     )
