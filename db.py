@@ -28,6 +28,8 @@ class Robot(db.Entity):
     avatar = Optional(str, 255)
     partidas_ganadas = Required(int)
     partidas_jugadas = Required(int)
+    juegos_ganados = Required(int)
+    rondas_ganadas = Required(int)
     defectuoso = Required(bool)
     participa = Set('Partida', reverse='participante')
     usuario = Required(Usuario, reverse='robot')
