@@ -4,9 +4,9 @@ from db import *
 
 def test_verify_ok(client):
     with db_session:
-        Usuario(nombre_usuario='leandro',
-                email='leandro.lopez@mi.unc.edu.ar',
-                contraseña='42787067', verificado=False)
+        User(name='leandro',
+             email='leandro.lopez@mi.unc.edu.ar',
+             password='42787067', verified=False)
     token = gen_verification_token({'email': 'leandro.lopez@mi.unc.edu.ar'})
     response = client.get(
         f'/verify/{token}'

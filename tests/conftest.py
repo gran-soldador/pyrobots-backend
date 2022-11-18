@@ -83,7 +83,7 @@ def user4():
                 email='test_gran_soldador@hotmail.com',
                 password='asdASD123$', verified=True)
     user.flush()
-    return user.user_id
+    return user.id
 
 
 @pytest.fixture

@@ -11,7 +11,7 @@ router = APIRouter()
              name='Send an email for password recover.')
 async def send_email_password(email: str = Form(...)):
     with db_session:
-        if Usuario.get(email=email) is None:
+        if User.get(email=email) is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Email doesn't exist in database")
         send_email_recover(email)

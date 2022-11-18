@@ -17,8 +17,8 @@ async def recover_password(token,
         if token is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Invalid Token.")
-        myToken_user = token['email']
-        user = Usuario.get(email=myToken_user)
+        email = token['email']
+        user = User.get(email=email)
         if user is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="User doesn't exist.")
@@ -27,5 +27,5 @@ async def recover_password(token,
                                 detail="Password inválido, el password "
                                        "requiere al menos una mayuscula, una "
                                        "minusucula y un numero.")
-        user.contraseña = password
+        user.password = password
     return {'detail': "Password succesfully changed."}
