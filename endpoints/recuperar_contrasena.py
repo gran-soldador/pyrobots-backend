@@ -10,7 +10,7 @@ router = APIRouter()
              tags=['User Methods'],
              name='Recover the password and set a new one.')
 async def recover_password(token,
-                           password: str=Form(...)
+                           password: str = Form(...)
                            ):
     with db_session:
         token = check_verification_token(token)
