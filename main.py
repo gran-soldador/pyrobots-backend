@@ -7,7 +7,8 @@ from endpoints import (registrar_usuario, endpoint_login, listar_robot,
                        mostrar_resultados, lobby, iniciar_partida,
                        editar_implementacion_robot, cambiar_imagen_pefil,
                        enviar_mail_recuperacion_contrasena,
-                       recuperar_contrasena, implementacion_robot)
+                       recuperar_contrasena, implementacion_robot,
+                       profile)
 
 app = FastAPI()
 
@@ -26,6 +27,7 @@ app.include_router(abandonar_partida.router)
 app.include_router(mostrar_resultados.router)
 app.include_router(lobby.router)
 app.include_router(iniciar_partida.router)
+app.include_router(profile.router)
 app.include_router(implementacion_robot.router)
 app.include_router(enviar_mail_recuperacion_contrasena.router)
 app.include_router(recuperar_contrasena.router)

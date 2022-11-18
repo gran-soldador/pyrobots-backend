@@ -49,7 +49,9 @@ def reset_db():
 def user1():
     user = Usuario(nombre_usuario='leandro',
                    email='leandro.lopez@mi.unc.edu.ar',
-                   contraseña='42787067', verificado=True)
+                   contraseña='42787067',
+                   avatar='avatars/leandroUserAvatar.png',
+                   verificado=True)
     user.flush()
     return user.user_id
 
