@@ -115,6 +115,8 @@ class IGoToCenter(Robot):
 
 
 def test_shooting_robot():
+    random.seed(1)
+
     def r(n):
         return (n, "IGoToCenter", """
 class IGoToCenter(Robot):

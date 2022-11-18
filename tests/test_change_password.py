@@ -11,7 +11,7 @@ def test_correct_edit(loggedin_client, user1):
     )
     assert response.status_code == 200
     with db_session:
-        password = Usuario.get(user_id=user1).contraseña
+        password = User[user1].password
     assert password == '@Leandro013'
 
 

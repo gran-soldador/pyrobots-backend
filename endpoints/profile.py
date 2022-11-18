@@ -19,9 +19,9 @@ class ProfileResult:
             response_model=ProfileResult)
 async def view_profile(user_id: int = Depends(authenticated_user)):
     with db_session:
-        user = Usuario.get(user_id=user_id)
+        user = User[user_id]
         return ProfileResult(
-            username=user.nombre_usuario,
+            username=user.name,
             mail=user.email,
             avatar="http://localhost:9000/" + user.avatar
         )

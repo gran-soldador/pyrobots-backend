@@ -17,9 +17,9 @@ async def edit_profile_picture(user_id: int = Depends(authenticated_user),
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="File is not an image.")
     with db_session:
-        username = Usuario.get(user_id=user_id).nombre_usuario
-        avatar_location = f"avatars/{username}UserAvatar.{ext}"
+        user = User.get(id=user_id)
+        avatar_location = f"avatars/{user.name}UserAvatar.{ext}"
         with open("userUploads/" + avatar_location, "wb+") as file_object:
             file_object.write(new_profile.file.read())
-        Usuario[user_id].avatar = avatar_location
+        user.avatar = avatar_location
         return {"detail": "Profile picture succesfully changed."}

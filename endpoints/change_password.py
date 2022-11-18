@@ -26,9 +26,9 @@ async def change_password(user_id: int = Depends(authenticated_user),
                                    "requiere al menos una mayuscula, una "
                                    "minusucula y un numero.")
     with db_session:
-        user = Usuario.get(user_id=user_id)
-        if user.contraseña != old_password:
+        user = User[user_id]
+        if user.password != old_password:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                                detail="contraseña incorrecta")           
-        user.contraseña = new_password
+                                detail="contraseña incorrecta")
+        user.password = new_password
         user.flush()
