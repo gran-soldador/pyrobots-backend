@@ -1,7 +1,7 @@
 from fastapi import (APIRouter, HTTPException, File, status,
                      UploadFile, Depends)
 from db import *
-from .functions_jwt import *
+from utils.tokens import *
 
 router = APIRouter()
 

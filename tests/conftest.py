@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from main import app
 from db import *
-from endpoints.functions_jwt import authenticated_user
+from utils.tokens import authenticated_user
 import pytest
 
 _client = TestClient(app)

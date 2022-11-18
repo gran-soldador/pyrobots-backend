@@ -1,4 +1,4 @@
-from endpoints.functions_jwt import *
+from utils.tokens import *
 from db import *
 
 

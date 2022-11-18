@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 from db import *
-from .functions_jwt import *
+from utils.tokens import *
 
 router = APIRouter()
 

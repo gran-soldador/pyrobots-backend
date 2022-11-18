@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Form, status, HTTPException, Depends
 from db import *
-from .functions_jwt import *
+from utils.tokens import *
 from websocket import lobby_manager
 
 router = APIRouter()

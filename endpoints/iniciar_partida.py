@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Form, status, HTTPException, Depends
 from fastapi import BackgroundTasks
 from db import *
-from .functions_jwt import *
+from utils.tokens import *
 from websocket import lobby_manager
 from typing import Tuple, List, Dict
 from engine import Game

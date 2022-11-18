@@ -3,7 +3,7 @@ import pytest
 from datetime import datetime, timedelta
 from fastapi.security import HTTPAuthorizationCredentials
 
-from endpoints.functions_jwt import *
+from utils.tokens import *
 
 
 def test_verification_token():
@@ -39,7 +39,7 @@ def test_decode_trash():
 def test_authenticated_user_expired():
     data = {"user_id": 42}
     past_datetime = datetime.now() - timedelta(days=10)
-    with mock.patch("endpoints.functions_jwt.expire_date",
+    with mock.patch("utils.tokens.expire_date",
                     return_value=past_datetime):
         token = gen_session_token(data)
     with pytest.raises(HTTPException):

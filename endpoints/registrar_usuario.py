@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, File, UploadFile, Form
 from db import *
-from .validation import *
+from utils.validation import *
 
 router = APIRouter()
 

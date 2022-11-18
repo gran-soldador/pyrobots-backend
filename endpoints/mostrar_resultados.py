@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, HTTPException
 from db import *
-from .functions_jwt import *
+from utils.tokens import *
 from dataclasses import dataclass
 from typing import List
 

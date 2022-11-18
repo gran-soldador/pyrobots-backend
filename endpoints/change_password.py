@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Form
 from db import *
-from .validation import *
-from .functions_jwt import *
+from utils.validation import *
+from utils.tokens import *
 
 router = APIRouter()
 

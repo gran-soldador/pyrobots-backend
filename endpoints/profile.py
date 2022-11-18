@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from db import *
-from .functions_jwt import *
+from utils.tokens import *
 from dataclasses import dataclass
 
 router = APIRouter()
