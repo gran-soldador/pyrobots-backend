@@ -117,8 +117,8 @@ def test_password_without_digit(client):
 
 def test_user_already_exist(client):
     with db_session:
-        Usuario(nombre_usuario="usuarioQueExiste", contraseña="paSSw0rd444",
-                email="emailtestUsuario@nose.com", verificado=1)
+        User(name="usuarioQueExiste", password="paSSw0rd444",
+             email="emailtestUsuario@nose.com", verified=1)
 
     response = client.post(
         '/user/register',
@@ -136,8 +136,8 @@ def test_user_already_exist(client):
 
 def test_email_already_exist(client):
     with db_session:
-        Usuario(nombre_usuario="usuarioASDK", contraseña="paSSw0rd444",
-                email="emailtestEmailExiste@test.com", verificado=1)
+        User(name="usuarioASDK", password="paSSw0rd444",
+             email="emailtestEmailExiste@test.com", verified=1)
     response = client.post(
         '/user/register',
         headers={'Content-type': 'application/x-www-form-urlencoded'},

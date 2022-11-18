@@ -51,15 +51,14 @@ class GuardRobot(Robot):
 ]
 
 
-#  Creacion de usuario con o sin avatar
 @router.post("/user/register",
              tags=["User Methods"],
              name="Register new user")
-async def registro_usuario(username: str = Form(...),
-                           password: str = Form(...),
-                           email: str = Form(...),
-                           avatar: UploadFile = File(None)
-                           ):
+async def user_register(username: str = Form(...),
+                        password: str = Form(...),
+                        email: str = Form(...),
+                        avatar: UploadFile = File(None)
+                        ):
     if len(username) > MAX_NICKNAME_SIZE:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Username too long.")
@@ -85,10 +84,10 @@ async def registro_usuario(username: str = Form(...),
         with open("userUploads/" + avatar_location, "wb+") as file_object:
             file_object.write(avatar.file.read())
     with db_session:
-        if user_exist(username):
+        if User.get(name=username) is not None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="User name already exist.")
-        elif email_exist(email):
+        elif User.get(email=email) is not None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail="Email already registered.")
         user = User(
