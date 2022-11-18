@@ -5,7 +5,9 @@ from .functions_jwt import *
 router = APIRouter()
 
 
-@router.get('/verify/{token}')
+@router.get('/verify/{token}',
+            tags=['User Methods'],
+            name='Verify new user')
 async def verify_user(token):
     with db_session:
         token = check_verification_token(token)

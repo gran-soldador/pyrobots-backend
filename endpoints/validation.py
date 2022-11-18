@@ -35,7 +35,7 @@ def send_email(mail: str):
     user = 'emaildepruebagransoldador@gmail.com'
     app_password = getenv("GMAIL_APP_PW")  # a token for gmail
     token = gen_verification_token({'email': mail})
-    link = f"http://localhost:3000/verify/{token}"
+    link = f"http://localhost:3000/verify/{token}"  # TODO: Get URL from env
     subject = 'Verifica tu cuenta de PYRobot'
     content = f"""
 <a href="{link}">Clickeá aca para verificar tu cuenta en PYRobots</a>

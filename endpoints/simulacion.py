@@ -12,7 +12,10 @@ converter = make_converter()
 router = APIRouter()
 
 
-@router.post("/create_simulation", response_model=SimulationResult)
+@router.post("/simulation",
+             tags=['Simulation Methods'],
+             name='Run simulation',
+             response_model=SimulationResult)
 async def simulation(user_id: int = Depends(authenticated_user),
                      rounds: int = Form(...),
                      robot_ids: list[int] = Form(...)
