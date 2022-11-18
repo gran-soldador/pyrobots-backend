@@ -34,11 +34,11 @@ async def simulation(user_id: int = Depends(authenticated_user),
     with db_session:
         robots = []
         for id in robot_ids:
-            robot = Robot.get(robot_id=id)
-            if robot is None or robot.usuario.user_id != user_id:
+            robot = Robot.get(id=id)
+            if robot is None or robot.user.id != user_id:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                     detail='Robot does not exist')
-            robots.append((id, robot.nombre, robot.implementacion))
+            robots.append((id, robot.name, robot.code))
     try:
         result = engine.Game(robots, rounds).simulation()
         # We COULD do `return result`, but some quick measurements show that
