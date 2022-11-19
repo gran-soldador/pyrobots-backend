@@ -5,13 +5,12 @@ from collections.abc import Generator
 from itertools import combinations  # hit calculation
 from math import ceil               # missile flight delay
 
-import heapq                        # missiles_in_flight data structure
-
+from .constants import MAXX, MAXY, HITBOX, MISSILE_SPEED, MAXROUNDS
+from .heap import Heap
+from .missile import MissileInFlight
+from .outputmodels import *
 from .robot import Robot, MisbehavingRobotException
 from .vector import Vector
-from .missile import MissileInFlight
-from .constants import MAXX, MAXY, HITBOX, MISSILE_SPEED, MAXROUNDS
-from .outputmodels import *
 
 
 class Game:
@@ -24,7 +23,7 @@ class Game:
         self.maxrounds = rounds
         self.round = 0
         self.robots: list[Robot] = []
-        self.missiles_in_flight: list[MissileInFlight] = []
+        self.missiles_in_flight: Heap[MissileInFlight] = Heap()
         self.explosions: list[Vector] = []
         for num, (robot_id, name, code) in enumerate(robot_descriptions):
             position = (random.uniform(.1, .9) * MAXX,
@@ -122,11 +121,11 @@ class Game:
                     shot_vec.angle,
                     r._get_id()
                 )
-                heapq.heappush(self.missiles_in_flight, missile)
+                self.missiles_in_flight.push_back(missile)
         self.explosions.clear()
         while (len(self.missiles_in_flight) > 0 and
-                self.missiles_in_flight[0].hit_round - 1 <= self.round):
-            missile = heapq.heappop(self.missiles_in_flight)
+               self.missiles_in_flight.front().hit_round - 1 <= self.round):
+            missile = self.missiles_in_flight.pop_front()
             explosion = missile.destination
             for r in self.alive:
                 distance = r._get_position_vec().distance(explosion)
