@@ -59,7 +59,7 @@ def test_bounds():
     maxxy = Vector(cartesian=(10e6, 10e6))
     vec = Vector(cartesian=(randfloat(-10e8, -10e6), randfloat(10e6, 10e8)))
     assert not vec.is_bounded(minxy, maxxy)
-    new = vec.bound(minxy, maxxy)
+    new = vec.clamp(minxy, maxxy)
     assert new.is_bounded(minxy, maxxy)
 
 

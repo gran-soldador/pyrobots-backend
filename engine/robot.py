@@ -176,7 +176,7 @@ class Robot:
         position = self._status.position + movement
         if not position.is_bounded(*BOUNDS):
             self._status.damage += 2
-            position = position.bound(*BOUNDS)
+            position = position.clamp(*BOUNDS)
             movement = Vector((0, 0))
 
         self._status.position = position

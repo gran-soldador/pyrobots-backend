@@ -6,10 +6,16 @@ Pair = tuple[float, float]
 
 
 class Vector:
+    """Vector
+
+    Supports cartesian and polar coordinates, and common operations
+    """
     __slots__ = ["x", "y"]
 
-    def __init__(self, cartesian: Pair = None, polar: Pair = None):
-        """Vector supporting cartesian and polar coordinates
+    def __init__(self,
+                 cartesian: Pair | None = None,
+                 polar: Pair | None = None):
+        """Create Vector with either cartesian or polar coordinates
 
         Exactly one argument must be provided
         :param cartesian: (x, y) pair
@@ -27,15 +33,15 @@ class Vector:
         return (self.x, self.y)
 
     @cartesian.setter
-    def cartesian(self, val: Pair):
+    def cartesian(self, val: Pair) -> None:
         self.x, self.y = val
 
     @property
-    def polar(self):
+    def polar(self) -> Pair:
         return (atan2(self.y, self.x), sqrt(self.x**2 + self.y**2))
 
     @polar.setter
-    def polar(self, val: Pair):
+    def polar(self, val: Pair) -> None:
         angle, modulo = val
         self.x, self.y = (cos(angle) * modulo, sin(angle) * modulo)
 
@@ -47,7 +53,7 @@ class Vector:
     def modulo(self) -> float:
         return sqrt(self.x**2 + self.y**2)
 
-    def is_bounded(self, minxy, maxxy) -> bool:
+    def is_bounded(self, minxy: "Vector", maxxy: "Vector") -> bool:
         """ Test whether Vector is inside rectangle
 
         :param minxy: corner with minimum x and minimum y
@@ -57,7 +63,7 @@ class Vector:
         return ((minxy.x <= self.x <= maxxy.x) and
                 (minxy.y <= self.y <= maxxy.y))
 
-    def bound(self, minxy, maxxy):
+    def clamp(self, minxy: "Vector", maxxy: "Vector"):
         """ Used to ensure Vector is inside rectangle
 
         :param minxy: corner with minimum x and minimum y
@@ -68,26 +74,26 @@ class Vector:
         y = min(maxxy.y, max(minxy.y, self.y))
         return Vector(cartesian=(x, y))
 
-    def distance(self, other) -> float:
+    def distance(self, other: "Vector") -> float:
         return (self - other).modulo
 
-    def __eq__(self, other):
+    def __eq__(self, other: "Vector") -> bool:
         x_eq = isclose(self.x, other.x, abs_tol=EPSILON)
         y_eq = isclose(self.y, other.y, abs_tol=EPSILON)
         return x_eq and y_eq
 
-    def __add__(self, other):
+    def __add__(self, other: "Vector") -> "Vector":
         return Vector(cartesian=(self.x + other.x, self.y + other.y))
 
-    def __sub__(self, other):
+    def __sub__(self, other: "Vector") -> "Vector":
         return Vector(cartesian=(self.x - other.x, self.y - other.y))
 
-    def __iadd__(self, other):
+    def __iadd__(self, other: "Vector") -> "Vector":
         self.x, self.y = (self.x + other.x, self.y + other.y)
         return self
 
-    def __mul__(self, scalar: float):
+    def __mul__(self, scalar: float) -> "Vector":
         return Vector(cartesian=(self.x * scalar, self.y * scalar))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Vector(cartesian={(self.x, self.y)})"
