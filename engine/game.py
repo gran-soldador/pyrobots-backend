@@ -27,27 +27,25 @@ class Game:
         self.missiles_in_flight: list[MissileInFlight] = []
         self.explosions: list[Vector] = []
         for num, (robot_id, name, code) in enumerate(robot_descriptions):
+            position = (random.uniform(.1, .9) * MAXX,
+                        random.uniform(.1, .9) * MAXY)
+            damage = 0
             try:
                 exec(code)
-                robot = eval(name)()
-                if not isinstance(robot, Robot):
+                robotClass = eval(name)
+                if not issubclass(robotClass, Robot):
                     raise MisbehavingRobotException()
             except Exception:
                 logging.getLogger(__name__).debug(
                     "Robot failed during construction", exc_info=True)
-                robot = Robot()
-                robot._status.damage = 100
-            robot._status.position = Vector(cartesian=(
-                random.uniform(.1, .9) * MAXX,
-                random.uniform(.1, .9) * MAXY))
-            robot._status.name = name
-            robot._status.robot_id = robot_id
-            robot._status.id = num
+                robotClass = Robot
+                damage = 100
+            robot = robotClass(num, name, robot_id, position, damage)
             self.robots.append(robot)
 
     @property
     def alive(self) -> list[Robot]:
-        return [r for r in self.robots if r._status.damage < 100]
+        return [r for r in self.robots if r.get_damage() < 100]
 
     def simulation(self) -> SimulationResult:
         rounds = []

@@ -3,7 +3,7 @@ import logging
 from math import radians, isclose, degrees
 from typing import Optional
 from .constants import *
-from .vector import Vector
+from .vector import Vector, Pair
 
 
 BOUNDS = (Vector((0, 0)), Vector((MAXX, MAXY)))
@@ -13,19 +13,19 @@ class MisbehavingRobotException(Exception):
     pass
 
 
-@dataclass
+@dataclass(slots=True)
 class BotStatus:
-    name: str = ""
-    id: int = -1
-    robot_id: int = -1
-    damage: float = 0.0
+    id: int
+    name: str
+    robot_id: int
+    position: Vector
+    damage: float
     movement: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
-    position: Vector = field(default_factory=lambda: Vector(cartesian=(0, 0)))
     cannon_cooldown: float = 0.0
     scan_result: Optional[float] = None
 
 
-@dataclass
+@dataclass(slots=True)
 class BotCommands:
     drive_direction: float = 0.0
     drive_velocity: float = 0.0
@@ -39,8 +39,10 @@ class BotCommands:
 
 class Robot:
 
-    def __init__(self):
-        self._status = BotStatus()
+    def __init__(self, id: int = -1, name: str = "", robot_id: int = -1,
+                 position: Pair = (0, 0), damage: float = 0):
+        self._status = BotStatus(
+            id, name, robot_id, Vector(cartesian=position), damage)
         self._commands = BotCommands()
 
     def initialize(self):
