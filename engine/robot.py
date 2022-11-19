@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 import logging
-from math import radians, isclose, degrees
+from math import radians, isclose, degrees, pi
 from typing import Optional
 from .constants import *
 from .vector import Vector, Pair
@@ -120,14 +120,15 @@ class Robot:
         except ValueError:
             self._fail("scanner")
             return
-        min_angle = (self._commands.scanner_direction -
-                     self._commands.scanner_resolution / 2 + 360) % 360
-        max_angle = (self._commands.scanner_direction +
-                     self._commands.scanner_resolution / 2 + 360) % 360
+        direction = radians(self._commands.scanner_direction)
+        resolution = radians(self._commands.scanner_resolution)
+        MOD = 2 * pi
+        min_angle = (direction - resolution / 2 + MOD) % MOD
+        max_angle = (direction + resolution / 2 + MOD) % MOD
         best = float("inf")
         for other in positions:
             vec = other - self._status.position
-            angle = (degrees(vec.angle) + 360) % 360
+            angle = (vec.angle + MOD) % MOD
             if min_angle < max_angle:
                 if min_angle <= angle <= max_angle:
                     best = min(best, vec.modulo)
