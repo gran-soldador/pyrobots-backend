@@ -1,15 +1,13 @@
-from fastapi import APIRouter, HTTPException, status, File, UploadFile, Form
+from fastapi import (APIRouter, HTTPException, status, File, UploadFile, Form,
+                     Depends)
 from db import *
-from utils.validation import *
+from utils.password_validator import password_validator_generator
 from utils.mailing import send_verification_email
 
 router = APIRouter()
 
-MAX_NICKNAME_SIZE = 32
-MIN_NICKNAME_SIZE = 1
-MIN_PASSWORD_SIZE = 8
-
-defaultrobots = [
+MAX_USERNAME_LEN = 32
+DEFAULT_ROBOTS = (
     ("SpiralRobot", """
 class SpiralRobot(Robot):
     def initialize(self):
@@ -49,28 +47,22 @@ class GuardRobot(Robot):
         if result is not None and self.is_cannon_ready():
             self.cannon(0, result)
 """)
-]
+)
+
+password_validator = password_validator_generator("password")
 
 
 @router.post("/user/register",
              tags=["User Methods"],
              name="Register new user")
 async def register(username: str = Form(...),
-                   password: str = Form(...),
+                   password: str = Depends(password_validator),
                    email: str = Form(...),
                    avatar: UploadFile = File(None)
                    ):
-    if len(username) > MAX_NICKNAME_SIZE:
+    if len(username) > MAX_USERNAME_LEN:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Username too long.")
-    elif len(password) < MIN_PASSWORD_SIZE:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Password too Short.")
-    elif (not password_is_correct(password)):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Password inválido, el password "
-                                   "requiere al menos una mayuscula, una "
-                                   "minusucula y un numero.")
     elif not ("@" in email):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Email inválido.")
@@ -98,7 +90,7 @@ async def register(username: str = Form(...),
             verified=False,
             avatar=avatar_location
         )
-        for robot in defaultrobots:
+        for robot in DEFAULT_ROBOTS:
             Robot(
                 name=robot[0],
                 code=robot[1],

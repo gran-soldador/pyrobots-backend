@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException, status, Form
+from fastapi import APIRouter, HTTPException, status, Form, Depends
 from db import *
-from utils.validation import *
+from utils.password_validator import password_validator_generator
 from utils.tokens import *
 
 router = APIRouter()
 
 MIN_PASSWORD_SIZE = 8
+
+password_validator = password_validator_generator("new_password")
 
 
 @router.post('/user/edit/password',
@@ -13,18 +15,10 @@ MIN_PASSWORD_SIZE = 8
              name='Change user password')
 async def change_password(user_id: int = Depends(authenticated_user),
                           old_password: str = Form(...),
-                          new_password: str = Form(...)):
+                          new_password: str = Depends(password_validator)):
     if old_password == new_password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="La contraseña debe ser distinta")
-    if len(new_password) < MIN_PASSWORD_SIZE:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Password too Short.")
-    elif (not password_is_correct(new_password)):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Password inválido, el password "
-                                   "requiere al menos una mayuscula, una "
-                                   "minusucula y un numero.")
     with db_session:
         user = User[user_id]
         if user.password != old_password:

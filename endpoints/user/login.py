@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException, status, Form
 from pony.orm import *
 from db import *
 from utils.tokens import gen_session_token
-from utils.validation import *
 
 
 router = APIRouter()

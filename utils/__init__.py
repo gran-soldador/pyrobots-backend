@@ -1,6 +1,6 @@
 from . import mailing
 from . import tokens
-from . import validation
+from . import password_validator
 from . import websocket
 
-__all__ = ['tokens', 'validation', 'mailing', 'websocket']
+__all__ = ['tokens', 'password_validator', 'mailing', 'websocket']
