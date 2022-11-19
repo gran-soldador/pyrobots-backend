@@ -1,64 +1,57 @@
-from typing import List
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(slots=True)
 class RobotId:
-    __slots__ = ["id", "name"]
     id: int
     name: str
 
 
-@dataclass
+@dataclass(slots=True)
 class Status:
-    __slots__ = ["x", "y"]
     x: float
     y: float
 
 
-@dataclass
+@dataclass(slots=True)
 class ScannerStatus:
-    __slots__ = ["used", "angle", "amplitude"]
     used: bool
     angle: float
     amplitude: float
 
 
-@dataclass
+@dataclass(slots=True)
 class RobotStatus(Status):
-    __slots__ = ["damage", "scanner"]
     damage: float
     scanner: ScannerStatus
 
 
-@dataclass
+@dataclass(slots=True)
 class MissileStatus(Status):
-    __slots__ = ["angle", "sender"]
     angle: float
     sender: int
 
 
-@dataclass
+@dataclass(slots=True)
 class ExplosionStatus(Status):
     pass
 
 
-@dataclass
+@dataclass(slots=True)
 class RoundResult:
-    __slots__ = ["robots", "missiles", "explosions"]
-    robots: List[RobotStatus]
-    missiles: List[MissileStatus]
-    explosions: List[ExplosionStatus]
+    robots: list[RobotStatus]
+    missiles: list[MissileStatus]
+    explosions: list[ExplosionStatus]
 
 
 @dataclass
 class MatchResult:
     rounds_played: int
-    players: List[RobotId]
-    winners: List[RobotId]
+    players: list[RobotId]
+    winners: list[RobotId]
 
 
 @dataclass
 class SimulationResult(MatchResult):
     maxrounds: int
-    rounds: List[RoundResult]
+    rounds: list[RoundResult]
