@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import logging
 from math import radians, isclose, degrees
-from typing import Tuple, Optional, List
+from typing import Optional
 from .constants import *
 from .vector import Vector
 
@@ -115,7 +115,7 @@ class Robot:
         if not 0 < self._commands.scanner_resolution <= 20:
             raise ValueError("Invalid resolution")
 
-    def _execute_scanner(self, positions: List[Vector]) -> None:
+    def _execute_scanner(self, positions: list[Vector]) -> None:
         self._status.scan_result = None
         if not self._commands.scanner_used:
             return
@@ -186,7 +186,7 @@ class Robot:
     def get_velocity(self) -> float:
         return self._status.movement.modulo / MAXSPEED * 100
 
-    def get_position(self) -> Tuple[float, float]:
+    def get_position(self) -> tuple[float, float]:
         return self._status.position.x, self._status.position.y
 
     def get_damage(self) -> float:

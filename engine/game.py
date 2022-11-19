@@ -1,6 +1,7 @@
 import logging
 import random
-from typing import Any, Generator, List, Tuple
+from typing import Any
+from collections.abc import Generator
 from itertools import combinations  # hit calculation
 from math import ceil               # missile flight delay
 
@@ -15,16 +16,16 @@ from .outputmodels import *
 
 class Game:
     def __init__(self,
-                 robot_descriptions: List[Tuple[int, str, str]],
+                 robot_descriptions: list[tuple[int, str, str]],
                  rounds: int = MAXROUNDS):
         assert 2 <= len(robot_descriptions) <= 4
         assert 1 <= rounds <= MAXROUNDS
         logging.getLogger(__name__).debug("starting game")
         self.maxrounds = rounds
         self.round = 0
-        self.robots: List[Robot] = []
-        self.missiles_in_flight: List[MissileInFlight] = []
-        self.explosions: List[Vector] = []
+        self.robots: list[Robot] = []
+        self.missiles_in_flight: list[MissileInFlight] = []
+        self.explosions: list[Vector] = []
         for num, (robot_id, name, code) in enumerate(robot_descriptions):
             try:
                 exec(code)
@@ -45,7 +46,7 @@ class Game:
             self.robots.append(robot)
 
     @property
-    def alive(self) -> List[Robot]:
+    def alive(self) -> list[Robot]:
         return [r for r in self.robots if r._status.damage < 100]
 
     def simulation(self) -> SimulationResult:
@@ -57,10 +58,9 @@ class Game:
                 # Gather data
                 robots_status = []
                 for r in self.robots:
-                    pos = r._status.position
+                    x, y = r.get_position()
                     robots_status.append(
-                        RobotStatus(x=pos.x, y=pos.y,
-                                    damage=min(r._status.damage, 100)))
+                        RobotStatus(x=x, y=y, damage=min(r.get_damage(), 100)))
                 missiles_status = []
                 for m in self.missiles_in_flight:
                     pos = m.curr_pos(self.round)

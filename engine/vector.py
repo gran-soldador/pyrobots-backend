@@ -1,9 +1,8 @@
-from typing import Tuple
 from math import cos, sin, atan2, sqrt, isclose
 from .constants import EPSILON
 
 
-Pair = Tuple[float, float]
+Pair = tuple[float, float]
 
 
 class Vector:
