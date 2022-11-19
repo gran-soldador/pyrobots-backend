@@ -45,6 +45,7 @@ class LobbyManager:
             msg = self.create_msg(partida_id, msg)
             for connection in room:
                 await connection.send_json(msg)
+        return
 
     async def send_msg(self, partida_id: int, websocket: WebSocket, msg: str):
         if msg != 'error':

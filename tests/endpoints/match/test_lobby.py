@@ -1,17 +1,18 @@
-from db import *
+import pytest
+from utils.websocket import lobby_manager
 
 
-def test_websocket(client, user1):
-    with db_session:
-        Match(id=-1, name='my_partida', status='disponible',
-              min_players=3, max_players=3, num_games=10, num_rounds=10,
-              owner=User[user1])
-    with client.websocket_connect("/ws/-1") as websocket:
+def test_websocket(client, match1):
+    with client.websocket_connect(f"/ws/{match1}") as websocket:
         data = websocket.receive_json()
     assert data == {'event': 'start',
                     'creator': 'leandro',
                     'password': False,
-                    'robots': []
+                    'robots': [{'id': 1,
+                                'name': 'RandomRobot',
+                                'username': 'leandro'
+                                }
+                               ]
                     }
 
 
@@ -25,33 +26,33 @@ def test_websocket_incorrect(client):
                     }
 
 
-def test_websocket_send(client, user1):
-    with db_session:
-        Match(id=-2, name='my_partida', status='disponible',
-              min_players=3, max_players=3, num_games=10, num_rounds=10,
-              owner=User[user1])
-    with client.websocket_connect("/ws/-2") as websocket:
-        data = websocket.receive_json()
-        websocket.send_text("finish")
-        data = websocket.receive_json()
-    assert data == {'event': 'finish',
-                    'creator': 'leandro',
-                    'password': False,
-                    'robots': []
-                    }
-
-
-def test_websocket_last_msg(client, user1):
-    with db_session:
-        Match(id=-3, name='my_partida', status='disponible',
-              min_players=3, max_players=3, num_games=10, num_rounds=10,
-              owner=User[user1])
-    with client.websocket_connect("/ws/-3") as websocket:
-        data = websocket.send_text('test')
-    with client.websocket_connect("/ws/-3") as websocket:
+@pytest.mark.asyncio
+async def test_empty_broadcast(client, match1):
+    await lobby_manager.broadcast(match1, 'test')
+    with client.websocket_connect(f"/ws/{match1}") as websocket:
         data = websocket.receive_json()
     assert data == {'event': 'test',
                     'creator': 'leandro',
                     'password': False,
-                    'robots': []
+                    'robots': [{'id': 1,
+                                'name': 'RandomRobot',
+                                'username': 'leandro'
+                                }
+                               ]
+                    }
+
+
+@pytest.mark.asyncio
+async def test_non_empty_broadcast(client, match1):
+    with client.websocket_connect(f"/ws/{match1}") as websocket:
+        await lobby_manager.broadcast(match1, 'test')
+        data = websocket.receive_json()
+    assert data == {'event': 'test',
+                    'creator': 'leandro',
+                    'password': False,
+                    'robots': [{'id': 1,
+                                'name': 'RandomRobot',
+                                'username': 'leandro'
+                                }
+                               ]
                     }

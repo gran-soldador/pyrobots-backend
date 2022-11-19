@@ -18,7 +18,7 @@ def valid_form(robot1):
 
 @pytest.mark.parametrize("password", [None, "42787067"])
 def test_correct_form(loggedin_client, valid_form, user1, password):
-    with mock.patch("utils.websocket.lobby_manager.broadcast", return_value=None):
+    with mock.patch("utils.websocket.lobby_manager.broadcast"):
         response = loggedin_client.post(
             '/match/new',
             data={**valid_form, "password": password}
