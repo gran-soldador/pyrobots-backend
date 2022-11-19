@@ -52,9 +52,7 @@ class Robot:
         try:
             self.initialize()
         except Exception:
-            logging.getLogger(__name__).debug("Robot failed when initializing",
-                                              exc_info=True)
-            self._status.damage = 100
+            self._fail("initialize")
 
     def respond(self):
         raise NotImplementedError("Robot has no respond code")
@@ -65,9 +63,7 @@ class Robot:
         try:
             self.respond()
         except Exception:
-            logging.getLogger(__name__).debug("Robot failed when responding",
-                                              exc_info=True)
-            self._status.damage = 100
+            self._fail("respond")
 
     def is_cannon_ready(self) -> bool:
         return self._status.cannon_cooldown <= 0
@@ -90,10 +86,8 @@ class Robot:
             return
         try:
             self._validate_cannon()
-        except Exception:
-            logging.getLogger(__name__).debug("Robot failed when shooting",
-                                              exc_info=True)
-            self._status.damage = 100
+        except ValueError:
+            self._fail("cannon")
             return
         self._status.cannon_cooldown = \
             max(2, self._commands.cannon_distance * CANNON_COOLDOWN_FACTOR)
@@ -123,10 +117,8 @@ class Robot:
             return
         try:
             self._validate_scanner()
-        except Exception:
-            logging.getLogger(__name__).debug("Robot failed when scanning",
-                                              exc_info=True)
-            self._status.damage = 100
+        except ValueError:
+            self._fail("scanner")
             return
         min_angle = (self._commands.scanner_direction -
                      self._commands.scanner_resolution / 2 + 360) % 360
@@ -163,10 +155,8 @@ class Robot:
     def _execute_drive(self) -> None:
         try:
             self._validate_drive()
-        except Exception:
-            logging.getLogger(__name__).debug("Robot failed when moving",
-                                              exc_info=True)
-            self._status.damage = 100
+        except ValueError:
+            self._fail("drive")
             return
         requested = Vector(polar=(
             radians(self._commands.drive_direction),
@@ -200,5 +190,10 @@ class Robot:
     def _get_id(self) -> int:
         return self._status.id
 
-    def _apply_damage(self, amount) -> None:
+    def _apply_damage(self, amount: float) -> None:
         self._status.damage += amount
+
+    def _fail(self, detail: Optional[str] = None) -> None:
+        self._status.damage = 100.0
+        msg = "Robot failed" if detail is None else f"Robot failed ({detail})"
+        logging.getLogger(__name__).debug(msg, exc_info=True)
