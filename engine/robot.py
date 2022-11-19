@@ -197,6 +197,15 @@ class Robot:
     def _get_id(self) -> int:
         return self._status.id
 
+    def _get_scanner_command(self) -> tuple[bool, float, float]:
+        """ Get last scanner request
+
+        :return: Tuple of (used, direction, resolution)
+        """
+        return (self._commands.scanner_used,
+                radians(self._commands.scanner_direction),
+                radians(self._commands.scanner_resolution))
+
     def _apply_damage(self, amount: float) -> None:
         self._status.damage += amount
 

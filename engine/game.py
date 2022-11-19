@@ -3,7 +3,7 @@ import random
 from typing import Any
 from collections.abc import Generator
 from itertools import combinations  # hit calculation
-from math import ceil, radians
+from math import ceil
 
 from .constants import MAXX, MAXY, HITBOX, MISSILE_SPEED, MAXROUNDS
 from .heap import Heap
@@ -55,13 +55,7 @@ class Game:
                 robots_status = []
                 for r in self.robots:
                     x, y = r.get_position()
-                    if r._commands.scanner_used:
-                        scanner = ScannerStatus(
-                            True,
-                            radians(r._commands.scanner_direction),
-                            radians(r._commands.scanner_resolution))
-                    else:
-                        scanner = ScannerStatus(False, 0.0, 0.0)
+                    scanner = ScannerStatus(*r._get_scanner_command())
                     robots_status.append(
                         RobotStatus(x=x, y=y, damage=min(r.get_damage(), 100),
                                     scanner=scanner))
