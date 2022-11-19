@@ -30,6 +30,7 @@ class Vector:
 
     @property
     def cartesian(self) -> Pair:
+        """ Cartesian coordinates of Vector ((x, y) pair) """
         return (self.x, self.y)
 
     @cartesian.setter
@@ -38,6 +39,7 @@ class Vector:
 
     @property
     def polar(self) -> Pair:
+        """ Polar coordinates of Vector ((angle, modulo) pair) """
         return (atan2(self.y, self.x), sqrt(self.x**2 + self.y**2))
 
     @polar.setter
