@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Form, status, HTTPException, Depends
 from db import *
 from utils.tokens import *
-from websocket import lobby_manager
+from utils.websocket import lobby_manager
 
 router = APIRouter()
 
@@ -9,7 +9,7 @@ router = APIRouter()
 @router.post('/match/join',
              tags=["Match Methods"],
              name="Join a match")
-async def match_join(user_id: int = Depends(authenticated_user),
+async def join_match(user_id: int = Depends(authenticated_user),
                      match_id: int = Form(...),
                      password: str = Form(None),
                      robot_id: int = Form(...)):

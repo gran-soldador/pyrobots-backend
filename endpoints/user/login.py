@@ -5,12 +5,12 @@ from utils.tokens import gen_session_token
 from utils.validation import *
 
 
-auth_routes = APIRouter()
+router = APIRouter()
 
 
-@auth_routes.post("/login",
-                  tags=['User Methods'],
-                  name='Login')
+@router.post("/login",
+             tags=['User Methods'],
+             name='Login')
 async def login(username: str = Form(...),
                 password: str = Form(...)):
     with db_session:

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Form, status, HTTPException, Depends
 from fastapi import BackgroundTasks
 from db import *
 from utils.tokens import *
-from websocket import lobby_manager
+from utils.websocket import lobby_manager
 from typing import Tuple, List, Dict
 from engine import Game
 from fastapi.concurrency import run_in_threadpool
@@ -53,9 +53,9 @@ async def calculate_match(match_id: int, robots: List[Tuple[int, str, str]],
 @router.post('/match/start',
              tags=["Match Methods"],
              name="Start match")
-async def init_match(user_id: int = Depends(authenticated_user),
-                     match_id: int = Form(...),
-                     background_tasks: BackgroundTasks = BackgroundTasks()):
+async def start_match(user_id: int = Depends(authenticated_user),
+                      match_id: int = Form(...),
+                      background_tasks: BackgroundTasks = BackgroundTasks()):
     with db_session:
         match = Match.get_for_update(id=match_id)
         if match is None:

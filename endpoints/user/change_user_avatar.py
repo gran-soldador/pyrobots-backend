@@ -9,9 +9,9 @@ router = APIRouter()
 @router.post("/user/profile/change_avatar",
              tags=['User Methods'],
              name='Change Profile Picture')
-async def edit_profile_picture(user_id: int = Depends(authenticated_user),
-                               new_profile: UploadFile = File(...)
-                               ):
+async def change_user_avatar(user_id: int = Depends(authenticated_user),
+                             new_profile: UploadFile = File(...)
+                             ):
     ext = new_profile.filename.split(".")[-1]
     if ext not in ['png', 'jpg', 'jpeg', 'tiff', 'bmp']:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,

@@ -8,8 +8,8 @@ router = APIRouter()
 @router.get('/robot/code/{robot_id}',
             tags=['Robot Methods'],
             name='Return robot code')
-async def implementacion_robot(robot_id: int,
-                               user_id: int = Depends(authenticated_user)):
+async def get_robot_code(robot_id: int,
+                         user_id: int = Depends(authenticated_user)):
     with db_session:
         robot = Robot.get(id=robot_id)
         if robot is None:

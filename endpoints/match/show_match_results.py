@@ -18,7 +18,7 @@ class WinnerResult:
             tags=["Match Methods"],
             name="Match results",
             response_model=List[WinnerResult])
-async def return_result(match_id: int):
+async def show_match_results(match_id: int):
     with db_session:
         match = Match.get(id=match_id)
         if match is None:

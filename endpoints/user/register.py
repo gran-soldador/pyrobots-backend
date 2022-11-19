@@ -55,11 +55,11 @@ class GuardRobot(Robot):
 @router.post("/user/register",
              tags=["User Methods"],
              name="Register new user")
-async def user_register(username: str = Form(...),
-                        password: str = Form(...),
-                        email: str = Form(...),
-                        avatar: UploadFile = File(None)
-                        ):
+async def register(username: str = Form(...),
+                   password: str = Form(...),
+                   email: str = Form(...),
+                   avatar: UploadFile = File(None)
+                   ):
     if len(username) > MAX_NICKNAME_SIZE:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Username too long.")

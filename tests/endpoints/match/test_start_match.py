@@ -2,7 +2,7 @@ import mock
 
 
 def test_correct_start(loggedin_client, match5):
-    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+    with mock.patch("utils.websocket.lobby_manager.broadcast", return_value=None):
         response = loggedin_client.post(
             '/match/start',
             data={'match_id': match5}

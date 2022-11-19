@@ -1,5 +1,6 @@
-from .tokens import *
-from .validation import *
-from .mailing import *
+from . import mailing
+from . import tokens
+from . import validation
+from . import websocket
 
-__all__ = ['tokens', 'validation', 'mailing']
+__all__ = ['tokens', 'validation', 'mailing', 'websocket']

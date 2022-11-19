@@ -2,7 +2,7 @@ import mock
 
 
 def test_correct_union(loggedin_client2, match1, robot2):
-    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+    with mock.patch("utils.websocket.lobby_manager.broadcast", return_value=None):
         response = loggedin_client2.post(
             '/match/join',
             data={
@@ -14,7 +14,7 @@ def test_correct_union(loggedin_client2, match1, robot2):
 
 
 def test_correct_password_union(loggedin_client2, match2, robot2):
-    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+    with mock.patch("utils.websocket.lobby_manager.broadcast", return_value=None):
         response = loggedin_client2.post(
             '/match/join',
             data={
@@ -118,7 +118,7 @@ def test_same_user_union(loggedin_client2, match4, robot2):
 
 
 def test_full_user_union(loggedin_client2, match5, robot2):
-    with mock.patch("websocket.lobby_manager.broadcast", return_value=None):
+    with mock.patch("utils.websocket.lobby_manager.broadcast", return_value=None):
         response = loggedin_client2.post(
             '/match/join',
             data={
