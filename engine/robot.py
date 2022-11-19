@@ -82,6 +82,11 @@ class Robot:
             raise ValueError("Invalid distance")
 
     def _execute_cannon(self) -> Optional[Vector]:
+        """ Execute last cannon request, killing robot if invalid
+
+        :return: Missile destination iff there was a valid cannon request,
+        otherwise None
+        """
         if not self._commands.cannon_used:
             return
         try:
@@ -112,6 +117,10 @@ class Robot:
             raise ValueError("Invalid resolution")
 
     def _execute_scanner(self, positions: list[Vector]) -> None:
+        """ Execute last scanner request, killing robot if invalid
+
+        :param positions: Positions of other robots that scanner can detect
+        """
         self._status.scan_result = None
         if not self._commands.scanner_used:
             return
@@ -154,6 +163,9 @@ class Robot:
             raise ValueError("Too fast for changing direction")
 
     def _execute_drive(self) -> None:
+        """ Execute last drive request, killing robot if invalid, and
+        applying damage if out of bounds
+        """
         try:
             self._validate_drive()
         except ValueError:
