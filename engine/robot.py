@@ -193,3 +193,12 @@ class Robot:
 
     def get_damage(self) -> float:
         return self._status.damage
+
+    def _get_position_vec(self) -> Vector:
+        return self._status.position
+
+    def _get_id(self) -> int:
+        return self._status.id
+
+    def _apply_damage(self, amount) -> None:
+        self._status.damage += amount
