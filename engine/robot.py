@@ -131,19 +131,13 @@ class Robot:
             return
         direction = radians(self._commands.scanner_direction)
         resolution = radians(self._commands.scanner_resolution)
-        MOD = 2 * pi
-        min_angle = (direction - resolution / 2 + MOD) % MOD
-        max_angle = (direction + resolution / 2 + MOD) % MOD
+        min_angle = direction - resolution / 2
+        max_angle = direction + resolution / 2
         best = float("inf")
         for other in positions:
-            vec = other - self._status.position
-            angle = (vec.angle + MOD) % MOD
-            if min_angle < max_angle:
-                if min_angle <= angle <= max_angle:
-                    best = min(best, vec.modulo)
-            else:  # an angle has wrapped around
-                if not max_angle < angle < min_angle:
-                    best = min(best, vec.modulo)
+            relative_position = other - self._status.position
+            if angle_in_range(relative_position.angle, min_angle, max_angle):
+                best = min(best, relative_position.modulo)
         if best < float("inf"):
             self._status.scan_result = best
 
@@ -210,3 +204,14 @@ class Robot:
         self._status.damage = 100.0
         msg = "Robot failed" if detail is None else f"Robot failed ({detail})"
         logging.getLogger(__name__).debug(msg, exc_info=True)
+
+
+def angle_in_range(angle: float, min: float, max: float):
+    MOD = 2 * pi
+    angle = (angle + MOD) % MOD
+    min = (min + MOD) % MOD
+    max = (max + MOD) % MOD
+    if min < max:
+        return min <= angle <= max
+    else:  # an angle has wrapped around
+        return not max < angle < min
