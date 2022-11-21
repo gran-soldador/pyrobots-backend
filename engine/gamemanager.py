@@ -1,4 +1,4 @@
-from poolrunner import PoolRunner
+from utils.poolrunner import PoolRunner
 from .game import Game
 from .outputmodels import SimulationResult
 
