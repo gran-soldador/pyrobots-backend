@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 import logging
+from timeout_decorator import timeout, TimeoutError
 from math import radians, isclose, degrees, pi
 from typing import Optional
 from .constants import *
@@ -50,7 +51,9 @@ class Robot:
 
     def _initialize_or_die(self):
         try:
-            self.initialize()
+            timeout(TIMEOUT)(self.initialize)()
+        except TimeoutError:
+            pass
         except Exception:
             self._fail("initialize")
 
@@ -61,7 +64,9 @@ class Robot:
         self._commands = BotCommands()
         self._status.cannon_cooldown -= 1
         try:
-            self.respond()
+            timeout(TIMEOUT)(self.respond)()
+        except TimeoutError:
+            pass
         except Exception:
             self._fail("respond")
 

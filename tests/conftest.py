@@ -1,9 +1,12 @@
 from fastapi.testclient import TestClient
+import logging
+import pytest
+
 from main import app
 from db import *
 from utils.tokens import authenticated_user
-import pytest
 
+logging.basicConfig(level=logging.DEBUG)
 _client = TestClient(app)
 
 

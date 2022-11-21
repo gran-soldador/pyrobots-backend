@@ -69,7 +69,7 @@ def test_simulation_robot_not_mine(loggedin_client, robot1, robot2, robot3):
 def test_simulation_ok(loggedin_client, robot1, robot3, robot4):
     res = SimulationResult(rounds_played=10, players=[], winners=[],
                            maxrounds=10, rounds=[])
-    with mock.patch("engine.Game.simulation", return_value=res):
+    with mock.patch("engine.GameManager.simulation", return_value=res):
         response = loggedin_client.post(
             '/simulation',
             data={
@@ -82,7 +82,7 @@ def test_simulation_ok(loggedin_client, robot1, robot3, robot4):
 
 
 def test_simulation_fail(loggedin_client, robot1, robot3, robot4):
-    with mock.patch("engine.Game.simulation", side_effect=ValueError()):
+    with mock.patch("engine.GameManager.simulation", side_effect=ValueError()):
         response = loggedin_client.post(
             '/simulation',
             data={

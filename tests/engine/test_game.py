@@ -58,6 +58,28 @@ class R(Robot):
                 curr.robots[0].y > prev.robots[0].y)
 
 
+def test_sleeping_robots():
+    r = (1, "R", """
+class R(Robot):
+    def initialize(self):
+        from time import sleep
+        sleep(2)
+        a = 2/0
+    def respond(self):
+        from time import sleep
+        sleep(2)
+        self.drive(45,1)
+    """)
+    rounds = 5
+    gut = Game([r, r], rounds)
+    result = gut.simulation()
+    assert result.maxrounds == result.rounds_played == rounds
+    assert len(result.rounds) == result.rounds_played + 1
+    for prev, curr in zip(result.rounds, result.rounds[1:]):
+        assert (curr.robots[0].x == prev.robots[0].x and
+                curr.robots[0].y == prev.robots[0].y)
+
+
 def test_early_finish():
     r1 = (1, "ISurvive", """
 class ISurvive(Robot):
