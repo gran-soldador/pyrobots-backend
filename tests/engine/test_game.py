@@ -62,7 +62,9 @@ def test_sleeping_robots():
     r = (1, "R", """
 class R(Robot):
     def initialize(self):
-        pass
+        from time import sleep
+        sleep(2)
+        a = 2/0
     def respond(self):
         from time import sleep
         sleep(2)
