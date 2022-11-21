@@ -66,4 +66,3 @@ def test_gamerunners_match():
     mocked_game.assert_called_with(args[0], args[2])
     assert mocked_game.call_count == args[1]
     assert game.match.call_count == args[1]
-
