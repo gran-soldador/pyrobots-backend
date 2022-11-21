@@ -1,5 +1,5 @@
 from fastapi import (APIRouter, HTTPException, status, File, UploadFile, Form,
-                     Depends)
+                     Depends, BackgroundTasks)
 from db import *
 from utils.password_validator import password_validator_generator
 from utils.mailing import send_verification_email
@@ -58,7 +58,8 @@ password_validator = password_validator_generator("password")
 async def register(username: str = Form(...),
                    password: str = Depends(password_validator),
                    email: str = Form(...),
-                   avatar: UploadFile = File(None)
+                   avatar: UploadFile = File(None),
+                   background_tasks: BackgroundTasks = BackgroundTasks()
                    ):
     if len(username) > MAX_USERNAME_LEN:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
@@ -102,5 +103,5 @@ async def register(username: str = Form(...),
                 defective=False,
                 user=user
             )
-    send_verification_email(email)
+    background_tasks.add_task(send_verification_email, email)
     return {"new user created": username}
