@@ -18,8 +18,7 @@ async def websocket_manager(websocket: WebSocket, match_id: int):
             await lobby_manager.send_msg(match_id, websocket, 'start')
         try:
             while True:
-                data = await websocket.receive_text()
-                await lobby_manager.broadcast(match_id, data)
+                await websocket.receive_text()
         except WebSocketDisconnect:
             lobby_manager.disconnect(websocket, match_id)
     else:

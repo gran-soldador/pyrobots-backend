@@ -7,8 +7,7 @@ def test_correct_start(loggedin_client, match5):
     with db_session:
         robot_ids = [r.id for r in Match[match5].players]
     res = (dict(zip(robot_ids, [0, 20])), dict(zip(robot_ids, [0, 1])))
-    with mock.patch("utils.websocket.lobby_manager.broadcast",
-                    return_value=None):
+    with mock.patch("utils.websocket.lobby_manager.broadcast"):
         with mock.patch("engine.GameManager.match", return_value=res):
             response = loggedin_client.post(
                 '/match/start',

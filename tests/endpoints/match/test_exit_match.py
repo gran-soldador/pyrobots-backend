@@ -2,7 +2,7 @@ import mock
 
 
 def test_correct_quit(loggedin_client2, match4):
-    with mock.patch("utils.websocket.lobby_manager.broadcast", return_value=None):
+    with mock.patch("utils.websocket.lobby_manager.broadcast"):
         response = loggedin_client2.post(
             '/match/exit',
             data={'match_id': match4}
