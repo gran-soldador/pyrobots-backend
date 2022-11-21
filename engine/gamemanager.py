@@ -16,8 +16,7 @@ class GameRunners:
         rounds = {r_id: 0 for (r_id, _, _) in robots}
         scores = {r_id: 0 for (r_id, _, _) in robots}
         for _ in range(num_games):
-            match = Game(robots, num_rounds)
-            result = match.match()
+            result = Game(robots, num_rounds).match()
             for winner in result.winners:
                 rounds[winner.id] += result.rounds_played
                 scores[winner.id] += 1
