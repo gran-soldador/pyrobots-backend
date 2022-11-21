@@ -3,7 +3,7 @@ import random
 from typing import Any
 from collections.abc import Generator
 from itertools import combinations  # hit calculation
-from math import ceil               # missile flight delay
+from math import ceil
 
 from .constants import MAXX, MAXY, HITBOX, MISSILE_SPEED, MAXROUNDS
 from .heap import Heap
@@ -55,8 +55,10 @@ class Game:
                 robots_status = []
                 for r in self.robots:
                     x, y = r.get_position()
+                    scanner = ScannerStatus(*r._get_scanner_command())
                     robots_status.append(
-                        RobotStatus(x=x, y=y, damage=min(r.get_damage(), 100)))
+                        RobotStatus(x=x, y=y, damage=min(r.get_damage(), 100),
+                                    scanner=scanner))
                 missiles_status = []
                 for m in self.missiles_in_flight:
                     pos = m.curr_pos(self.round)

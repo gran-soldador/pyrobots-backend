@@ -14,8 +14,16 @@ class Status:
 
 
 @dataclass(slots=True)
+class ScannerStatus:
+    used: bool
+    angle: float
+    amplitude: float
+
+
+@dataclass(slots=True)
 class RobotStatus(Status):
     damage: float
+    scanner: ScannerStatus
 
 
 @dataclass(slots=True)
