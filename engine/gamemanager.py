@@ -4,6 +4,10 @@ from .outputmodels import SimulationResult
 
 
 class GameRunners:
+    """GameRunners
+
+    Wrappers to be used by GameManager in child processes
+    """
     @staticmethod
     def simulation(robots: list[tuple[int, str, str]],
                    num_rounds: int) -> SimulationResult:
@@ -24,6 +28,11 @@ class GameRunners:
 
 
 class GameManager:
+    """GameManager
+
+    Wraps Game so that it is run in a separate process, to avoid problems
+    with multithreaded code.
+    """
     def __init__(self):
         self._runner = PoolRunner()
 
