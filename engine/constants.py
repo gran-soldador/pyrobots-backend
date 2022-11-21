@@ -10,3 +10,4 @@ CANNON_COOLDOWN_FACTOR = 1 / 100.0
 EPSILON = 0.0001  # |A-B|<EPSILON === A==B
 EPS_ANG = radians(0.1)  # Epsilon, but for angles. Used for comparing drive dir
 MAXROUNDS = 10000
+TIMEOUT = 0.1  # in seconds

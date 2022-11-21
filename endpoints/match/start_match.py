@@ -1,38 +1,17 @@
 from fastapi import APIRouter, Form, status, HTTPException, Depends
 from fastapi import BackgroundTasks
+
 from db import *
 from utils.tokens import *
 from utils.websocket import lobby_manager
-from typing import Tuple, List, Dict
-from engine import Game
-from fastapi.concurrency import run_in_threadpool
+from engine import game_manager
 
 router = APIRouter()
 
 
-def loop(scores: Dict[int, int],
-         rounds: Dict[int, int],
-         robots: List[Tuple[int, str, str]],
-         num_games: int, num_rounds: int):
-    for game in range(num_games):
-        match = Game(robots, num_rounds)
-        result = match.match()
-        for winner in result.winners:
-            rounds[winner.id] += result.rounds_played
-            scores[winner.id] += 1
-    return rounds, scores
-
-
-async def calculate_match(match_id: int, robots: List[Tuple[int, str, str]],
+async def calculate_match(match_id: int, robots: list[tuple[int, str, str]],
                           num_games: int, num_rounds: int):
-    scores: Dict[int, int] = {}
-    rounds: Dict[int, int] = {}
-    for (robot_id, _, _) in robots:
-        rounds[robot_id] = 0
-        scores[robot_id] = 0
-    rounds, scores = await run_in_threadpool(loop, scores, rounds,
-                                             robots, num_games,
-                                             num_rounds)
+    rounds, scores = await game_manager.match(robots, num_games, num_rounds)
     max_points = max(scores, key=scores.get)
     with db_session:
         match = Match[match_id]

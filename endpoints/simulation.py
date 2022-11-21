@@ -3,9 +3,9 @@ from cattrs.preconf.json import make_converter
 from fastapi import APIRouter, status, HTTPException, Depends, Form, Response
 
 from db import *
-import engine
 from engine.outputmodels import SimulationResult
 from utils.tokens import *
+from engine import game_manager
 
 
 converter = make_converter()
@@ -40,7 +40,7 @@ async def simulation(user_id: int = Depends(authenticated_user),
                                     detail='Robot does not exist')
             robots.append((id, robot.name, robot.code))
     try:
-        result = engine.Game(robots, rounds).simulation()
+        result = await game_manager.simulation(robots, rounds)
         # We COULD do `return result`, but some quick measurements show that
         # is ~10 times slower.
         json_str = converter.dumps(result)
