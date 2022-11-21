@@ -1,5 +1,4 @@
 from jwt import encode, decode, exceptions
-from datetime import datetime, timedelta
 from os import getenv
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -12,14 +11,8 @@ class JWTKinds(IntEnum):
     VERIFICATION = 2
 
 
-def expire_date(days: int) -> datetime:
-    date = datetime.now()
-    new_date = date + timedelta(days)
-    return new_date
-
-
 def gen_session_token(data: Dict[str, Any]) -> str:
-    payload = {**data, "exp": expire_date(2), "kind": JWTKinds.SESSION.value}
+    payload = {**data, "kind": JWTKinds.SESSION.value}
     token = encode(payload=payload, key=getenv("SECRET"), algorithm="HS256")
     return token
 
@@ -45,7 +38,6 @@ def check_session_token(token: str) -> Optional[Dict[str, Any]]:
         data = decode(token, key=getenv("SECRET"), algorithms=["HS256"])
         if data["kind"] == JWTKinds.SESSION:
             del data["kind"]
-            del data["exp"]
             return data
     except exceptions.PyJWTError:
         return

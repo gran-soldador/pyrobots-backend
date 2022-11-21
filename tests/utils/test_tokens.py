@@ -1,6 +1,4 @@
-import mock
 import pytest
-from datetime import datetime, timedelta
 from fastapi.security import HTTPAuthorizationCredentials
 
 from utils.tokens import *
@@ -36,12 +34,9 @@ def test_decode_trash():
     assert check_session_token(token) is None
 
 
-def test_authenticated_user_expired():
+def test_authenticated_user_invalid():
     data = {"user_id": 42}
-    past_datetime = datetime.now() - timedelta(days=10)
-    with mock.patch("utils.tokens.expire_date",
-                    return_value=past_datetime):
-        token = gen_session_token(data)
+    token = gen_session_token(data) + "trash"
     with pytest.raises(HTTPException):
         authenticated_user(
             HTTPAuthorizationCredentials(scheme="Bearer", credentials=token))
