@@ -10,42 +10,44 @@ else:
             create_db=True)  # pragma: no cover
 
 
-class Usuario(db.Entity):
-    user_id = PrimaryKey(int, auto=True)
-    nombre_usuario = Required(str, 255, unique=True)
+class User(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    name = Required(str, 255, unique=True)
     email = Required(str, 255, unique=True)
-    contraseña = Required(str, 255)
+    password = Required(str, 255)
     avatar = Optional(str, 255)
-    verificado = Required(bool)
-    robot = Set('Robot', reverse='usuario')
-    partida = Set('Partida', reverse='creador')
+    verified = Required(bool)
+    robots = Set('Robot', reverse='user')
+    matches = Set('Match', reverse='owner')
 
 
 class Robot(db.Entity):
-    robot_id = PrimaryKey(int, auto=True)
-    nombre = Required(str, 255)
-    implementacion = Required(str)
+    id = PrimaryKey(int, auto=True)
+    name = Required(str, 255)
+    code = Required(str)
     avatar = Optional(str, 255)
-    partidas_ganadas = Required(int)
-    partidas_jugadas = Required(int)
-    defectuoso = Required(bool)
-    participa = Set('Partida', reverse='participante')
-    usuario = Required(Usuario, reverse='robot')
-    gano = Set('Partida', reverse='ganador')
+    matches_num_won = Required(int)
+    matches_num_played = Required(int)
+    games_won = Required(int)
+    rounds_won = Required(int)
+    defective = Required(bool)
+    plays_in = Set('Match', reverse='players')
+    user = Required(User, reverse='robots')
+    won_in = Set('Match', reverse='winner')
 
 
-class Partida(db.Entity):
-    partida_id = PrimaryKey(int, auto=True)
-    namepartida = Required(str, 32)
+class Match(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    name = Required(str, 32)
     password = Optional(str, 10, nullable=True, default=None)
     status = Required(str, 32)
-    minplayers = Required(int)
-    maxplayers = Required(int)
-    numgames = Required(int)
-    numrondas = Required(int)
-    participante = Set(Robot, reverse='participa')
-    creador = Required(Usuario, reverse='partida')
-    ganador = Set(Robot, reverse='gano')
+    min_players = Required(int)
+    max_players = Required(int)
+    num_games = Required(int)
+    num_rounds = Required(int)
+    players = Set(Robot, reverse='plays_in')
+    owner = Required(User, reverse='matches')
+    winner = Set(Robot, reverse='won_in')
 
 
 db.generate_mapping(create_tables=True)

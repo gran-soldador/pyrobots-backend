@@ -1,9 +1,8 @@
 from .game import Game
-from .demo import demo as run_demo_game
-from .demo import demo_match as run_demo_match
+from .gamemanager import GameManager, game_manager
 
 __all__ = [
     'Game',
-    'run_demo_game',
-    'run_demo_match'
+    'GameManager',
+    'game_manager'
 ]
